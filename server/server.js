@@ -1,15 +1,23 @@
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5050;
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const apiRoutes = require('./routes/ticketRoutes.js');
-app.use(apiRoutes);
+app.get('/', (req, res) => {
+  res.redirect('/api/tickets');
+});
+app.use('/api/tickets', require('./routes/ticketRoutes.js'));
 
-app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`));
+mongoose.connect(process.env.MONGO_URI, () =>
+  console.log('DB connection successful!')
+);
+
+app.listen(process.env.PORT || 5050, () =>
+  console.log(`Server running: http://localhost:${process.env.PORT || 5050}`)
+);
