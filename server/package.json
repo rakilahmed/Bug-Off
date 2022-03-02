@@ -1,13 +1,14 @@
 {
-  "name": "server",
+  "name": "bug-off-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Bug Off Server",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "server": "nodemon server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Rakil Ahmed",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

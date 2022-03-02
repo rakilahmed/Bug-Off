@@ -1,0 +1,24 @@
+{
+  "name": "bug-off",
+  "version": "1.0.0",
+  "description": "A ticket (bug) tracking software",
+  "scripts": {
+    "setup": "cd server && npm install && cd ../client && npm install",
+    "server": "cd server && npm run server",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rakilahmed/Bug-Off.git"
+  },
+  "author": "Rakil Ahmed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rakilahmed/Bug-Off/issues"
+  },
+  "homepage": "https://github.com/rakilahmed/Bug-Off#readme",
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  }
+}
