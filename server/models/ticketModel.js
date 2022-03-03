@@ -18,10 +18,9 @@ const ticketSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please enter a description'],
     },
-    createdAt: { type: Date, default: Date.now() },
-    modifiedAt: { type: Date, default: Date.now() },
   },
   {
+    timestamps: true,
     versionKey: false,
   }
 );
