@@ -7,7 +7,12 @@ const getTickets = asyncHandler(async (req, res) => {
 });
 
 const setTicket = asyncHandler(async (req, res) => {
-  if (!req.body.name) {
+  if (
+    !req.body.name ||
+    !req.body.email ||
+    !req.body.title ||
+    !req.body.description
+  ) {
     res.status(400);
   }
 
@@ -18,7 +23,18 @@ const setTicket = asyncHandler(async (req, res) => {
     description: req.body.description,
   });
 
-  res.status(200).json(ticket);
+  res.status(201).json(ticket);
+});
+
+const getTicketById = asyncHandler(async (req, res) => {
+  const ticket = await Ticket.findById(req.params.id);
+
+  if (!ticket) {
+    res.status(400);
+    throw new Error('No ticket found');
+  }
+
+  res.status(200).send(ticket);
 });
 
 const updateTicket = asyncHandler(async (req, res) => {
@@ -37,7 +53,7 @@ const updateTicket = asyncHandler(async (req, res) => {
     }
   );
 
-  res.status(200).json(updatedTicket);
+  res.status(201).json(updatedTicket);
 });
 
 const deleteTicket = asyncHandler(async (req, res) => {
@@ -55,6 +71,7 @@ const deleteTicket = asyncHandler(async (req, res) => {
 module.exports = {
   getTickets,
   setTicket,
+  getTicketById,
   updateTicket,
   deleteTicket,
 };

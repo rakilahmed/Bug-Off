@@ -3,11 +3,12 @@ const router = express.Router();
 const {
   getTickets,
   setTicket,
+  getTicketById,
   updateTicket,
   deleteTicket,
 } = require('../controllers/ticketController');
 
 router.route('/').get(getTickets).post(setTicket);
-router.route('/:id').put(updateTicket).delete(deleteTicket);
+router.route('/:id').get(getTicketById).put(updateTicket).delete(deleteTicket);
 
 module.exports = router;
