@@ -1,20 +1,21 @@
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Container, CssBaseline } from '@mui/material';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>Bug Off</p>
-        <a
-          className="App-link"
-          href="https://github.com/rakilahmed/Bug-Off/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GitHub...
-        </a>
-      </header>
-    </div>
+    <Router>
+      <CssBaseline />
+      <Container>
+        <Routes>
+          <Route path='/' element={<Dashboard />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+        </Routes>
+      </Container>
+    </Router>
   );
 }
 
