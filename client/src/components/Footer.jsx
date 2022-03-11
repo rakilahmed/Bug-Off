@@ -2,7 +2,7 @@ import { Box, Typography, Link } from '@mui/material';
 
 const Copyright = () => {
   return (
-    <Typography variant="body2" color="text.secondary">
+    <Typography variant="subtitle2" color="text.secondary">
       {'Copyright © '}
       <Link color="inherit" href="/">
         Bug Off
@@ -38,14 +38,14 @@ const Footer = () => {
           <Typography variant="subtitle1">
             Get that "Bug Off" of your project ...
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="subtitle2">
             Having any issues?{' '}
             <Link color="inherit" href="/">
               Contact Us
             </Link>
           </Typography>
+          <Copyright />
         </Box>
-        <Copyright />
       </Box>
     </Box>
   );
