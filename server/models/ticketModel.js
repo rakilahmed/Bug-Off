@@ -8,7 +8,7 @@ const ticketSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, 'Please enter a email'],
+      required: [true, 'Please enter an email'],
     },
     assignedTo: {
       type: String,
@@ -20,7 +20,7 @@ const ticketSchema = mongoose.Schema(
     },
     summary: {
       type: String,
-      required: [true, 'Please enter a description'],
+      required: [true, 'Please enter a summary'],
     },
     dueDate: {
       type: String,
