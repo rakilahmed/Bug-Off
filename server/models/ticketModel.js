@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ticketSchema = mongoose.Schema(
   {
-    name: {
+    submittedBy: {
       type: String,
       required: [true, 'Please enter a name'],
     },
@@ -10,13 +10,21 @@ const ticketSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please enter a email'],
     },
+    assignedTo: {
+      type: String,
+      required: [true, 'Please enter a name'],
+    },
     title: {
       type: String,
       required: [true, 'Please enter a title'],
     },
-    description: {
+    summary: {
       type: String,
       required: [true, 'Please enter a description'],
+    },
+    dueDate: {
+      type: String,
+      required: [true, 'Please enter a date'],
     },
   },
   {
