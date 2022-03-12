@@ -8,19 +8,23 @@ const getTickets = asyncHandler(async (req, res) => {
 
 const setTicket = asyncHandler(async (req, res) => {
   if (
-    !req.body.name ||
+    !req.body.submittedBy ||
     !req.body.email ||
+    !req.body.assignedTo ||
     !req.body.title ||
-    !req.body.description
+    !req.body.summary ||
+    !req.body.dueDate
   ) {
     res.status(400);
   }
 
   const ticket = await Ticket.create({
-    name: req.body.name,
+    submittedBy: req.body.submittedBy,
     email: req.body.email,
+    assignedTo: req.body.assignedTo,
     title: req.body.title,
-    description: req.body.description,
+    summary: req.body.summary,
+    dueDate: req.body.dueDate
   });
 
   res.status(201).json(ticket);
