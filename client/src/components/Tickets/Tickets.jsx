@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 import { TicketItems } from './TicketItem';
 
-const URI = 'http://localhost:8080';
+const URI = 'http://44.201.83.36';
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -30,7 +30,7 @@ const Tickets = () => {
 
   const addTicket = async (title, assignedTo, dueDate, summary) => {
     await axios.post(URI + '/api/tickets', {
-      submittedBy: 'Rakil',
+      submittedBy: 'Admin',
       email: 'rakil@bugoff.com',
       assignedTo: assignedTo,
       ticketId: Math.floor(1000 + Math.random() * 9000),

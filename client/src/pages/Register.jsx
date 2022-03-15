@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserAuth } from '../context/AuthContext';
 import {
   Box,
   TextField,
@@ -8,13 +10,27 @@ import {
   Link,
 } from '@mui/material';
 import { HowToRegSharp } from '@mui/icons-material';
+import { Alert } from '@mui/material';
 import logo from '../assets/logo.svg';
 
 const Register = () => {
+  const { register } = useUserAuth();
   const navigate = useNavigate();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleRegister = () => {
-    navigate('/');
+  const handleRegister = async (event) => {
+    event.preventDefault();
+    setError('');
+    try {
+      await register(email, password);
+      navigate('/login');
+    } catch {
+      setError('Failed to register, try again!');
+    }
   };
 
   return (
@@ -44,6 +60,11 @@ const Register = () => {
           </Typography>
         </Box>
         <Box sx={{ mt: 2 }}>
+          {error && (
+            <Alert variant="filled" severity="error">
+              {error}
+            </Alert>
+          )}
           <TextField
             fullWidth
             required
@@ -51,6 +72,7 @@ const Register = () => {
             id="name"
             name="name"
             label="Name"
+            onChange={(e) => setName(e.target.value)}
           />
           <TextField
             fullWidth
@@ -59,6 +81,7 @@ const Register = () => {
             id="email"
             name="email"
             label="Email Address"
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             fullWidth
@@ -68,6 +91,7 @@ const Register = () => {
             id="password"
             name="password"
             label="Password"
+            onChange={(e) => setPassword(e.target.value)}
           />
           <TextField
             fullWidth
@@ -77,6 +101,7 @@ const Register = () => {
             id="confirm-password"
             name="confirm-password"
             label="Confirm Password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <Button
             fullWidth
@@ -85,6 +110,9 @@ const Register = () => {
             sx={{ mt: 1, mb: 2 }}
             startIcon={<HowToRegSharp />}
             onClick={handleRegister}
+            disabled={
+              !name || !email || !password || password !== confirmPassword
+            }
           >
             REGISTER
           </Button>
