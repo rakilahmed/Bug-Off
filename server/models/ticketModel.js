@@ -14,6 +14,10 @@ const ticketSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please enter a name'],
     },
+    ticketId: {
+      type: Number,
+      required: [true, 'Please enter a ticket id'],
+    },
     title: {
       type: String,
       required: [true, 'Please enter a title'],

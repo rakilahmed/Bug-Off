@@ -7,31 +7,16 @@ const getTickets = asyncHandler(async (_, res) => {
 });
 
 const setTicket = asyncHandler(async (req, res) => {
-  if (
-    !req.body.submittedBy ||
-    !req.body.email ||
-    !req.body.assignedTo ||
-    !req.body.title ||
-    !req.body.summary ||
-    !req.body.dueDate
-  ) {
-    res.status(400);
-  }
-
-  const ticket = await Ticket.create({
-    submittedBy: req.body.submittedBy,
-    email: req.body.email,
-    assignedTo: req.body.assignedTo,
-    title: req.body.title,
-    summary: req.body.summary,
-    dueDate: req.body.dueDate
-  });
-
+  const data = req.body;
+  if (!data) { res.status(400); }
+  console.log(data);
+  const ticket = await Ticket.create(data);
   res.status(201).json(ticket);
 });
 
 const getTicketById = asyncHandler(async (req, res) => {
-  const ticket = await Ticket.findById(req.params.id);
+  const ticketId = req.params.id;
+  const ticket = await Ticket.findOne({ ticketId });
 
   if (!ticket) {
     res.status(400);
@@ -42,26 +27,26 @@ const getTicketById = asyncHandler(async (req, res) => {
 });
 
 const updateTicket = asyncHandler(async (req, res) => {
-  const ticket = await Ticket.findById(req.params.id);
+  const ticketId = req.params.id;
+  const ticket = await Ticket.findOne({ ticketId });
 
   if (!ticket) {
     res.status(400);
     throw new Error('No ticket found');
   }
 
-  const updatedTicket = await Ticket.findByIdAndUpdate(
-    req.params.id,
+  const updatedTicket = await Ticket.findOneAndUpdate(
+    { ticketId },
     req.body,
     {
       new: true,
-    }
-  );
-
+    });
   res.status(201).json(updatedTicket);
 });
 
 const deleteTicket = asyncHandler(async (req, res) => {
-  const ticket = await Ticket.findById(req.params.id);
+  const ticketId = req.params.id;
+  const ticket = await Ticket.findOne({ ticketId });
 
   if (!ticket) {
     res.status(400);
@@ -69,7 +54,7 @@ const deleteTicket = asyncHandler(async (req, res) => {
   }
 
   await ticket.remove();
-  res.status(200).json({ id: req.params.id });
+  res.status(200).json({ ticketId });
 });
 
 module.exports = {
