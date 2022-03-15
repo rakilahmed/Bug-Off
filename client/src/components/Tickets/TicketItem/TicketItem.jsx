@@ -14,6 +14,7 @@ const TicketItem = ({ ticket, onDeleteTicket }) => {
         padding: '0.8rem',
         borderRadius: '5px',
         border: '1px solid #333',
+        backgroundColor: 'bisque',
       }}
     >
       <Box
@@ -27,10 +28,10 @@ const TicketItem = ({ ticket, onDeleteTicket }) => {
         onClick={() => setShowTicket(!showTicket)}
       >
         <Typography variant="subtitle1">
-          <b>{ticket.title}</b> [{ticket.ticketId}]
+          <b>{ticket.title}</b>
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="subtitle1">By: {ticket.submittedBy}</Typography>
+          <Typography variant="subtitle1">[#{ticket.ticketId}]</Typography>
           {!showTicket ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
         </Box>
       </Box>
@@ -39,6 +40,9 @@ const TicketItem = ({ ticket, onDeleteTicket }) => {
         <React.Fragment>
           <hr />
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="subtitle2">
+              Submitted by: <b>{ticket.submittedBy}</b>
+            </Typography>
             <Typography variant="subtitle2">
               Assigned to: <b>{ticket.assignedTo}</b>
             </Typography>
