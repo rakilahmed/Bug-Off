@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Container, Box, Button, TextField } from '@mui/material';
+import { Container, Box, Button, TextField, Card } from '@mui/material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Tickets from '../components/Tickets';
 
 const Dashboard = () => {
   const [showForm, setShowForm] = useState(false);
@@ -137,6 +138,13 @@ const Dashboard = () => {
           />
         </form>
       )}
+      <Box>
+        {/* <Card variant="outlined">
+          <Tickets />
+        </Card> */}
+        <Tickets />
+      </Box>
+
       <Footer />
     </Container>
   );
