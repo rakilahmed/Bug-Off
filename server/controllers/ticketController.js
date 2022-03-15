@@ -1,33 +1,22 @@
 const asyncHandler = require('express-async-handler');
 const Ticket = require('../models/ticketModel');
 
-const getTickets = asyncHandler(async (req, res) => {
+const getTickets = asyncHandler(async (_, res) => {
   const tickets = await Ticket.find();
   res.status(200).json(tickets);
 });
 
 const setTicket = asyncHandler(async (req, res) => {
-  if (
-    !req.body.name ||
-    !req.body.email ||
-    !req.body.title ||
-    !req.body.description
-  ) {
-    res.status(400);
-  }
-
-  const ticket = await Ticket.create({
-    name: req.body.name,
-    email: req.body.email,
-    title: req.body.title,
-    description: req.body.description,
-  });
-
+  const data = req.body;
+  if (!data) { res.status(400); }
+  console.log(data);
+  const ticket = await Ticket.create(data);
   res.status(201).json(ticket);
 });
 
 const getTicketById = asyncHandler(async (req, res) => {
-  const ticket = await Ticket.findById(req.params.id);
+  const ticketId = req.params.id;
+  const ticket = await Ticket.findOne({ ticketId });
 
   if (!ticket) {
     res.status(400);
@@ -38,26 +27,26 @@ const getTicketById = asyncHandler(async (req, res) => {
 });
 
 const updateTicket = asyncHandler(async (req, res) => {
-  const ticket = await Ticket.findById(req.params.id);
+  const ticketId = req.params.id;
+  const ticket = await Ticket.findOne({ ticketId });
 
   if (!ticket) {
     res.status(400);
     throw new Error('No ticket found');
   }
 
-  const updatedTicket = await Ticket.findByIdAndUpdate(
-    req.params.id,
+  const updatedTicket = await Ticket.findOneAndUpdate(
+    { ticketId },
     req.body,
     {
       new: true,
-    }
-  );
-
+    });
   res.status(201).json(updatedTicket);
 });
 
 const deleteTicket = asyncHandler(async (req, res) => {
-  const ticket = await Ticket.findById(req.params.id);
+  const ticketId = req.params.id;
+  const ticket = await Ticket.findOne({ ticketId });
 
   if (!ticket) {
     res.status(400);
@@ -65,7 +54,7 @@ const deleteTicket = asyncHandler(async (req, res) => {
   }
 
   await ticket.remove();
-  res.status(200).json({ id: req.params.id });
+  res.status(200).json({ ticketId });
 });
 
 module.exports = {

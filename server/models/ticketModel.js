@@ -2,21 +2,33 @@ const mongoose = require('mongoose');
 
 const ticketSchema = mongoose.Schema(
   {
-    name: {
+    submittedBy: {
       type: String,
       required: [true, 'Please enter a name'],
     },
     email: {
       type: String,
-      required: [true, 'Please enter a email'],
+      required: [true, 'Please enter an email'],
+    },
+    assignedTo: {
+      type: String,
+      required: [true, 'Please enter a name'],
+    },
+    ticketId: {
+      type: Number,
+      required: [true, 'Please enter a ticket id'],
     },
     title: {
       type: String,
       required: [true, 'Please enter a title'],
     },
-    description: {
+    summary: {
       type: String,
-      required: [true, 'Please enter a description'],
+      required: [true, 'Please enter a summary'],
+    },
+    dueDate: {
+      type: Date,
+      required: [true, 'Please enter a date'],
     },
   },
   {
