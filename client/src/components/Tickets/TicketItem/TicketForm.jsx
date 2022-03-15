@@ -3,7 +3,7 @@ import { Box, FormGroup, TextField, Button } from '@mui/material/';
 import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
-const TicketForm = () => {
+const TicketForm = ({ onAddTicket }) => {
   const [showForm, setShowForm] = useState(false);
   const [titleInput, setTitleInput] = useState('');
   const [assignedToInput, setAssignedToInput] = useState('');
@@ -44,19 +44,8 @@ const TicketForm = () => {
 
   const handleAddTicket = (event) => {
     event.preventDefault();
-    addTicket(titleInput, assignedToInput, summaryInput);
+    onAddTicket(titleInput, assignedToInput, dueDate, summaryInput);
     setShowForm(!showForm);
-  };
-
-  const addTicket = (titleInput, assignedToInput, summaryInput) => {
-    const ticket = {
-      title: titleInput,
-      assignedTo: assignedToInput,
-      dueDate: dueDate,
-      summary: summaryInput,
-    };
-
-    console.log(ticket);
   };
 
   return (
