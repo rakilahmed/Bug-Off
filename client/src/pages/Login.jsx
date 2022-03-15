@@ -1,13 +1,20 @@
-import { useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Container, Grid, Link } from "@mui/material";
-import { LoginSharp } from "@mui/icons-material";
-import logo from "../assets/logo.png";
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  TextField,
+  Button,
+  Container,
+  Link,
+  Typography,
+} from '@mui/material';
+import { LoginSharp } from '@mui/icons-material';
+import logo from '../assets/logo.svg';
 
 const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    navigate("/");
+    navigate('/');
   };
 
   return (
@@ -15,12 +22,27 @@ const Login = () => {
       <Box
         sx={{
           marginTop: 20,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
-        <img src={logo} alt="Bug Off logo" />
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: '5rem', height: '5rem', marginRight: '1rem' }}
+          />
+          <Typography variant="overline" fontSize="2rem">
+            Bug Off
+          </Typography>
+        </Box>
         <Box sx={{ mt: 2 }}>
           <TextField
             fullWidth
@@ -49,18 +71,23 @@ const Login = () => {
           >
             LOGIN
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="/login" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="/register" variant="body2">
-                Don't have an account? Register!
-              </Link>
-            </Grid>
-          </Grid>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Link href="/login" variant="body2">
+              Forgot password?
+            </Link>
+            <Link href="/register" variant="body2">
+              Don't have an account? Register
+            </Link>
+            <Link href="/" variant="body2">
+              Sign in as a Guest User
+            </Link>
+          </Box>
         </Box>
       </Box>
     </Container>

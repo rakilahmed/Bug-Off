@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography, Link } from '@mui/material';
 import { LogoutSharp } from '@mui/icons-material';
+import logo from '../assets/logo.svg';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -19,7 +20,29 @@ const Header = () => {
         borderBottom: '1px solid #333',
       }}
     >
-      <Typography variant="h4">Bug Off</Typography>
+      <Link
+        sx={{
+          color: 'inherit',
+          textDecoration: 'inherit',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        href="/"
+      >
+        <img
+          src={logo}
+          alt="logo"
+          style={{ width: '3rem', height: '3rem', marginRight: '0.7rem' }}
+        />
+        <Typography
+          variant="overline"
+          fontSize="1.3rem"
+          sx={{ display: { md: 'block', xs: 'none' } }}
+        >
+          Bug Off
+        </Typography>
+      </Link>
       <Button
         variant="contained"
         color="warning"

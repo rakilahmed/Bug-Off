@@ -1,13 +1,20 @@
-import { useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Container, Grid, Link } from "@mui/material";
-import { HowToRegSharp } from "@mui/icons-material";
-import logo from "../assets/logo.png";
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Link,
+} from '@mui/material';
+import { HowToRegSharp } from '@mui/icons-material';
+import logo from '../assets/logo.svg';
 
 const Register = () => {
   const navigate = useNavigate();
 
   const handleRegister = () => {
-    navigate("/");
+    navigate('/');
   };
 
   return (
@@ -15,12 +22,27 @@ const Register = () => {
       <Box
         sx={{
           marginTop: 20,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
-        <img src={logo} alt="Bug Off logo" />
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: '5rem', height: '5rem', marginRight: '1rem' }}
+          />
+          <Typography variant="overline" fontSize="2rem">
+            Bug Off
+          </Typography>
+        </Box>
         <Box sx={{ mt: 2 }}>
           <TextField
             fullWidth
@@ -66,13 +88,11 @@ const Register = () => {
           >
             REGISTER
           </Button>
-          <Grid container justifyContent="flex-end">
-            <Grid item>
-              <Link href="/login" variant="body2">
-                Already have an account? Login!
-              </Link>
-            </Grid>
-          </Grid>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Link href="/login" variant="body2">
+              Already have an account? Login
+            </Link>
+          </Box>
         </Box>
       </Box>
     </Container>
