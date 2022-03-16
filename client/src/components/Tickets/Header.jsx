@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useUserAuth } from '../context/AuthContext';
 import { Box, Button, Typography, Link } from '@mui/material';
 import { LogoutSharp } from '@mui/icons-material';
 import logo from '../assets/logo.svg';
 
 const Header = () => {
-  const { logOut } = useAuth();
+  const { logOut } = useUserAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {

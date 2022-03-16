@@ -10,7 +10,6 @@ const TicketItem = ({ ticket, onDeleteTicket }) => {
     <Box
       sx={{
         maxWidth: '30rem',
-        margin: '1rem auto',
         padding: '0.8rem',
         borderRadius: '5px',
         border: '1px solid #333',

@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   Box,
   TextField,
@@ -8,13 +10,30 @@ import {
   Typography,
 } from '@mui/material';
 import { LoginSharp } from '@mui/icons-material';
+import { Alert } from '@mui/material';
 import logo from '../assets/logo.svg';
 
 const Login = () => {
+  const { logIn } = useAuth();
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    navigate('/');
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    setError('');
+    try {
+      await logIn(email, password);
+      navigate('/');
+    } catch {
+      setError('Login failed, try again!');
+    }
+  };
+
+  const handleGuest = () => {
+    setEmail('demo@bugoff.com');
+    setPassword('bugoff2022');
   };
 
   return (
@@ -44,6 +63,11 @@ const Login = () => {
           </Typography>
         </Box>
         <Box sx={{ mt: 2 }}>
+          {error && (
+            <Alert variant="filled" severity="error">
+              {error}
+            </Alert>
+          )}
           <TextField
             fullWidth
             required
@@ -51,6 +75,8 @@ const Login = () => {
             id="email"
             name="email"
             label="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             fullWidth
@@ -60,6 +86,8 @@ const Login = () => {
             id="password"
             name="password"
             label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <Button
             fullWidth
@@ -68,6 +96,7 @@ const Login = () => {
             sx={{ mt: 1, mb: 2 }}
             startIcon={<LoginSharp />}
             onClick={handleLogin}
+            disabled={!email || !password}
           >
             LOGIN
           </Button>
@@ -84,7 +113,7 @@ const Login = () => {
             <Link href="/register" variant="body2">
               Don't have an account? Register
             </Link>
-            <Link href="/" variant="body2">
+            <Link onClick={handleGuest} variant="body2">
               Sign in as a Guest User
             </Link>
           </Box>

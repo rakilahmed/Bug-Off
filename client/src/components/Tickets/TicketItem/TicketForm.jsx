@@ -49,9 +49,9 @@ const TicketForm = ({ onAddTicket }) => {
   };
 
   return (
-    <Box>
+    <Box mb={3}>
       <Box
-        mt={5}
+        mt={4}
         sx={{
           display: 'flex',
           flexDirection: 'column',

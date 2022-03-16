@@ -3,10 +3,12 @@ import axios from 'axios';
 import { Box } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 import { TicketItems } from './TicketItem';
+import { useAuth } from '../../context/AuthContext';
 
-const URI = 'http://localhost:8080';
+const URI = 'http://44.201.83.36';
 
 const Tickets = () => {
+  const { user } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -30,7 +32,7 @@ const Tickets = () => {
 
   const addTicket = async (title, assignedTo, dueDate, summary) => {
     await axios.post(URI + '/api/tickets', {
-      submittedBy: 'Rakil',
+      submittedBy: 'Admin',
       email: 'rakil@bugoff.com',
       assignedTo: assignedTo,
       ticketId: Math.floor(1000 + Math.random() * 9000),
