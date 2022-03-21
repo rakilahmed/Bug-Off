@@ -1,13 +1,19 @@
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../firebase/AuthContext';
 import { Box, Button, Typography, Link } from '@mui/material';
-import { LogoutSharp } from '@mui/icons-material';
 import logo from '../assets/logo.svg';
 
 const Header = () => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -45,8 +51,10 @@ const Header = () => {
       </Link>
       <Button
         variant="contained"
-        color="warning"
-        endIcon={<LogoutSharp />}
+        sx={{
+          backgroundColor: '#363740',
+          '&:hover': { backgroundColor: '#ff5722' },
+        }}
         onClick={handleLogout}
       >
         LOGOUT

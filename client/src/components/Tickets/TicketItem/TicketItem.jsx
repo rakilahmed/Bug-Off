@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material/';
 import moment from 'moment';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 
 const TicketItem = ({ ticket, onDeleteTicket }) => {
   const [showTicket, setShowTicket] = useState(false);
@@ -9,12 +9,10 @@ const TicketItem = ({ ticket, onDeleteTicket }) => {
   return (
     <Box
       sx={{
-        maxWidth: '30rem',
+        border: '1px solid #e6e6e6',
+        padding: 1,
+        borderRadius: 2,
         margin: '1rem auto',
-        padding: '0.8rem',
-        borderRadius: '5px',
-        border: '1px solid #333',
-        backgroundColor: 'bisque',
       }}
     >
       <Box
@@ -27,64 +25,71 @@ const TicketItem = ({ ticket, onDeleteTicket }) => {
         }}
         onClick={() => setShowTicket(!showTicket)}
       >
-        <Typography variant="subtitle1">
-          <b>{ticket.title}</b>
+        <Typography
+          variant="subtitle1"
+          sx={{ fontWeight: 'bold', wordBreak: 'break-all' }}
+        >
+          {ticket.title}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="subtitle1">[#{ticket.ticketId}]</Typography>
-          {!showTicket ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
+          <Typography variant="caption">[#{ticket.ticketId}]</Typography>
+          {!showTicket ? <ArrowDropDown /> : <ArrowDropUp />}
         </Box>
       </Box>
 
       {showTicket && (
         <React.Fragment>
-          <hr />
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle2">
-              Submitted by: <b>{ticket.submittedBy}</b>
+          <Box mt={1} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="caption">
+              Submitted: {moment(ticket.createdAt).startOf().fromNow()}
             </Typography>
-            <Typography variant="subtitle2">
-              Assigned to: <b>{ticket.assignedTo}</b>
+            <Typography variant="caption">By: {ticket.submittedBy}</Typography>
+            <Typography variant="caption">
+              Assigned to: {ticket.assignedTo}
             </Typography>
-            <Typography variant="subtitle2">
-              Due by: {moment(ticket.dueDate).format('ddd, MMM Do')} at{' '}
-              {moment(ticket.dueDate).format('LT')}
+            <Typography variant="caption">
+              Due: {moment(ticket.dueDate).endOf().fromNow()}
             </Typography>
           </Box>
-          <hr />
-          <Typography variant="inherit">{ticket.summary}</Typography>
-          <hr />
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle2">
-              Submitted on: {moment(ticket.createdAt).format('ddd, MMM Do')} at{' '}
-              {moment(ticket.createdAt).format('LT')}
-            </Typography>
-            <Typography variant="subtitle2">
-              Last edited on: {moment(ticket.createdAt).format('ddd, MMM Do')}{' '}
-              at {moment(ticket.createdAt).format('LT')}
-            </Typography>
-            <Box
-              mt={1}
-              mb={1}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
+          <Typography
+            variant="body1"
+            sx={{
+              borderTop: '1px solid #e6e6e6',
+              padding: 2,
+              borderBottom: '1px solid #e6e6e6',
+            }}
+          >
+            {ticket.summary}
+          </Typography>
+          <Box
+            m={1.5}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Button
+              disabled
+              sx={{ marginRight: 1 }}
+              variant="contained"
+              size="small"
+              color="primary"
             >
-              <Button disabled variant="contained" size="small" color="primary">
-                Edit
-              </Button>
-              <Button
-                variant="contained"
-                size="small"
-                color="error"
-                onClick={() => onDeleteTicket(ticket.ticketId)}
-              >
-                Delete
-              </Button>
-            </Box>
+              Edit
+            </Button>
+            <Button
+              variant="contained"
+              size="small"
+              color="error"
+              onClick={() => onDeleteTicket(ticket.ticketId)}
+            >
+              Delete
+            </Button>
           </Box>
+          <Typography variant="caption">
+            Last updated: {moment(ticket.updatedAt).startOf().fromNow()}
+          </Typography>
         </React.Fragment>
       )}
     </Box>

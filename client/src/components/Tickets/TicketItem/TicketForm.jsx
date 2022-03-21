@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, FormGroup, TextField, Button } from '@mui/material/';
+import { Box, FormGroup, TextField, Button, Typography } from '@mui/material/';
 import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
@@ -13,7 +13,7 @@ const TicketForm = ({ onAddTicket }) => {
   const [assignedToStatus, setAssignedToStatus] = useState(false);
   const [summaryStatus, setSummaryStatus] = useState(false);
 
-  const handleForm = (event) => {
+  const handleForm = () => {
     setShowForm(!showForm);
     setTitleInput('');
     setAssignedToInput('');
@@ -51,96 +51,107 @@ const TicketForm = ({ onAddTicket }) => {
   return (
     <Box>
       <Box
-        mt={5}
         sx={{
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       >
+        <Typography variant="h6">Tickets</Typography>
         <Button
           variant="contained"
-          color={!showForm ? 'primary' : 'secondary'}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            backgroundColor: '#363740',
+            '&:hover': { backgroundColor: '#363740' },
+          }}
           onClick={handleForm}
         >
-          {!showForm ? 'Create New Ticket' : 'Cancel'}
+          {!showForm ? 'New Ticket' : 'Cancel'}
         </Button>
       </Box>
       {showForm && (
-        <FormGroup
-          noValidate
-          style={{
-            maxWidth: '30rem',
-            margin: 'auto',
+        <Box
+          sx={{
+            maxWidth: '40rem',
+            margin: '0 auto 1rem auto',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
+          <FormGroup noValidate>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <TextField
+                fullWidth
+                required
+                margin="normal"
+                id="ticket-title"
+                label="Ticket Title"
+                variant="outlined"
+                value={titleInput}
+                onChange={validateTitle}
+              />
+              <Button
+                type="submit"
+                onClick={handleAddTicket}
+                variant="contained"
+                size="large"
+                color="success"
+                sx={{
+                  margin: '0.5rem 0 0 1rem',
+                  backgroundColor: '#363740',
+                  '&:hover': { backgroundColor: '#66bb6a' },
+                }}
+                disabled={!titleStatus || !assignedToStatus || !summaryStatus}
+              >
+                Add
+              </Button>
+            </Box>
             <TextField
               fullWidth
               required
               margin="normal"
-              id="ticket-title"
-              label="Ticket Title"
+              id="ticket-assigned"
+              label="Ticket Assigned To"
               variant="outlined"
-              value={titleInput}
-              onChange={validateTitle}
+              value={assignedToInput}
+              onChange={validateAssigned}
             />
-            <Button
-              type="submit"
-              onClick={handleAddTicket}
-              variant="contained"
-              size="large"
-              color="success"
-              style={{ margin: '0.5rem 0 0 1rem' }}
-              disabled={!titleStatus || !assignedToStatus || !summaryStatus}
-            >
-              Add
-            </Button>
-          </Box>
-          <TextField
-            fullWidth
-            required
-            margin="normal"
-            id="ticket-assigned"
-            label="Ticket Assigned To"
-            variant="outlined"
-            value={assignedToInput}
-            onChange={validateAssigned}
-          />
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DateTimePicker
-              disablePast
-              value={dueDate}
-              onChange={setDueDate}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Due Date"
-                  fullWidth
-                  margin="normal"
-                />
-              )}
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateTimePicker
+                disablePast
+                value={dueDate}
+                onChange={setDueDate}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Due Date"
+                    fullWidth
+                    margin="normal"
+                  />
+                )}
+              />
+            </LocalizationProvider>
+            <TextField
+              fullWidth
+              required
+              margin="normal"
+              id="ticket-description"
+              label="Ticket Description"
+              variant="outlined"
+              multiline
+              rows={5}
+              value={summaryInput}
+              onChange={validateDescription}
             />
-          </LocalizationProvider>
-          <TextField
-            fullWidth
-            required
-            margin="normal"
-            id="ticket-description"
-            label="Ticket Description"
-            variant="outlined"
-            multiline
-            rows={5}
-            value={summaryInput}
-            onChange={validateDescription}
-          />
-        </FormGroup>
+          </FormGroup>
+        </Box>
       )}
     </Box>
   );

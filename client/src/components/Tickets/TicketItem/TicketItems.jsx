@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid } from '@mui/material/';
+import { Box, Typography } from '@mui/material/';
 import TicketForm from './TicketForm';
 import TicketItem from './TicketItem';
 
@@ -7,19 +7,21 @@ const TicketItems = ({ tickets, onAddTicket, onDeleteTicket }) => {
   return (
     <Box>
       <TicketForm onAddTicket={onAddTicket} />
-      <Grid
-        container
-        spacing={{ md: 3, xs: 2 }}
-        columns={{ xs: 4, sm: 4, md: 12 }}
-      >
-        {tickets.map((ticket) => {
+      {tickets.length > 0 ? (
+        tickets.map((ticket) => {
           return (
-            <Grid item xs={4} key={ticket.ticketId}>
-              <TicketItem ticket={ticket} onDeleteTicket={onDeleteTicket} />
-            </Grid>
+            <TicketItem
+              key={ticket.ticketId}
+              ticket={ticket}
+              onDeleteTicket={onDeleteTicket}
+            />
           );
-        })}
-      </Grid>
+        })
+      ) : (
+        <Typography sx={{ marginTop: 2 }} varient="body1">
+          No open tickets to show.
+        </Typography>
+      )}
     </Box>
   );
 };
