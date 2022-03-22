@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../firebase/AuthContext';
 import { Grid } from '@mui/material';
-import { Header, Footer } from '../components';
+import { Header } from '../components/Header';
+import { Footer } from '../components';
 import { Tickets } from '../components/Tickets';
 
 const Dashboard = () => {

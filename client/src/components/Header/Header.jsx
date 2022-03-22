@@ -1,28 +1,15 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../firebase/AuthContext';
-import { Box, Button, Typography, Link } from '@mui/material';
-import logo from '../assets/logo.svg';
+import { Box, Typography, Link } from '@mui/material';
+import logo from '../../assets/logo.svg';
+import DropDownMenu from './DropDownMenu';
 
 const Header = () => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
   return (
     <Box
       sx={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '1rem',
+        padding: '1rem 0 0.5rem 0',
         borderBottom: '1px solid #333',
       }}
     >
@@ -49,16 +36,7 @@ const Header = () => {
           Bug Off
         </Typography>
       </Link>
-      <Button
-        variant="contained"
-        sx={{
-          backgroundColor: '#363740',
-          '&:hover': { backgroundColor: '#ff5722' },
-        }}
-        onClick={handleLogout}
-      >
-        LOGOUT
-      </Button>
+      <DropDownMenu />
     </Box>
   );
 };

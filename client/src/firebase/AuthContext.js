@@ -31,12 +31,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setTimeout(() => {
         setLoading(false);
-      }, 500);
+      }, 1000);
     });
+
+    return unsub;
   }, []);
 
   const value = { user, login, register, logout };
