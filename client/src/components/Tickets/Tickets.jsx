@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TicketItems } from './TicketItem';
+import TicketItems from './TicketItem/TicketItems';
 import { useAuth } from '../../firebase/AuthContext';
 import { Paper } from '@mui/material';
 
