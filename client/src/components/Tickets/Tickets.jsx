@@ -35,6 +35,27 @@ const Tickets = () => {
     fetchTickets();
   };
 
+  const editTicket = async (
+    ticketId,
+    title,
+    assignedTo,
+    priority,
+    dueDate,
+    summary
+  ) => {
+    await axios.put(URI + `/${ticketId}`, {
+      submittedBy: `${user.displayName}`,
+      email: `${user.email}`,
+      assignedTo: assignedTo,
+      ticketId: Math.floor(1000 + Math.random() * 9000),
+      title: title,
+      priority: priority,
+      dueDate: dueDate,
+      summary: summary,
+    });
+    fetchTickets();
+  };
+
   const deleteTicket = async (ticketId) => {
     await axios.delete(URI + `/${ticketId}`);
     fetchTickets();
@@ -52,6 +73,7 @@ const Tickets = () => {
       <TicketItems
         tickets={tickets}
         onAddTicket={addTicket}
+        onEditTicket={editTicket}
         onDeleteTicket={deleteTicket}
       />
     </Paper>

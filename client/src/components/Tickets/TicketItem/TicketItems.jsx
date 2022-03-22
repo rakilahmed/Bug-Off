@@ -3,16 +3,22 @@ import { Box, Typography } from '@mui/material/';
 import TicketForm from './TicketForm';
 import TicketItem from './TicketItem';
 
-const TicketItems = ({ tickets, onAddTicket, onDeleteTicket }) => {
+const TicketItems = ({
+  tickets,
+  onAddTicket,
+  onEditTicket,
+  onDeleteTicket,
+}) => {
   return (
     <Box>
-      <TicketForm onAddTicket={onAddTicket} />
+      <TicketForm title="Tickets" edit={false} onAddTicket={onAddTicket} />
       {tickets.length > 0 ? (
         tickets.map((ticket) => {
           return (
             <TicketItem
               key={ticket.ticketId}
               ticket={ticket}
+              onEditTicket={onEditTicket}
               onDeleteTicket={onDeleteTicket}
             />
           );

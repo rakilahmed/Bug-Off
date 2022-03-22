@@ -28,8 +28,8 @@ const TicketForm = ({ onAddTicket }) => {
     setShowForm(!showForm);
     setTitleInput('');
     setAssignedToInput('');
-    setPriority('Low');
     setSummaryInput('');
+    setPriority('Low');
     setTitleStatus(false);
     setAssignedToStatus(false);
     setSummaryStatus(false);
@@ -40,18 +40,18 @@ const TicketForm = ({ onAddTicket }) => {
     event.target.value === '' ? setTitleStatus(false) : setTitleStatus(true);
   };
 
-  const validateDescription = (event) => {
-    setSummaryInput(event.target.value);
-    event.target.value === ''
-      ? setSummaryStatus(false)
-      : setSummaryStatus(true);
-  };
-
   const validateAssigned = (event) => {
     setAssignedToInput(event.target.value);
     event.target.value === ''
       ? setAssignedToStatus(false)
       : setAssignedToStatus(true);
+  };
+
+  const validateSummary = (event) => {
+    setSummaryInput(event.target.value);
+    event.target.value === ''
+      ? setSummaryStatus(false)
+      : setSummaryStatus(true);
   };
 
   const handleAddTicket = (event) => {
@@ -178,7 +178,7 @@ const TicketForm = ({ onAddTicket }) => {
               multiline
               rows={5}
               value={summaryInput}
-              onChange={validateDescription}
+              onChange={validateSummary}
             />
           </FormGroup>
         </Box>
