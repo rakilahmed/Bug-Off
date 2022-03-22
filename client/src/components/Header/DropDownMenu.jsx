@@ -9,8 +9,14 @@ import {
   Popper,
   MenuItem,
   MenuList,
+  Typography,
 } from '@mui/material/';
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import {
+  ArrowDropDown,
+  ArrowDropUp,
+  PermIdentity,
+  Logout,
+} from '@mui/icons-material';
 import { useAuth } from '../../firebase/AuthContext';
 
 const DropDownMenu = () => {
@@ -21,6 +27,10 @@ const DropDownMenu = () => {
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleProfile = () => {
+    navigate('/profile');
   };
 
   const handleLogout = async () => {
@@ -100,8 +110,14 @@ const DropDownMenu = () => {
                   aria-labelledby="composition-button"
                   onKeyDown={handleListKeyDown}
                 >
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  <MenuItem onClick={handleProfile}>
+                    <PermIdentity />
+                    <Typography sx={{ ml: 1 }}>Profile</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <Logout />
+                    <Typography sx={{ ml: 1 }}>Logout</Typography>
+                  </MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>
