@@ -32,7 +32,7 @@ const TicketItem = ({ ticket, onDeleteTicket }) => {
           {ticket.title}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="caption">[#{ticket.ticketId}]</Typography>
+          <Typography variant="caption">[{ticket.priority}]</Typography>
           {!showTicket ? <ArrowDropDown /> : <ArrowDropUp />}
         </Box>
       </Box>

@@ -21,15 +21,16 @@ const Tickets = () => {
     setTickets(res.data);
   };
 
-  const addTicket = async (title, assignedTo, dueDate, summary) => {
+  const addTicket = async (title, assignedTo, priority, dueDate, summary) => {
     await axios.post(URI, {
       submittedBy: `${user.displayName}`,
       email: `${user.email}`,
       assignedTo: assignedTo,
       ticketId: Math.floor(1000 + Math.random() * 9000),
       title: title,
-      summary: summary,
+      priority: priority,
       dueDate: dueDate,
+      summary: summary,
     });
     fetchTickets();
   };

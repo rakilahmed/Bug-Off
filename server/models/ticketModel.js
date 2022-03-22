@@ -26,6 +26,10 @@ const ticketSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please enter a summary'],
     },
+    priority: {
+      type: String,
+      required: [true, 'Please enter a priority'],
+    },
     dueDate: {
       type: Date,
       required: [true, 'Please enter a date'],

@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Box, FormGroup, TextField, Button, Typography } from '@mui/material/';
+import {
+  Box,
+  FormGroup,
+  FormControl,
+  InputLabel,
+  TextField,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+} from '@mui/material/';
 import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
@@ -8,6 +18,7 @@ const TicketForm = ({ onAddTicket }) => {
   const [titleInput, setTitleInput] = useState('');
   const [assignedToInput, setAssignedToInput] = useState('');
   const [summaryInput, setSummaryInput] = useState('');
+  const [priority, setPriority] = useState('');
   const [dueDate, setDueDate] = useState(new Date());
   const [titleStatus, setTitleStatus] = useState(false);
   const [assignedToStatus, setAssignedToStatus] = useState(false);
@@ -17,6 +28,7 @@ const TicketForm = ({ onAddTicket }) => {
     setShowForm(!showForm);
     setTitleInput('');
     setAssignedToInput('');
+    setPriority('Low');
     setSummaryInput('');
     setTitleStatus(false);
     setAssignedToStatus(false);
@@ -44,7 +56,7 @@ const TicketForm = ({ onAddTicket }) => {
 
   const handleAddTicket = (event) => {
     event.preventDefault();
-    onAddTicket(titleInput, assignedToInput, dueDate, summaryInput);
+    onAddTicket(titleInput, assignedToInput, priority, dueDate, summaryInput);
     setShowForm(!showForm);
   };
 
@@ -79,7 +91,7 @@ const TicketForm = ({ onAddTicket }) => {
             margin: '0 auto 1rem auto',
           }}
         >
-          <FormGroup noValidate>
+          <FormGroup>
             <Box
               sx={{
                 display: 'flex',
@@ -114,36 +126,54 @@ const TicketForm = ({ onAddTicket }) => {
               </Button>
             </Box>
             <TextField
-              fullWidth
               required
               margin="normal"
               id="ticket-assigned"
-              label="Ticket Assigned To"
+              label="Assigned To"
               variant="outlined"
               value={assignedToInput}
               onChange={validateAssigned}
             />
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DateTimePicker
-                disablePast
-                value={dueDate}
-                onChange={setDueDate}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Due Date"
-                    fullWidth
-                    margin="normal"
-                  />
-                )}
-              />
-            </LocalizationProvider>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-evenly',
+              }}
+            >
+              <FormControl fullWidth sx={{ mt: 1, mr: 1 }}>
+                <InputLabel>Priority</InputLabel>
+                <Select
+                  value={priority}
+                  label="Priority"
+                  onChange={(e) => setPriority(e.target.value)}
+                >
+                  <MenuItem value="Low">Low</MenuItem>
+                  <MenuItem value="Medium">Medium</MenuItem>
+                  <MenuItem value="High">High</MenuItem>
+                </Select>
+              </FormControl>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateTimePicker
+                  disablePast
+                  value={dueDate}
+                  onChange={setDueDate}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      margin="normal"
+                      label="Due Date"
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
             <TextField
-              fullWidth
               required
               margin="normal"
-              id="ticket-description"
-              label="Ticket Description"
+              id="ticket-summary"
+              label="Summary"
               variant="outlined"
               multiline
               rows={5}
