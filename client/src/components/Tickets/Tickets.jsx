@@ -7,22 +7,30 @@ import { Paper } from '@mui/material';
 const URI = 'https://bugoff.rakilahmed.com/api/tickets';
 
 const Tickets = () => {
-  const { user } = useAuth();
+  const { user, getToken } = useAuth();
   const [tickets, setTickets] = useState([]);
 
   useEffect(() => {
-    if (user) {
-      fetchTickets();
-    }
-  }, [user]);
+    const fetchTickets = async () => {
+      const res = await axios.get(URI);
+      setTickets(res.data);
+    };
+    fetchTickets();
+  }, []);
 
-  const fetchTickets = async () => {
-    const res = await axios.get(URI);
-    setTickets(res.data);
-  };
+  axios.interceptors.request.use(
+    async (config) => {
+      config.headers.authorization = 'Bearer ' + (await getToken());
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
 
   const addTicket = async (title, assignedTo, priority, dueDate, summary) => {
-    await axios.post(URI, {
+    const res = await axios.post(URI, {
+      uid: `${user.uid}`,
       submittedBy: `${user.displayName}`,
       email: `${user.email}`,
       assignedTo: assignedTo,
@@ -32,7 +40,7 @@ const Tickets = () => {
       dueDate: dueDate,
       summary: summary,
     });
-    fetchTickets();
+    setTickets([...tickets, res.data]);
   };
 
   const editTicket = async (
@@ -43,7 +51,8 @@ const Tickets = () => {
     dueDate,
     summary
   ) => {
-    await axios.put(URI + `/${ticketId}`, {
+    const res = await axios.put(URI + `/${ticketId}`, {
+      uid: `${user.uid}`,
       submittedBy: `${user.displayName}`,
       email: `${user.email}`,
       assignedTo: assignedTo,
@@ -53,12 +62,19 @@ const Tickets = () => {
       dueDate: dueDate,
       summary: summary,
     });
-    fetchTickets();
+    setTickets(
+      tickets.map((ticket) => {
+        return ticket.ticketId === ticketId ? { ...res.data } : ticket;
+      })
+    );
   };
 
   const deleteTicket = async (ticketId) => {
     await axios.delete(URI + `/${ticketId}`);
-    fetchTickets();
+    const updatedTickets = tickets.filter((ticket) => {
+      return ticket.ticketId !== ticketId;
+    });
+    setTickets(updatedTickets);
   };
 
   return (
