@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../firebase/AuthContext';
 import { Grid, Paper, Box, TextField, Button, Alert } from '@mui/material';
+import { Header } from '../components';
 
 const Profile = () => {
   const { user, updateUserName, updateUserEmail, updateUserPassword } =
@@ -37,14 +38,14 @@ const Profile = () => {
 
     Promise.all(promises)
       .then(() => {
-        setMessage('Profile Updated');
+        setMessage('Profile updated');
         setName('');
         setEmail('');
         setPassword('');
         setConfirmPassword('');
       })
       .catch(() => {
-        setUpdateError('Failed to update account');
+        setUpdateError('Failed to update profile');
       });
   };
 
@@ -53,112 +54,115 @@ const Profile = () => {
   };
 
   return (
-    <Grid
-      container
-      alignItems="center"
-      justifyContent="center"
-      style={{ minHeight: '100vh' }}
-    >
-      <Paper
-        sx={{
-          maxWidth: '25rem',
-          margin: 1,
-          padding: 3,
-          borderRadius: 2,
-          boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
-        }}
+    <>
+      <Header />
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="center"
+        style={{ minHeight: '90vh' }}
       >
-        <Box sx={{ mt: 2 }}>
-          {message && (
-            <Alert variant="filled" severity="success">
-              {message}
-            </Alert>
-          )}
-          {updateError && (
-            <Alert variant="filled" severity="error">
-              {updateError}
-            </Alert>
-          )}
-          <TextField
-            disabled
-            fullWidth
-            margin="normal"
-            id="current-name"
-            name="current-name"
-            label="Current Name"
-            value={user?.displayName}
-          />
-          <TextField
-            disabled
-            fullWidth
-            margin="normal"
-            id="current-email"
-            name="current-email"
-            label="Current Email"
-            value={user?.email}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            id="name"
-            name="name"
-            label="New Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            id="email"
-            name="email"
-            label="New Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            fullWidth
-            required
-            margin="normal"
-            type="password"
-            id="password"
-            name="password"
-            label="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <TextField
-            fullWidth
-            required
-            margin="normal"
-            type="password"
-            id="confirm-password"
-            name="confirm-password"
-            label="Confirm Password"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          <Button
-            fullWidth
-            size="large"
-            variant="contained"
-            sx={{
-              mt: 1,
-              mb: 2,
-              backgroundColor: '#363740',
-              '&:hover': { backgroundColor: '#66bb6a' },
-            }}
-            onClick={handleUpdateProfile}
-            disabled={
-              (!name && !email && !password && !confirmPassword) ||
-              password !== confirmPassword
-            }
-          >
-            UPDATE
-          </Button>
-          <Button fullWidth variant="text" onClick={handleGoBack}>
-            Back to Dashboard
-          </Button>
-        </Box>
-      </Paper>
-    </Grid>
+        <Paper
+          sx={{
+            maxWidth: '25rem',
+            margin: 1,
+            padding: 3,
+            borderRadius: 2,
+            boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
+          }}
+        >
+          <Box sx={{ mt: 2 }}>
+            {message && (
+              <Alert variant="filled" severity="success">
+                {message}
+              </Alert>
+            )}
+            {updateError && (
+              <Alert variant="filled" severity="error">
+                {updateError}
+              </Alert>
+            )}
+            <TextField
+              disabled
+              fullWidth
+              margin="normal"
+              id="current-name"
+              name="current-name"
+              label="Current Name"
+              value={user?.displayName}
+            />
+            <TextField
+              disabled
+              fullWidth
+              margin="normal"
+              id="current-email"
+              name="current-email"
+              label="Current Email"
+              value={user?.email}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              id="name"
+              name="name"
+              label="New Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              id="email"
+              name="email"
+              label="New Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              fullWidth
+              required
+              margin="normal"
+              type="password"
+              id="password"
+              name="password"
+              label="Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <TextField
+              fullWidth
+              required
+              margin="normal"
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              label="Confirm Password"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <Button
+              fullWidth
+              size="large"
+              variant="contained"
+              sx={{
+                mt: 1,
+                mb: 2,
+                backgroundColor: '#363740',
+                '&:hover': { backgroundColor: '#66bb6a' },
+              }}
+              onClick={handleUpdateProfile}
+              disabled={
+                (!name && !email && !password && !confirmPassword) ||
+                password !== confirmPassword
+              }
+            >
+              UPDATE
+            </Button>
+            <Button fullWidth variant="text" onClick={handleGoBack}>
+              Back to Dashboard
+            </Button>
+          </Box>
+        </Paper>
+      </Grid>
+    </>
   );
 };
 
