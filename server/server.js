@@ -14,7 +14,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('tiny'));
 
-app.get('/', (_, res) => res.redirect('/api/tickets'));
+app.get('/', (_, res) => res.redirect('/api'));
+app.get('/api', (_, res) => {
+  res.status(201).json({
+    who_are_we: 'Bug Off Team',
+    endpoints: {
+      'api/tickets': 'To get all the tickets of the user',
+    },
+    note: 'You must be a verified user',
+  });
+});
+
 app.use('/api/tickets', ticketRoutes);
 
 app.listen(port, () =>
