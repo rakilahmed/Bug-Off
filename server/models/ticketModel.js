@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const ticketSchema = mongoose.Schema(
   {
+    uid: { type: String, required: [true, 'Please enter an id'] },
     submittedBy: {
       type: String,
       required: [true, 'Please enter a name'],
