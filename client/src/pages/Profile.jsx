@@ -37,7 +37,7 @@ const Profile = () => {
 
     Promise.all(promises)
       .then(() => {
-        setMessage('Profile Updated');
+        setMessage('Profile updated');
         setName('');
         setEmail('');
         setPassword('');
@@ -57,7 +57,7 @@ const Profile = () => {
       container
       alignItems="center"
       justifyContent="center"
-      style={{ minHeight: '100vh' }}
+      style={{ minHeight: '90vh' }}
     >
       <Paper
         sx={{
