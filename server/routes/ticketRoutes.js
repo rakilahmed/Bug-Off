@@ -7,8 +7,13 @@ const {
   updateTicket,
   deleteTicket,
 } = require('../controllers/ticketController');
+const { checkAuth } = require('../middleware/checkAuth');
 
-router.route('/').get(getTickets).post(setTicket);
-router.route('/:id').get(getTicketById).put(updateTicket).delete(deleteTicket);
+router.route('/').get(checkAuth, getTickets).post(checkAuth, setTicket);
+router
+  .route('/:id')
+  .get(checkAuth, getTicketById)
+  .put(checkAuth, updateTicket)
+  .delete(checkAuth, deleteTicket);
 
 module.exports = router;
