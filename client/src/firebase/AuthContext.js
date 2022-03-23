@@ -46,9 +46,14 @@ export const AuthProvider = ({ children }) => {
     return updatePassword(auth.currentUser, password);
   };
 
+  const getToken = async () => {
+    return await auth.currentUser.getIdToken();
+  };
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       setUser(user);
+
       setTimeout(() => {
         setLoading(false);
       }, 1000);
@@ -59,6 +64,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    getToken,
     register,
     login,
     logout,
