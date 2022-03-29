@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import TicketItems from './TicketItem/TicketItems';
-import { useAuth } from '../../firebase/AuthContext';
+import { createContext, useState, useEffect, useContext } from 'react';
 import { Paper } from '@mui/material';
+import axios from 'axios';
+import { useAuth } from '../../firebase/AuthContext';
 
 const URI = 'https://bugoff.rakilahmed.com/api/tickets';
+const TicketContext = createContext();
 
-const Tickets = () => {
+const TicketProvider = ({ children }) => {
   const { user, getToken } = useAuth();
   const [tickets, setTickets] = useState([]);
 
   useEffect(() => {
     const fetchTickets = async () => {
       const res = await axios.get(URI);
-      setTickets(res.data);
+      setTickets(res.data.reverse());
     };
     fetchTickets();
   }, []);
@@ -40,7 +40,7 @@ const Tickets = () => {
       dueDate: dueDate,
       summary: summary,
     });
-    setTickets([...tickets, res.data]);
+    setTickets([res.data, ...tickets]);
   };
 
   const editTicket = async (
@@ -77,6 +77,8 @@ const Tickets = () => {
     setTickets(updatedTickets);
   };
 
+  const contextValue = { tickets, addTicket, editTicket, deleteTicket };
+
   return (
     <Paper
       sx={{
@@ -86,14 +88,12 @@ const Tickets = () => {
         boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
       }}
     >
-      <TicketItems
-        tickets={tickets}
-        onAddTicket={addTicket}
-        onEditTicket={editTicket}
-        onDeleteTicket={deleteTicket}
-      />
+      <TicketContext.Provider value={contextValue}>
+        {children}
+      </TicketContext.Provider>
     </Paper>
   );
 };
 
-export default Tickets;
+export const useTicketContext = () => useContext(TicketContext);
+export default TicketProvider;

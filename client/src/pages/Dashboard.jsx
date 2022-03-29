@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../firebase/AuthContext';
 import { Grid } from '@mui/material';
-import { Header, Tickets, Footer } from '../components/';
+import { Header, TicketProvider, RecentTickets, Footer } from '../components/';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -23,7 +23,9 @@ const Dashboard = () => {
         columns={{ xs: 4, sm: 8, md: 8 }}
       >
         <Grid item xs={4}>
-          <Tickets />
+          <TicketProvider>
+            <RecentTickets />
+          </TicketProvider>
         </Grid>
       </Grid>
       <Footer />
