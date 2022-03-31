@@ -12,16 +12,24 @@ import {
 } from '@mui/material/';
 import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { useTicketContext } from './TicketProvider';
 
-const TicketForm = ({ onAddTicket }) => {
-  const [showForm, setShowForm] = useState(false);
-  const [titleInput, setTitleInput] = useState('');
-  const [assignedToInput, setAssignedToInput] = useState('');
-  const [summaryInput, setSummaryInput] = useState('');
-  const [priority, setPriority] = useState('');
-  const [dueDate, setDueDate] = useState(new Date());
+const TicketForm = ({ title, openEditForm = false, ticket }) => {
+  const { addTicket, editTicket } = useTicketContext();
+  const [showForm, setShowForm] = useState(openEditForm ? openEditForm : false);
+  const [titleInput, setTitleInput] = useState(ticket ? ticket.title : '');
+  const [assignedToInput, setAssignedToInput] = useState(
+    ticket ? ticket.assigned_to : ''
+  );
+  const [priority, setPriority] = useState(ticket ? ticket.priority : '');
+  const [dueDate, setDueDate] = useState(ticket ? ticket.due_date : new Date());
+  const [summaryInput, setSummaryInput] = useState(
+    ticket ? ticket.summary : ''
+  );
   const [titleStatus, setTitleStatus] = useState(false);
   const [assignedToStatus, setAssignedToStatus] = useState(false);
+  const [priorityStatus, setPriorityStatus] = useState(false);
+  const [dueDateStatus, setDueDateStatus] = useState(false);
   const [summaryStatus, setSummaryStatus] = useState(false);
 
   const handleForm = () => {
@@ -33,6 +41,14 @@ const TicketForm = ({ onAddTicket }) => {
     setTitleStatus(false);
     setAssignedToStatus(false);
     setSummaryStatus(false);
+  };
+
+  const handleEditForm = () => {
+    setTitleStatus(false);
+    setAssignedToStatus(false);
+    setSummaryStatus(false);
+    setPriorityStatus(false);
+    setDueDateStatus(false);
   };
 
   const validateTitle = (event) => {
@@ -47,6 +63,20 @@ const TicketForm = ({ onAddTicket }) => {
       : setAssignedToStatus(true);
   };
 
+  const validatePriority = (event) => {
+    setPriority(event.target.value);
+    event.target.value === ticket.priority
+      ? setPriorityStatus(false)
+      : setPriorityStatus(true);
+  };
+
+  const validateDueDate = (newDate) => {
+    setDueDate(newDate);
+    newDate === ticket.due_data
+      ? setDueDateStatus(false)
+      : setDueDateStatus(true);
+  };
+
   const validateSummary = (event) => {
     setSummaryInput(event.target.value);
     event.target.value === ''
@@ -56,38 +86,55 @@ const TicketForm = ({ onAddTicket }) => {
 
   const handleAddTicket = (event) => {
     event.preventDefault();
-    onAddTicket(titleInput, assignedToInput, priority, dueDate, summaryInput);
-    setShowForm(!showForm);
+    addTicket(titleInput, assignedToInput, priority, dueDate, summaryInput);
+    handleForm();
+  };
+
+  const handleEditTicket = (event) => {
+    event.preventDefault();
+    console.log(ticket);
+    editTicket(
+      ticket._id,
+      assignedToInput,
+      titleInput,
+      summaryInput,
+      priority,
+      dueDate,
+      ticket.created_at
+    );
+    handleEditForm();
   };
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Typography variant="h6">Tickets</Typography>
-        <Button
-          variant="contained"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            backgroundColor: '#363740',
-            '&:hover': { backgroundColor: '#363740' },
-          }}
-          onClick={handleForm}
-        >
-          {!showForm ? 'New Ticket' : 'Cancel'}
-        </Button>
-      </Box>
-      {showForm && (
+      {!openEditForm && (
         <Box
           sx={{
-            maxWidth: '40rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography variant="h6">{title}</Typography>
+          <Button
+            variant="contained"
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              backgroundColor: '#363740',
+              '&:hover': { backgroundColor: '#363740' },
+            }}
+            onClick={!openEditForm ? handleForm : handleEditForm}
+          >
+            {!showForm ? 'New Ticket' : 'Cancel'}
+          </Button>
+        </Box>
+      )}
+      {(showForm || openEditForm) && (
+        <Box
+          sx={{
+            maxWidth: '33rem',
             margin: '0 auto 1rem auto',
           }}
         >
@@ -111,7 +158,6 @@ const TicketForm = ({ onAddTicket }) => {
               />
               <Button
                 type="submit"
-                onClick={handleAddTicket}
                 variant="contained"
                 size="large"
                 color="success"
@@ -120,9 +166,18 @@ const TicketForm = ({ onAddTicket }) => {
                   backgroundColor: '#363740',
                   '&:hover': { backgroundColor: '#66bb6a' },
                 }}
-                disabled={!titleStatus || !assignedToStatus || !summaryStatus}
+                disabled={
+                  !openEditForm
+                    ? !titleStatus || !assignedToStatus || !summaryStatus
+                    : !titleStatus &&
+                      !assignedToStatus &&
+                      !summaryStatus &&
+                      !priorityStatus &&
+                      !dueDateStatus
+                }
+                onClick={openEditForm ? handleEditTicket : handleAddTicket}
               >
-                Add
+                {openEditForm ? 'Update' : 'Add'}
               </Button>
             </Box>
             <TextField
@@ -146,7 +201,11 @@ const TicketForm = ({ onAddTicket }) => {
                 <Select
                   value={priority}
                   label="Priority"
-                  onChange={(e) => setPriority(e.target.value)}
+                  onChange={
+                    openEditForm
+                      ? validatePriority
+                      : (e) => setPriority(e.target.value)
+                  }
                 >
                   <MenuItem value="Low">Low</MenuItem>
                   <MenuItem value="Medium">Medium</MenuItem>
@@ -157,7 +216,7 @@ const TicketForm = ({ onAddTicket }) => {
                 <DateTimePicker
                   disablePast
                   value={dueDate}
-                  onChange={setDueDate}
+                  onChange={openEditForm ? validateDueDate : setDueDate}
                   renderInput={(params) => (
                     <TextField
                       {...params}

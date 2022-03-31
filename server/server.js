@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const ticketRoutes = require('./routes/ticketRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 connectDB();
 const app = express();
@@ -20,12 +21,14 @@ app.get('/api', (_, res) => {
     who_are_we: 'Bug Off Team',
     endpoints: {
       'api/tickets': 'To get all the tickets of the user',
+      'api/tasks': 'To get all the tasks of the user',
     },
     note: 'You must be a verified user',
   });
 });
 
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/users', userRoutes);
 
 app.listen(port, () =>
   console.log(
