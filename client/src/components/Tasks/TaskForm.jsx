@@ -1,17 +1,5 @@
 import { useState } from 'react';
-import {
-  Box,
-  FormGroup,
-  FormControl,
-  InputLabel,
-  TextField,
-  Button,
-  Typography,
-  Select,
-  MenuItem,
-} from '@mui/material/';
-import { LocalizationProvider, DateTimePicker } from '@mui/lab';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { Box, FormGroup, TextField, Button, Typography } from '@mui/material/';
 import { useTaskContext } from './TaskProvider';
 
 const TaskForm = ({ title, openEditForm = false, task }) => {
@@ -27,7 +15,6 @@ const TaskForm = ({ title, openEditForm = false, task }) => {
   };
 
   const handleEditForm = () => {
-    setTitleInput(task.title);
     setTitleStatus(false);
   };
 

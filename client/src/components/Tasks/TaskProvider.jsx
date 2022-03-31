@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import { Paper } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
-import { ForkLeft, ForkRight } from '@mui/icons-material';
 
 const URI = 'https://bugoff.rakilahmed.com/api/tasks';
 const TaskContext = createContext();
