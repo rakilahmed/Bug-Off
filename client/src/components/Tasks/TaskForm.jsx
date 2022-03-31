@@ -5,12 +5,12 @@ import { useTaskContext } from './TaskProvider';
 const TaskForm = ({ title, openEditForm = false, task }) => {
   const { addTask, editTask } = useTaskContext();
   const [showForm, setShowForm] = useState(openEditForm ? openEditForm : false);
-  const [titleInput, setTitleInput] = useState(task ? task.title : '');
+  const [taskInput, setTaskInput] = useState(task ? task.task : '');
   const [titleStatus, setTitleStatus] = useState(false);
 
   const handleForm = () => {
     setShowForm(!showForm);
-    setTitleInput('');
+    setTaskInput('');
     setTitleStatus(false);
   };
 
@@ -19,19 +19,20 @@ const TaskForm = ({ title, openEditForm = false, task }) => {
   };
 
   const validateTitle = (event) => {
-    setTitleInput(event.target.value);
+    setTaskInput(event.target.value);
     event.target.value === '' ? setTitleStatus(false) : setTitleStatus(true);
   };
 
   const handleAddTask = (event) => {
     event.preventDefault();
-    addTask(titleInput);
+    addTask(taskInput);
     setShowForm(!showForm);
   };
 
   const handleEditTask = (event) => {
     event.preventDefault();
-    editTask(task.taskId, titleInput);
+    editTask(task.taskId, taskInput);
+    handleEditForm();
   };
 
   return (
@@ -82,7 +83,7 @@ const TaskForm = ({ title, openEditForm = false, task }) => {
                 id="task-title"
                 label="Task"
                 variant="outlined"
-                value={titleInput}
+                value={taskInput}
                 onChange={validateTitle}
               />
               <Button

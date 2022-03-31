@@ -1,9 +1,9 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { Paper } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
 
-const URI = 'https://bugoff.rakilahmed.com/api/tasks';
+// const URI = 'https://bugoff.rakilahmed.com/api/tasks';
+const URI = 'http://localhost:8080/api/tasks';
 const TaskContext = createContext();
 
 const TaskProvider = ({ children }) => {
@@ -28,30 +28,32 @@ const TaskProvider = ({ children }) => {
     }
   );
 
-  const addTask = async (title) => {
-    const newTask = {
+  const addTask = async (task) => {
+    const res = await axios.post(URI, {
       uid: `${user.uid}`,
       taskId: Math.floor(1000 + Math.random() * 9000),
-      title: title,
-    };
-
-    setTasks([newTask, ...tasks]);
+      status: true,
+      task: task,
+    });
+    setTasks([res.data, ...tasks]);
   };
 
-  const editTask = async (taskId, title) => {
-    const newTask = {
+  const editTask = async (taskId, task) => {
+    const res = await axios.put(URI + `/${taskId}`, {
       uid: `${user.uid}`,
-      taskId: Math.floor(1000 + Math.random() * 9000),
-      title: title,
-    };
+      taskId: taskId,
+      status: true,
+      task: task,
+    });
     setTasks(
       tasks.map((task) => {
-        return task.taskId === taskId ? { ...newTask } : task;
+        return task.taskId === taskId ? { ...res.data } : task;
       })
     );
   };
 
   const deleteTask = async (taskId) => {
+    await axios.delete(URI + `/${taskId}`);
     const updatedTasks = tasks.filter((task) => {
       return task.taskId !== taskId;
     });
@@ -61,18 +63,7 @@ const TaskProvider = ({ children }) => {
   const contextValue = { tasks, addTask, editTask, deleteTask };
 
   return (
-    <Paper
-      sx={{
-        marginTop: 2,
-        padding: 2,
-        borderRadius: 2,
-        boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
-      }}
-    >
-      <TaskContext.Provider value={contextValue}>
-        {children}
-      </TaskContext.Provider>
-    </Paper>
+    <TaskContext.Provider value={contextValue}>{children}</TaskContext.Provider>
   );
 };
 

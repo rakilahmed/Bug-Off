@@ -8,7 +8,7 @@ import {
   RecentTickets,
   Footer,
   TaskProvider,
-  RecentTasks,
+  Tasks,
 } from '../components/';
 
 const Dashboard = () => {
@@ -36,7 +36,7 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={4}>
           <TaskProvider>
-            <RecentTasks />
+            <Tasks />
           </TaskProvider>
         </Grid>
       </Grid>

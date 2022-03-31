@@ -78,7 +78,7 @@ const RecentTask = ({ task }) => {
           variant="subtitle1"
           sx={{ fontWeight: 'bold', wordBreak: 'break-all' }}
         >
-          {task.title}
+          {task.task}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!showTask ? <ArrowDropDown /> : <ArrowDropUp />}
