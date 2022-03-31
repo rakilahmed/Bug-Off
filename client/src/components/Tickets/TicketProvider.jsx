@@ -13,7 +13,8 @@ const TicketProvider = ({ children }) => {
   useEffect(() => {
     const fetchTickets = async () => {
       const res = await axios.get(URI);
-      setTickets(res.data.reverse());
+      res.data[0].tickets.length > 0 &&
+        setTickets(res.data[0].tickets.reverse());
     };
     fetchTickets();
   }, []);
@@ -30,41 +31,54 @@ const TicketProvider = ({ children }) => {
 
   const addTicket = async (title, assignedTo, priority, dueDate, summary) => {
     const res = await axios.post(URI, {
-      uid: `${user.uid}`,
-      submittedBy: `${user.displayName}`,
+      _id: `${user.uid}`,
       email: `${user.email}`,
-      assignedTo: assignedTo,
-      ticketId: Math.floor(1000 + Math.random() * 9000),
-      title: title,
-      priority: priority,
-      dueDate: dueDate,
-      summary: summary,
+      tickets: [
+        {
+          _id: Math.floor(1000 + Math.random() * 9000),
+          submitted_by: `${user.displayName}`,
+          assigned_to: assignedTo,
+          title: title,
+          summary: summary,
+          priority: priority,
+          due_date: dueDate,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ],
     });
     setTickets([res.data, ...tickets]);
   };
 
   const editTicket = async (
     ticketId,
-    title,
     assignedTo,
+    title,
+    summary,
     priority,
     dueDate,
-    summary
+    createdAt
   ) => {
     const res = await axios.put(URI + `/${ticketId}`, {
-      uid: `${user.uid}`,
-      submittedBy: `${user.displayName}`,
+      _id: `${user.uid}`,
       email: `${user.email}`,
-      assignedTo: assignedTo,
-      ticketId: Math.floor(1000 + Math.random() * 9000),
-      title: title,
-      priority: priority,
-      dueDate: dueDate,
-      summary: summary,
+      tickets: [
+        {
+          _id: ticketId,
+          submitted_by: `${user.displayName}`,
+          assigned_to: assignedTo,
+          title: title,
+          summary: summary,
+          priority: priority,
+          due_date: dueDate,
+          created_at: createdAt,
+          updated_at: new Date().toISOString(),
+        },
+      ],
     });
     setTickets(
       tickets.map((ticket) => {
-        return ticket.ticketId === ticketId ? { ...res.data } : ticket;
+        return ticket._id === ticketId ? { ...res.data } : ticket;
       })
     );
   };
@@ -72,7 +86,7 @@ const TicketProvider = ({ children }) => {
   const deleteTicket = async (ticketId) => {
     await axios.delete(URI + `/${ticketId}`);
     const updatedTickets = tickets.filter((ticket) => {
-      return ticket.ticketId !== ticketId;
+      return ticket._id !== ticketId;
     });
     setTickets(updatedTickets);
   };

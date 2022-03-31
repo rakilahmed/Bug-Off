@@ -91,14 +91,14 @@ const RecentTicket = ({ ticket }) => {
         <React.Fragment>
           <Box mt={1} sx={{ display: 'flex', flexDirection: 'column' }}>
             <Typography variant="caption">
-              Submitted: {moment(ticket.createdAt).startOf().fromNow()}
+              Submitted: {moment(ticket.created_at).startOf().fromNow()}
             </Typography>
-            <Typography variant="caption">By: {ticket.submittedBy}</Typography>
+            <Typography variant="caption">By: {ticket.submitted_by}</Typography>
             <Typography variant="caption">
-              Assigned to: {ticket.assignedTo}
+              Assigned to: {ticket.assigned_to}
             </Typography>
             <Typography variant="caption">
-              Due: {moment(ticket.dueDate).endOf().fromNow()}
+              Due: {moment(ticket.due_date).endOf().fromNow()}
             </Typography>
           </Box>
           <Typography
@@ -132,13 +132,13 @@ const RecentTicket = ({ ticket }) => {
               variant="contained"
               size="small"
               color="error"
-              onClick={() => deleteTicket(ticket.ticketId)}
+              onClick={() => deleteTicket(ticket._id)}
             >
               Delete
             </Button>
           </Box>
           <Typography variant="caption">
-            Last updated: {moment(ticket.updatedAt).startOf().fromNow()}
+            Last updated: {moment(ticket.updated_at).startOf().fromNow()}
           </Typography>
         </React.Fragment>
       )}

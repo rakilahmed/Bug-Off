@@ -19,10 +19,10 @@ const TicketForm = ({ title, openEditForm = false, ticket }) => {
   const [showForm, setShowForm] = useState(openEditForm ? openEditForm : false);
   const [titleInput, setTitleInput] = useState(ticket ? ticket.title : '');
   const [assignedToInput, setAssignedToInput] = useState(
-    ticket ? ticket.assignedTo : ''
+    ticket ? ticket.assigned_to : ''
   );
   const [priority, setPriority] = useState(ticket ? ticket.priority : '');
-  const [dueDate, setDueDate] = useState(ticket ? ticket.dueDate : new Date());
+  const [dueDate, setDueDate] = useState(ticket ? ticket.due_date : new Date());
   const [summaryInput, setSummaryInput] = useState(
     ticket ? ticket.summary : ''
   );
@@ -44,11 +44,6 @@ const TicketForm = ({ title, openEditForm = false, ticket }) => {
   };
 
   const handleEditForm = () => {
-    setTitleInput(ticket.title);
-    setAssignedToInput(ticket.assignedTo);
-    setSummaryInput(ticket.summary);
-    setPriority(ticket.priority);
-    setDueDate(ticket.dueDate);
     setTitleStatus(false);
     setAssignedToStatus(false);
     setSummaryStatus(false);
@@ -77,7 +72,7 @@ const TicketForm = ({ title, openEditForm = false, ticket }) => {
 
   const validateDueDate = (newDate) => {
     setDueDate(newDate);
-    newDate === ticket.dueDate
+    newDate === ticket.due_data
       ? setDueDateStatus(false)
       : setDueDateStatus(true);
   };
@@ -92,19 +87,21 @@ const TicketForm = ({ title, openEditForm = false, ticket }) => {
   const handleAddTicket = (event) => {
     event.preventDefault();
     addTicket(titleInput, assignedToInput, priority, dueDate, summaryInput);
-    setShowForm(!showForm);
+    handleForm();
   };
 
   const handleEditTicket = (event) => {
     event.preventDefault();
     editTicket(
-      ticket.ticketId,
-      titleInput,
+      ticket._id,
       assignedToInput,
+      titleInput,
+      summaryInput,
       priority,
       dueDate,
-      summaryInput
+      ticket.created_at
     );
+    handleEditForm();
   };
 
   return (
@@ -133,7 +130,7 @@ const TicketForm = ({ title, openEditForm = false, ticket }) => {
           </Button>
         </Box>
       )}
-      {showForm && (
+      {(showForm || openEditForm) && (
         <Box
           sx={{
             maxWidth: '33rem',
