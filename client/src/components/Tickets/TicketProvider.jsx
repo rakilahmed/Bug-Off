@@ -1,9 +1,9 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { Paper } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
 
-const URI = 'https://bugoff.rakilahmed.com/api/tickets';
+// const URI = 'https://bugoff.rakilahmed.com/api/tickets';
+const URI = 'http://localhost:8080/api/tickets';
 const TicketContext = createContext();
 
 const TicketProvider = ({ children }) => {
@@ -94,18 +94,9 @@ const TicketProvider = ({ children }) => {
   const contextValue = { tickets, addTicket, editTicket, deleteTicket };
 
   return (
-    <Paper
-      sx={{
-        marginTop: 2,
-        padding: 2,
-        borderRadius: 2,
-        boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
-      }}
-    >
-      <TicketContext.Provider value={contextValue}>
-        {children}
-      </TicketContext.Provider>
-    </Paper>
+    <TicketContext.Provider value={contextValue}>
+      {children}
+    </TicketContext.Provider>
   );
 };
 

@@ -92,6 +92,7 @@ const TicketForm = ({ title, openEditForm = false, ticket }) => {
 
   const handleEditTicket = (event) => {
     event.preventDefault();
+    console.log(ticket);
     editTicket(
       ticket._id,
       assignedToInput,

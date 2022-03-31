@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Link } from '@mui/material/';
+import { Paper, Typography, Link } from '@mui/material/';
 import TicketForm from '../TicketForm';
 import RecentTicket from './RecentTicket';
 import { useTicketContext } from '../TicketProvider';
@@ -7,7 +7,14 @@ import { useTicketContext } from '../TicketProvider';
 const RecentTickets = () => {
   const { tickets } = useTicketContext();
   return (
-    <Box>
+    <Paper
+      sx={{
+        marginTop: 2,
+        padding: 2,
+        borderRadius: 2,
+        boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
+      }}
+    >
       <TicketForm title="Recent Tickets" />
       {tickets.length > 0 ? (
         tickets.slice(0, 5).map((ticket) => {
@@ -31,7 +38,7 @@ const RecentTickets = () => {
           View All
         </Link>
       )}
-    </Box>
+    </Paper>
   );
 };
 

@@ -4,7 +4,6 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const ticketRoutes = require('./routes/ticketRoutes');
-const taskRoutes = require('./routes/taskRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 connectDB();
@@ -23,14 +22,12 @@ app.get('/api', (_, res) => {
     endpoints: {
       'api/tickets': 'To get all the tickets of the user',
       'api/tasks': 'To get all the tasks of the user',
-      'api/users': 'To get all the users of the user',
     },
     note: 'You must be a verified user',
   });
 });
 
 app.use('/api/tickets', ticketRoutes);
-app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 
 app.listen(port, () =>
