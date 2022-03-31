@@ -4,7 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const ticketRoutes = require('./routes/ticketRoutes');
-const userRoutes = require('./routes/userRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 
 connectDB();
 const app = express();
@@ -28,7 +28,7 @@ app.get('/api', (_, res) => {
 });
 
 app.use('/api/tickets', ticketRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/tasks', taskRoutes);
 
 app.listen(port, () =>
   console.log(
