@@ -2,8 +2,8 @@ const asyncHandler = require('express-async-handler');
 const Task = require('../models/taskModel');
 
 const getTasks = asyncHandler(async (req, res) => {
-  const uid = req.user.uid;
-  const tasks = await Task.find({ uid });
+  const _id = req.user.uid;
+  const tasks = await Task.find({ _id });
   res.status(200).json(tasks);
 });
 

@@ -1,5 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Link, Button } from '@mui/material';
+import { Box, Link, Tooltip, IconButton } from '@mui/material';
+import { MdOutlineDashboardCustomize } from 'react-icons/md';
+import { IoTicketSharp } from 'react-icons/io5';
+import { CgProfile } from 'react-icons/cg';
+import { ImExit } from 'react-icons/im';
+import { AiOutlineMore } from 'react-icons/ai';
 import logo from '../../assets/logo.svg';
 import { useAuth } from '../../firebase/AuthContext';
 
@@ -27,57 +32,36 @@ const Header = () => {
       }}
     >
       <Link href="/">
-        <img
-          src={logo}
-          alt="logo"
-          style={{ width: '3rem', height: '3rem', marginRight: '0.7rem' }}
-        />
+        <img src={logo} alt="logo" style={{ width: '3rem', height: '3rem' }} />
       </Link>
-      <Box sx={{ display: 'flex' }}>
-        <Link
-          href="/"
-          sx={{
-            padding: '0.5rem',
-            color: 'inherit',
-            textDecoration: 'inherit',
-            cursor: 'pointer',
-            '&:hover': { borderBottom: '1px solid #333' },
-          }}
-        >
-          <Typography>Dashboard</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Link href="/">
+          <Tooltip title="Dashboard">
+            <IconButton>
+              <MdOutlineDashboardCustomize color="#363740" />
+            </IconButton>
+          </Tooltip>
         </Link>
-        <Link
-          href="/tickets"
-          sx={{
-            padding: '0.5rem',
-            color: 'inherit',
-            textDecoration: 'inherit',
-            cursor: 'pointer',
-            '&:hover': { borderBottom: '1px solid #333' },
-          }}
-        >
-          <Typography>Tickets</Typography>
+        <Link href="/tickets">
+          <Tooltip title="Tickets">
+            <IconButton>
+              <IoTicketSharp color="#363740" />
+            </IconButton>
+          </Tooltip>
         </Link>
-        <Link
-          href="/profile"
-          sx={{
-            padding: '0.5rem',
-            color: 'inherit',
-            textDecoration: 'inherit',
-            cursor: 'pointer',
-            '&:hover': { borderBottom: '1px solid #333' },
-          }}
-        >
-          <Typography>Profile</Typography>
+        <Link href="/profile">
+          <Tooltip title="Profile">
+            <IconButton>
+              <CgProfile color="#363740" />
+            </IconButton>
+          </Tooltip>
         </Link>
-        <Button
-          size="small"
-          variant="outlined"
-          color="error"
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
+        <AiOutlineMore style={{ marginInline: 10, fontSize: 30 }} />
+        <Tooltip title="Logout" onClick={handleLogout}>
+          <IconButton>
+            <ImExit color="#363740" />
+          </IconButton>
+        </Tooltip>
       </Box>
     </Box>
   );

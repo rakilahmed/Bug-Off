@@ -9,7 +9,10 @@ import {
   Typography,
   Select,
   MenuItem,
+  Tooltip,
+  IconButton,
 } from '@mui/material/';
+import { GrAdd, GrClose } from 'react-icons/gr';
 import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { useTicketContext } from './TicketProvider';
@@ -116,19 +119,19 @@ const TicketForm = ({ title, openEditForm = false, ticket }) => {
           }}
         >
           <Typography variant="h6">{title}</Typography>
-          <Button
-            variant="contained"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              backgroundColor: '#363740',
-              '&:hover': { backgroundColor: '#363740' },
-            }}
-            onClick={!openEditForm ? handleForm : handleEditForm}
-          >
-            {!showForm ? 'New Ticket' : 'Cancel'}
-          </Button>
+          {!showForm ? (
+            <Tooltip title="Add Ticket" onClick={handleForm}>
+              <IconButton>
+                <GrAdd style={{ fontSize: 25 }} />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Close" onClick={handleForm}>
+              <IconButton>
+                <GrClose style={{ fontSize: 25 }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       )}
       {(showForm || openEditForm) && (
@@ -151,7 +154,7 @@ const TicketForm = ({ title, openEditForm = false, ticket }) => {
                 required
                 margin="normal"
                 id="ticket-title"
-                label="Ticket Title"
+                label="Title"
                 variant="outlined"
                 value={titleInput}
                 onChange={validateTitle}

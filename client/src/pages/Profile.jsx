@@ -54,17 +54,17 @@ const Profile = () => {
   };
 
   return (
-    <>
+    <Box minHeight="100vh">
       <Header />
       <Grid
         container
         alignItems="center"
         justifyContent="center"
-        style={{ minHeight: '90vh' }}
+        style={{ minHeight: '80vh' }}
       >
         <Paper
           sx={{
-            maxWidth: '25rem',
+            maxWidth: '30rem',
             margin: 1,
             padding: 3,
             borderRadius: 2,
@@ -162,7 +162,7 @@ const Profile = () => {
           </Box>
         </Paper>
       </Grid>
-    </>
+    </Box>
   );
 };
 

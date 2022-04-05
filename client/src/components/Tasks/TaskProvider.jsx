@@ -29,9 +29,8 @@ const TaskProvider = ({ children }) => {
 
   const addTask = async (task) => {
     const res = await axios.post(URI, {
-      uid: `${user.uid}`,
+      _id: `${user.uid}`,
       taskId: Math.floor(1000 + Math.random() * 9000),
-      status: true,
       task: task,
     });
     setTasks([res.data, ...tasks]);
@@ -39,9 +38,8 @@ const TaskProvider = ({ children }) => {
 
   const editTask = async (taskId, task) => {
     const res = await axios.put(URI + `/${taskId}`, {
-      uid: `${user.uid}`,
+      _id: `${user.uid}`,
       taskId: taskId,
-      status: true,
       task: task,
     });
     setTasks(

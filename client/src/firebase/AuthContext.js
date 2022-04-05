@@ -9,7 +9,7 @@ import {
   signOut,
 } from 'firebase/auth';
 import { auth } from './firebase';
-import Loading from '../components/Loading';
+import Loading from '../components/Utils/Loading';
 
 const AuthContext = createContext();
 

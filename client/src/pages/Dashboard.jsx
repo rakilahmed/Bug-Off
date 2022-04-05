@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../firebase/AuthContext';
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import {
   Header,
   TicketProvider,
   RecentTickets,
-  Footer,
   TaskProvider,
   Tasks,
+  Overview,
 } from '../components/';
 
 const Dashboard = () => {
@@ -22,7 +22,7 @@ const Dashboard = () => {
   }, [navigate, user]);
 
   return (
-    <>
+    <Box minHeight="100vh">
       <Header />
       <Grid
         container
@@ -39,9 +39,11 @@ const Dashboard = () => {
             <Tasks />
           </TaskProvider>
         </Grid>
+        <Grid item xs={4}>
+          <Overview />
+        </Grid>
       </Grid>
-      <Footer />
-    </>
+    </Box>
   );
 };
 

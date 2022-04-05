@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
 import { useAuth } from '../firebase/AuthContext';
 import { Header, TicketProvider, AllTickets } from '../components/';
 
@@ -14,12 +15,12 @@ const Tickets = () => {
   }, [navigate, user]);
 
   return (
-    <>
+    <Box minHeight="100vh">
       <Header />
       <TicketProvider>
         <AllTickets />
       </TicketProvider>
-    </>
+    </Box>
   );
 };
 

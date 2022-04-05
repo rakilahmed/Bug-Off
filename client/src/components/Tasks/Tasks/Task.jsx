@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { Box, Modal, Typography, Button } from '@mui/material/';
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import {
+  Box,
+  Modal,
+  Typography,
+  Button,
+  Tooltip,
+  IconButton,
+} from '@mui/material/';
+import { AiOutlineEdit, AiOutlineCheck } from 'react-icons/ai';
 import { useTaskContext } from '../TaskProvider';
 import TaskForm from '../TaskForm';
 
 const RecentTask = ({ task }) => {
   const { deleteTask } = useTaskContext();
-  const [showTask, setShowTask] = useState(false);
   const [openEditForm, setOpenEditForm] = useState(false);
 
   const handleOpenEditForm = () => setOpenEditForm(true);
@@ -69,52 +75,25 @@ const RecentTask = ({ task }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          cursor: 'pointer',
           userSelect: 'none',
         }}
-        onClick={() => setShowTask(!showTask)}
       >
-        <Typography
-          variant="subtitle1"
-          sx={{ fontWeight: 'bold', wordBreak: 'break-all' }}
-        >
+        <Typography variant="subtitle1" sx={{ wordBreak: 'break-all' }}>
           {task.task}
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {!showTask ? <ArrowDropDown /> : <ArrowDropUp />}
+        <Box sx={{ display: 'flex' }}>
+          <Tooltip title="Done" onClick={() => deleteTask(task.taskId)}>
+            <IconButton>
+              <AiOutlineCheck style={{ fontSize: 22, color: '#363740' }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Edit" onClick={handleOpenEditForm}>
+            <IconButton>
+              <AiOutlineEdit style={{ fontSize: 22, color: '#363740' }} />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
-
-      {showTask && (
-        <React.Fragment>
-          <Box
-            m={1.5}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Button
-              sx={{ marginRight: 1 }}
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={handleOpenEditForm}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              color="error"
-              onClick={() => deleteTask(task.taskId)}
-            >
-              Delete
-            </Button>
-          </Box>
-        </React.Fragment>
-      )}
     </Box>
   );
 };

@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { Box, FormGroup, TextField, Button, Typography } from '@mui/material/';
+import {
+  Box,
+  FormGroup,
+  TextField,
+  Button,
+  Typography,
+  Tooltip,
+  IconButton,
+} from '@mui/material/';
+import { GrAdd, GrClose } from 'react-icons/gr';
 import { useTaskContext } from './TaskProvider';
 
 const TaskForm = ({ title, openEditForm = false, task }) => {
@@ -46,19 +55,19 @@ const TaskForm = ({ title, openEditForm = false, task }) => {
           }}
         >
           <Typography variant="h6">{title}</Typography>
-          <Button
-            variant="contained"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              backgroundColor: '#363740',
-              '&:hover': { backgroundColor: '#363740' },
-            }}
-            onClick={!openEditForm ? handleForm : handleEditForm}
-          >
-            {!showForm ? 'New Task' : 'Cancel'}
-          </Button>
+          {!showForm ? (
+            <Tooltip title="Add Task" onClick={handleForm}>
+              <IconButton>
+                <GrAdd style={{ fontSize: 25 }} />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Close" onClick={handleForm}>
+              <IconButton>
+                <GrClose style={{ fontSize: 25 }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       )}
       {showForm && (

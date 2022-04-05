@@ -1,5 +1,6 @@
 import React from 'react';
-import { Paper, Typography, Link } from '@mui/material/';
+import { Paper, Typography, Box, Link } from '@mui/material/';
+import { BsArrowRight } from 'react-icons/bs';
 import TicketForm from '../TicketForm';
 import RecentTicket from './RecentTicket';
 import { useTicketContext } from '../TicketProvider';
@@ -26,17 +27,24 @@ const RecentTickets = () => {
         </Typography>
       )}
       {tickets.length > 5 && (
-        <Link
-          href="/tickets"
-          variant="body2"
-          style={{
+        <Box
+          sx={{
             display: 'flex',
             justifyContent: 'flex-end',
-            textDecoration: 'none',
           }}
         >
-          View All
-        </Link>
+          <Link
+            href="/tickets"
+            variant="body2"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+            }}
+          >
+            View All <BsArrowRight style={{ marginLeft: 5 }} />
+          </Link>
+        </Box>
       )}
     </Paper>
   );
