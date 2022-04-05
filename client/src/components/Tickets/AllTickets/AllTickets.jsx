@@ -1,12 +1,14 @@
-/* eslint-disable array-callback-return */
 import { useState } from 'react';
 import MUIDataTable from 'mui-datatables';
-import { Box, Button, Modal } from '@mui/material';
-import { Edit, DeleteForever } from '@material-ui/icons';
+import moment from 'moment';
+import { Box, Button, Modal, Paper, Tooltip, IconButton } from '@mui/material';
+import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
+import { useAuth } from '../../../firebase/AuthContext';
 import { useTicketContext } from '../TicketProvider';
 import TicketForm from '../TicketForm';
 
 const AllTickets = () => {
+  const { user } = useAuth();
   const { tickets, deleteTicket } = useTicketContext();
   const [ticket, setTicket] = useState('');
   const [openEditForm, setOpenEditForm] = useState(false);
@@ -19,6 +21,14 @@ const AllTickets = () => {
     {
       name: '_id',
       label: 'ID',
+      options: {
+        filter: false,
+        display: 'false',
+      },
+    },
+    {
+      name: 'submitted_by',
+      label: 'Submitted By',
       options: {
         filter: false,
         display: 'false',
@@ -54,12 +64,39 @@ const AllTickets = () => {
       options: {
         filter: true,
         sort: true,
+        customBodyRenderLite: (id) => {
+          return (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 70,
+                borderRadius: 5,
+                color: 'white',
+                backgroundColor:
+                  (tickets[id].priority === 'Low' && '#29CC97') ||
+                  (tickets[id].priority === 'Medium' && '#FEC400') ||
+                  (tickets[id].priority === 'High' && '#F12B2C'),
+                padding: 0.3,
+              }}
+            >
+              {tickets[id].priority}
+            </Box>
+          );
+        },
       },
     },
     {
       name: 'due_date',
       label: 'Due Date',
-      options: { filter: false, sort: true },
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRenderLite: (id) => {
+          return <>{moment(tickets[id].due_date).endOf().fromNow()}</>;
+        },
+      },
     },
     {
       name: 'Actions',
@@ -70,18 +107,19 @@ const AllTickets = () => {
           return (
             <Box
               sx={{
-                width: '60%',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
               }}
             >
-              <Button onClick={() => handleOpenEditForm(id)}>
-                <Edit />
-              </Button>
-              <Button onClick={() => handleDelete(id)}>
-                <DeleteForever />
-              </Button>
+              <Tooltip title="Edit" onClick={() => handleOpenEditForm(id)}>
+                <IconButton>
+                  <AiOutlineEdit style={{ color: '#363740' }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete" onClick={() => handleDelete(id)}>
+                <IconButton>
+                  <AiOutlineDelete style={{ color: '#363740' }} />
+                </IconButton>
+              </Tooltip>
             </Box>
           );
         },
@@ -148,24 +186,40 @@ const AllTickets = () => {
     },
     textLabels: {
       body: {
-        noMatch: 'No Tickets Found',
+        noMatch: 'No Tickets To Show',
         toolTip: 'Sort',
       },
       toolbar: {
         downloadCsv: 'Download Tickets as CSV',
       },
     },
+    customFilterDialogFooter: () => <Box width={300} />,
   };
 
   return (
-    <Box mt={2}>
+    <>
+      <Paper
+        sx={{
+          marginBlock: 2,
+          padding: 2,
+          boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
+        }}
+      >
+        <TicketForm
+          title={
+            moment().hour() < 12
+              ? `Good Morning, ${user.displayName}`
+              : `Good Evening, ${user.displayName}`
+          }
+        />
+      </Paper>
       <MUIDataTable
         title={'All Tickets'}
         data={tickets}
         columns={columns}
         options={options}
       />
-    </Box>
+    </>
   );
 };
 
