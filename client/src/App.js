@@ -2,11 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Container } from '@mui/material';
 import './App.css';
 import { AuthProvider } from './firebase/AuthContext';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Profile from './pages/Profile';
-import Tickets from './pages/Tickets';
+import { Login, Register, Dashboard, Profile, Tickets } from './pages/';
 
 function App() {
   return (

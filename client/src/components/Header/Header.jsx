@@ -73,7 +73,7 @@ const Header = () => {
         <Button
           size="small"
           variant="outlined"
-          color="error"
+          color="inherit"
           onClick={handleLogout}
         >
           Logout
