@@ -43,7 +43,7 @@ const Task = ({ task }) => {
           <Box sx={style}>
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               sx={{
                 mt: 1,
                 mb: 2,
