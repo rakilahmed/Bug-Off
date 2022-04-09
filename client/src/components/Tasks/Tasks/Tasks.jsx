@@ -21,7 +21,7 @@ const Tasks = () => {
         })
       ) : (
         <Typography sx={{ marginTop: 2 }} varient="body1">
-          No open tasks to show.
+          No tasks to do.
         </Typography>
       )}
     </Paper>
