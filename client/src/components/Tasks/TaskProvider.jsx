@@ -12,8 +12,9 @@ const TaskProvider = ({ children }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       const res = await axios.get(URI);
-      setTasks(res.data.reverse());
+      res.data[0].tasks.length > 0 && setTasks(res.data[0].tasks.reverse());
     };
+
     fetchTasks();
   }, []);
 
@@ -30,8 +31,12 @@ const TaskProvider = ({ children }) => {
   const addTask = async (task) => {
     const res = await axios.post(URI, {
       _id: `${user.uid}`,
-      taskId: Math.floor(1000 + Math.random() * 9000),
-      task: task,
+      tasks: [
+        {
+          _id: Math.floor(1000 + Math.random() * 9000),
+          task: task,
+        },
+      ],
     });
     setTasks([res.data, ...tasks]);
   };
@@ -39,12 +44,16 @@ const TaskProvider = ({ children }) => {
   const editTask = async (taskId, task) => {
     const res = await axios.put(URI + `/${taskId}`, {
       _id: `${user.uid}`,
-      taskId: taskId,
-      task: task,
+      tasks: [
+        {
+          _id: taskId,
+          task: task,
+        },
+      ],
     });
     setTasks(
       tasks.map((task) => {
-        return task.taskId === taskId ? { ...res.data } : task;
+        return task._id === taskId ? { ...res.data } : task;
       })
     );
   };
@@ -52,7 +61,7 @@ const TaskProvider = ({ children }) => {
   const deleteTask = async (taskId) => {
     await axios.delete(URI + `/${taskId}`);
     const updatedTasks = tasks.filter((task) => {
-      return task.taskId !== taskId;
+      return task._id !== taskId;
     });
     setTasks(updatedTasks);
   };

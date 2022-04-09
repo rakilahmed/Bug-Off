@@ -11,9 +11,9 @@ import {
 import { GrAdd, GrClose } from 'react-icons/gr';
 import { useTaskContext } from './TaskProvider';
 
-const TaskForm = ({ title, openEditForm = false, task }) => {
+const TaskForm = ({ title, floatingForm = false, closeForm, task }) => {
   const { addTask, editTask } = useTaskContext();
-  const [showForm, setShowForm] = useState(openEditForm ? openEditForm : false);
+  const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [taskInput, setTaskInput] = useState(task ? task.task : '');
   const [titleStatus, setTitleStatus] = useState(false);
 
@@ -23,7 +23,8 @@ const TaskForm = ({ title, openEditForm = false, task }) => {
     setTitleStatus(false);
   };
 
-  const handleEditForm = () => {
+  const handleFloatingForm = () => {
+    closeForm();
     setTitleStatus(false);
   };
 
@@ -40,13 +41,13 @@ const TaskForm = ({ title, openEditForm = false, task }) => {
 
   const handleEditTask = (event) => {
     event.preventDefault();
-    editTask(task.taskId, taskInput);
-    handleEditForm();
+    editTask(task._id, taskInput);
+    handleFloatingForm();
   };
 
   return (
     <Box>
-      {!openEditForm && (
+      {!floatingForm && (
         <Box
           sx={{
             display: 'flex',
@@ -71,12 +72,7 @@ const TaskForm = ({ title, openEditForm = false, task }) => {
         </Box>
       )}
       {showForm && (
-        <Box
-          sx={{
-            maxWidth: '33rem',
-            margin: '0 auto 1rem auto',
-          }}
-        >
+        <Box>
           <FormGroup>
             <Box
               sx={{
@@ -105,10 +101,10 @@ const TaskForm = ({ title, openEditForm = false, task }) => {
                   backgroundColor: '#363740',
                   '&:hover': { backgroundColor: '#66bb6a' },
                 }}
-                disabled={!openEditForm ? !titleStatus : !titleStatus}
-                onClick={openEditForm ? handleEditTask : handleAddTask}
+                disabled={!floatingForm ? !titleStatus : !titleStatus}
+                onClick={floatingForm ? handleEditTask : handleAddTask}
               >
-                {openEditForm ? 'Update' : 'Add'}
+                {floatingForm ? 'Update' : 'Add'}
               </Button>
             </Box>
             <Box
