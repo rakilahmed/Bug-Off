@@ -16,10 +16,10 @@ import TicketForm from '../TicketForm';
 const RecentTicket = ({ ticket }) => {
   const { deleteTicket } = useTicketContext();
   const [showTicket, setShowTicket] = useState(false);
-  const [openEditForm, setOpenEditForm] = useState(false);
+  const [floatingForm, setFloatingForm] = useState(false);
 
-  const handleOpenEditForm = () => setOpenEditForm(true);
-  const handleCloseEditForm = () => setOpenEditForm(false);
+  const handleOpenFloatingForm = () => setFloatingForm(true);
+  const handleCloseFloatingForm = () => setFloatingForm(false);
 
   const style = {
     position: 'absolute',
@@ -33,31 +33,33 @@ const RecentTicket = ({ ticket }) => {
     p: 2.5,
   };
 
-  if (openEditForm) {
+  if (floatingForm) {
     return (
       <Box>
         <Modal
           keepMounted
-          open={openEditForm}
-          onClose={handleCloseEditForm}
+          open={floatingForm}
+          onClose={handleCloseFloatingForm}
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
         >
           <Box sx={style}>
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               sx={{
                 mt: 1,
                 mb: 2,
-                backgroundColor: '#363740',
-                '&:hover': { backgroundColor: '#363740' },
               }}
-              onClick={handleCloseEditForm}
+              onClick={handleCloseFloatingForm}
             >
               Close
             </Button>
-            <TicketForm openEditForm ticket={ticket} />
+            <TicketForm
+              floatingForm
+              closeForm={handleCloseFloatingForm}
+              ticket={ticket}
+            />
           </Box>
         </Modal>
       </Box>
@@ -152,7 +154,7 @@ const RecentTicket = ({ ticket }) => {
               </Typography>
             </Box>
             <Box>
-              <Tooltip title="Edit" onClick={handleOpenEditForm}>
+              <Tooltip title="Edit" onClick={handleOpenFloatingForm}>
                 <IconButton>
                   <AiOutlineEdit style={{ color: '#363740' }} />
                 </IconButton>

@@ -15,7 +15,7 @@ const Tickets = () => {
   }, [navigate, user]);
 
   return (
-    <Box minHeight="100vh">
+    <Box>
       <Header />
       <TicketProvider>
         <AllTickets />
