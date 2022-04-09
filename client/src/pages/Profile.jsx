@@ -54,19 +54,18 @@ const Profile = () => {
   };
 
   return (
-    <Box minHeight="100vh">
+    <Box>
       <Header />
       <Grid
         container
         alignItems="center"
         justifyContent="center"
-        style={{ minHeight: '80vh' }}
+        style={{ minHeight: '85vh' }}
       >
         <Paper
           sx={{
-            maxWidth: '30rem',
-            margin: 1,
-            padding: 3,
+            maxWidth: '27rem',
+            padding: 2,
             borderRadius: 2,
             boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
           }}
@@ -120,12 +119,11 @@ const Profile = () => {
             />
             <TextField
               fullWidth
-              required
               margin="normal"
               type="password"
               id="password"
               name="password"
-              label="Password"
+              label="New Password"
               onChange={(e) => setPassword(e.target.value)}
             />
             <TextField
@@ -135,7 +133,7 @@ const Profile = () => {
               type="password"
               id="confirm-password"
               name="confirm-password"
-              label="Confirm Password"
+              label="Confirm New Password"
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <Button
@@ -156,7 +154,12 @@ const Profile = () => {
             >
               UPDATE
             </Button>
-            <Button fullWidth variant="text" onClick={handleGoBack}>
+            <Button
+              fullWidth
+              variant="outlined"
+              size="large"
+              onClick={handleGoBack}
+            >
               Back to Dashboard
             </Button>
           </Box>
