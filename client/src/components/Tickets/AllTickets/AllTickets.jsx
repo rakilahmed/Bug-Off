@@ -1,17 +1,40 @@
 import { useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import moment from 'moment';
-import { Box, Button, Modal, Paper, Tooltip, IconButton } from '@mui/material';
+import {
+  Box,
+  Button,
+  Modal,
+  Paper,
+  Tooltip,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import { useAuth } from '../../../firebase/AuthContext';
 import { useTicketContext } from '../TicketProvider';
 import TicketForm from '../TicketForm';
+import { GrAdd } from 'react-icons/gr';
 
 const AllTickets = () => {
   const { user } = useAuth();
   const { tickets, deleteTicket } = useTicketContext();
   const [ticket, setTicket] = useState('');
-  const [openEditForm, setOpenEditForm] = useState(false);
+  const [floatingForm, setFloatingForm] = useState(false);
+
+  const handleForm = () => {
+    setFloatingForm(true);
+  };
+
+  const handleOpenFloatingForm = (id) => {
+    setTicket(tickets[id]);
+    setFloatingForm(true);
+  };
+
+  const handleCloseFloatingForm = () => {
+    setFloatingForm(false);
+    setTicket('');
+  };
 
   const handleDelete = (id) => {
     deleteTicket(tickets[id]._id);
@@ -110,7 +133,7 @@ const AllTickets = () => {
                 display: 'flex',
               }}
             >
-              <Tooltip title="Edit" onClick={() => handleOpenEditForm(id)}>
+              <Tooltip title="Edit" onClick={() => handleOpenFloatingForm(id)}>
                 <IconButton>
                   <AiOutlineEdit style={{ color: '#363740' }} />
                 </IconButton>
@@ -139,37 +162,41 @@ const AllTickets = () => {
     p: 2.5,
   };
 
-  const handleOpenEditForm = (id) => {
-    setTicket(tickets[id]);
-    setOpenEditForm(true);
-  };
-  const handleCloseEditForm = () => setOpenEditForm(false);
-
-  if (openEditForm) {
+  if (floatingForm) {
     return (
       <Box>
         <Modal
           keepMounted
-          open={openEditForm}
-          onClose={handleCloseEditForm}
+          open={floatingForm}
+          onClose={handleCloseFloatingForm}
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
         >
           <Box sx={style}>
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               sx={{
                 mt: 1,
                 mb: 2,
-                backgroundColor: '#363740',
-                '&:hover': { backgroundColor: '#363740' },
               }}
-              onClick={handleCloseEditForm}
+              onClick={handleCloseFloatingForm}
             >
               Close
             </Button>
-            <TicketForm openEditForm ticket={ticket} />
+            {ticket ? (
+              <TicketForm
+                floatingForm
+                closeForm={handleCloseFloatingForm}
+                ticket={ticket}
+              />
+            ) : (
+              <TicketForm
+                newTicket
+                floatingForm
+                closeForm={handleCloseFloatingForm}
+              />
+            )}
           </Box>
         </Modal>
       </Box>
@@ -177,7 +204,7 @@ const AllTickets = () => {
   }
 
   const options = {
-    selectableRows: false,
+    selectableRows: 'none',
     responsive: 'vertical',
     print: false,
     downloadOptions: {
@@ -200,18 +227,32 @@ const AllTickets = () => {
     <>
       <Paper
         sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           marginBlock: 2,
           padding: 2,
           boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
         }}
       >
-        <TicketForm
+        <Typography variant="h6">
+          {moment().hour() < 12
+            ? `Good Morning, ${user.displayName}`
+            : `Good Evening, ${user.displayName}`}
+        </Typography>
+        <Tooltip title="Add Ticket" onClick={handleForm}>
+          <IconButton>
+            <GrAdd style={{ fontSize: 25 }} />
+          </IconButton>
+        </Tooltip>
+        {/* <TicketForm
           title={
             moment().hour() < 12
               ? `Good Morning, ${user.displayName}`
               : `Good Evening, ${user.displayName}`
           }
-        />
+          floatingForm={false}
+        /> */}
       </Paper>
       <MUIDataTable
         title={'All Tickets'}

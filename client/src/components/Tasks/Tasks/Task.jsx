@@ -11,12 +11,12 @@ import { AiOutlineEdit, AiOutlineCheck } from 'react-icons/ai';
 import { useTaskContext } from '../TaskProvider';
 import TaskForm from '../TaskForm';
 
-const RecentTask = ({ task }) => {
+const Task = ({ task }) => {
   const { deleteTask } = useTaskContext();
-  const [openEditForm, setOpenEditForm] = useState(false);
+  const [floatingForm, setFloatingForm] = useState(false);
 
-  const handleOpenEditForm = () => setOpenEditForm(true);
-  const handleCloseEditForm = () => setOpenEditForm(false);
+  const handleOpenFloatingForm = () => setFloatingForm(true);
+  const handleCloseFloatingForm = () => setFloatingForm(false);
 
   const style = {
     position: 'absolute',
@@ -30,31 +30,33 @@ const RecentTask = ({ task }) => {
     p: 2.5,
   };
 
-  if (openEditForm) {
+  if (floatingForm) {
     return (
       <Box>
         <Modal
           keepMounted
-          open={openEditForm}
-          onClose={handleCloseEditForm}
+          open={floatingForm}
+          onClose={handleCloseFloatingForm}
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-mounted-modal-description"
         >
           <Box sx={style}>
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               sx={{
                 mt: 1,
                 mb: 2,
-                backgroundColor: '#363740',
-                '&:hover': { backgroundColor: '#363740' },
               }}
-              onClick={handleCloseEditForm}
+              onClick={handleCloseFloatingForm}
             >
               Close
             </Button>
-            <TaskForm openEditForm task={task} />
+            <TaskForm
+              floatingForm
+              closeForm={handleCloseFloatingForm}
+              task={task}
+            />
           </Box>
         </Modal>
       </Box>
@@ -65,7 +67,7 @@ const RecentTask = ({ task }) => {
     <Box
       sx={{
         border: '1px solid #e6e6e6',
-        padding: 1,
+        padding: 0.5,
         borderRadius: 2,
         margin: '1rem auto',
       }}
@@ -82,14 +84,14 @@ const RecentTask = ({ task }) => {
           {task.task}
         </Typography>
         <Box sx={{ display: 'flex' }}>
-          <Tooltip title="Done" onClick={() => deleteTask(task.taskId)}>
+          <Tooltip title="Done" onClick={() => deleteTask(task._id)}>
             <IconButton>
-              <AiOutlineCheck style={{ fontSize: 22, color: '#363740' }} />
+              <AiOutlineCheck style={{ fontSize: 20, color: '#363740' }} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Edit" onClick={handleOpenEditForm}>
+          <Tooltip title="Edit" onClick={handleOpenFloatingForm}>
             <IconButton>
-              <AiOutlineEdit style={{ fontSize: 22, color: '#363740' }} />
+              <AiOutlineEdit style={{ fontSize: 20, color: '#363740' }} />
             </IconButton>
           </Tooltip>
         </Box>
@@ -98,4 +100,4 @@ const RecentTask = ({ task }) => {
   );
 };
 
-export default RecentTask;
+export default Task;

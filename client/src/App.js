@@ -7,7 +7,7 @@ import { Login, Register, Dashboard, Profile, Tickets } from './pages/';
 function App() {
   return (
     <Router>
-      <Container>
+      <Container style={{ maxWidth: '1350px' }}>
         <AuthProvider>
           <Routes>
             <Route exact path="/" element={<Dashboard />} />

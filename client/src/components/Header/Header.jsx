@@ -29,6 +29,7 @@ const Header = () => {
         alignItems: 'center',
         padding: '1rem 0 0.5rem 0',
         borderBottom: '1px solid #333',
+        marginBottom: 2,
       }}
     >
       <Link href="/">

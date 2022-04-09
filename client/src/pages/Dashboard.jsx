@@ -22,25 +22,21 @@ const Dashboard = () => {
   }, [navigate, user]);
 
   return (
-    <Box minHeight="100vh">
+    <Box>
       <Header />
-      <Grid
-        container
-        spacing={{ md: 3, sm: 2, xs: 1 }}
-        columns={{ xs: 4, sm: 8, md: 8 }}
-      >
-        <Grid item xs={4}>
+      <Grid container spacing={2} alignItems="flex-start">
+        <Grid item xs={12} sm={6}>
           <TicketProvider>
             <RecentTickets />
           </TicketProvider>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6}>
           <TaskProvider>
             <Tasks />
           </TaskProvider>
-        </Grid>
-        <Grid item xs={4}>
-          <Overview />
+          <Box mt={2}>
+            <Overview />
+          </Box>
         </Grid>
       </Grid>
     </Box>
