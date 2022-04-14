@@ -1,4 +1,3 @@
-import React from 'react';
 import { Paper, Typography, Box, Link } from '@mui/material/';
 import { BsArrowRight } from 'react-icons/bs';
 import TicketForm from '../TicketForm';

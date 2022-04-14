@@ -67,7 +67,7 @@ const Task = ({ task }) => {
     <Box
       sx={{
         border: '1px solid #e6e6e6',
-        padding: 0.5,
+        padding: '0.2rem 0.5rem',
         borderRadius: 2,
         margin: '1rem auto',
       }}
