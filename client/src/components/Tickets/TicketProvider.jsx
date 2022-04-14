@@ -8,13 +8,26 @@ const TicketContext = createContext();
 const TicketProvider = ({ children }) => {
   const { user, getToken } = useAuth();
   const [tickets, setTickets] = useState([]);
+  const [closedTickets, setClosedTickets] = useState([]);
 
   useEffect(() => {
     const fetchTickets = async () => {
       const res = await axios.get(URI);
       res.data[0].tickets.length > 0 &&
-        setTickets(res.data[0].tickets.reverse());
+        setTickets(
+          res.data[0].tickets
+            .filter((ticket) => ticket.status === 'open')
+            .reverse()
+        );
+
+      res.data[0].tickets.length > 0 &&
+        setClosedTickets(
+          res.data[0].tickets
+            .filter((ticket) => ticket.status === 'closed')
+            .reverse()
+        );
     };
+
     fetchTickets();
   }, []);
 
@@ -29,12 +42,14 @@ const TicketProvider = ({ children }) => {
   );
 
   const addTicket = async (title, assignedTo, priority, dueDate, summary) => {
-    const res = await axios.post(URI, {
+    window.location.reload();
+    await axios.post(URI, {
       _id: `${user.uid}`,
       email: `${user.email}`,
       tickets: [
         {
           _id: Math.floor(1000 + Math.random() * 9000),
+          status: 'open',
           submitted_by: `${user.displayName}`,
           assigned_to: assignedTo,
           title: title,
@@ -46,7 +61,6 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
-    setTickets([res.data, ...tickets]);
   };
 
   const editTicket = async (
@@ -58,12 +72,14 @@ const TicketProvider = ({ children }) => {
     dueDate,
     createdAt
   ) => {
-    const res = await axios.put(URI + `/${ticketId}`, {
+    window.location.reload();
+    await axios.put(URI + `/${ticketId}`, {
       _id: `${user.uid}`,
       email: `${user.email}`,
       tickets: [
         {
           _id: ticketId,
+          status: 'open',
           submitted_by: `${user.displayName}`,
           assigned_to: assignedTo,
           title: title,
@@ -75,22 +91,66 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
-    setTickets(
-      tickets.map((ticket) => {
-        return ticket._id === ticketId ? { ...res.data } : ticket;
-      })
-    );
+  };
+
+  const closeTicket = async (ticket) => {
+    window.location.reload();
+    await axios.put(URI + `/${ticket._id}`, {
+      _id: `${user.uid}`,
+      email: `${user.email}`,
+      tickets: [
+        {
+          _id: ticket._id,
+          status: 'closed',
+          submitted_by: ticket.submitted_by,
+          assigned_to: ticket.assigned_to,
+          title: ticket.title,
+          summary: ticket.summary,
+          priority: ticket.priority,
+          due_date: ticket.due_date,
+          created_at: ticket.created_at,
+          updated_at: new Date().toISOString(),
+        },
+      ],
+    });
+  };
+
+  const restoreTicket = async (ticket) => {
+    window.location.reload();
+    await axios.put(URI + `/${ticket._id}`, {
+      _id: `${user.uid}`,
+      email: `${user.email}`,
+      tickets: [
+        {
+          _id: ticket._id,
+          status: 'open',
+          submitted_by: ticket.submitted_by,
+          assigned_to: ticket.assigned_to,
+          title: ticket.title,
+          summary: ticket.summary,
+          priority: ticket.priority,
+          due_date: ticket.due_date,
+          created_at: ticket.created_at,
+          updated_at: new Date().toISOString(),
+        },
+      ],
+    });
   };
 
   const deleteTicket = async (ticketId) => {
+    window.location.reload();
     await axios.delete(URI + `/${ticketId}`);
-    const updatedTickets = tickets.filter((ticket) => {
-      return ticket._id !== ticketId;
-    });
-    setTickets(updatedTickets);
   };
 
-  const contextValue = { tickets, addTicket, editTicket, deleteTicket };
+  const contextValue = {
+    tickets,
+    closedTickets,
+    addTicket,
+    editTicket,
+    closeTicket,
+    restoreTicket,
+    deleteTicket,
+  };
 
   return (
     <TicketContext.Provider value={contextValue}>

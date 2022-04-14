@@ -7,14 +7,14 @@ import {
   Tooltip,
   IconButton,
 } from '@mui/material/';
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
+import { AiOutlineEdit, AiOutlineDelete, AiOutlineCheck } from 'react-icons/ai';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import moment from 'moment';
 import { useTicketContext } from '../TicketProvider';
 import TicketForm from '../TicketForm';
 
 const RecentTicket = ({ ticket }) => {
-  const { deleteTicket } = useTicketContext();
+  const { deleteTicket, closeTicket } = useTicketContext();
   const [showTicket, setShowTicket] = useState(false);
   const [floatingForm, setFloatingForm] = useState(false);
 
@@ -154,6 +154,11 @@ const RecentTicket = ({ ticket }) => {
               </Typography>
             </Box>
             <Box>
+              <Tooltip title="Close" onClick={() => closeTicket(ticket)}>
+                <IconButton>
+                  <AiOutlineCheck style={{ color: '#363740' }} />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Edit" onClick={handleOpenFloatingForm}>
                 <IconButton>
                   <AiOutlineEdit style={{ color: '#363740' }} />
