@@ -9,6 +9,7 @@ const Overview = () => {
   const { getToken } = useAuth();
   const { tickets, closedTickets } = useTicketContext();
   const { tasks } = useTaskContext();
+
   const formatValue = (value) => `${Number(value).toFixed(0)}`;
 
   axios.interceptors.request.use(
@@ -20,7 +21,7 @@ const Overview = () => {
       return Promise.reject(error);
     }
   );
-
+  
   return (
     <>
       <Grid container spacing={2} columns={{ xs: 4, sm: 8 }}>
