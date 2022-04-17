@@ -1,16 +1,15 @@
 import { Grid, Paper, Typography } from '@mui/material';
 import AnimatedNumber from 'animated-number-react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { useAuth } from '../../firebase/AuthContext';
+import { useTaskContext } from '../Tasks/TaskProvider';
+import { useTicketContext } from '../Tickets/TicketProvider';
 
-const TICKETS = 'https://bugoff.rakilahmed.com/api/tickets';
-const TASKS = 'https://bugoff.rakilahmed.com/api/tasks';
-
-const Overview = ({ overdueTickets = 2, closedTickets = 7 }) => {
+const Overview = () => {
   const { getToken } = useAuth();
-  const [ticketsCount, setTicketsCount] = useState(0);
-  const [tasksCount, setTasksCount] = useState(0);
+  const { tickets, closedTickets } = useTicketContext();
+  const { tasks } = useTaskContext();
+
   const formatValue = (value) => `${Number(value).toFixed(0)}`;
 
   axios.interceptors.request.use(
@@ -22,23 +21,6 @@ const Overview = ({ overdueTickets = 2, closedTickets = 7 }) => {
       return Promise.reject(error);
     }
   );
-
-  useEffect(() => {
-    const fetchTickets = async () => {
-      const res = await axios.get(TICKETS);
-      setTicketsCount(
-        res.data[0].tickets.length ? res.data[0].tickets.length : 0
-      );
-    };
-
-    const fetchTasks = async () => {
-      const res = await axios.get(TASKS);
-      setTasksCount(res.data[0].tasks.length ? res.data[0].tasks.length : 0);
-    };
-
-    fetchTickets();
-    fetchTasks();
-  }, []);
 
   return (
     <>
@@ -59,7 +41,7 @@ const Overview = ({ overdueTickets = 2, closedTickets = 7 }) => {
             </Typography>
             <Typography variant="subtitle2" fontSize={35} noWrap>
               <AnimatedNumber
-                value={ticketsCount}
+                value={tickets.length}
                 formatValue={formatValue}
                 duration={500}
               />
@@ -82,7 +64,13 @@ const Overview = ({ overdueTickets = 2, closedTickets = 7 }) => {
             </Typography>
             <Typography variant="subtitle2" fontSize={35}>
               <AnimatedNumber
-                value={overdueTickets}
+                value={
+                  tickets.filter(
+                    (ticket) =>
+                      ticket.status === 'open' &&
+                      ticket.due_date < new Date().toISOString()
+                  ).length
+                }
                 formatValue={formatValue}
                 duration={500}
               />
@@ -105,7 +93,7 @@ const Overview = ({ overdueTickets = 2, closedTickets = 7 }) => {
             </Typography>
             <Typography variant="subtitle2" fontSize={35} noWrap>
               <AnimatedNumber
-                value={closedTickets}
+                value={closedTickets.length}
                 formatValue={formatValue}
                 duration={500}
               />
@@ -128,7 +116,7 @@ const Overview = ({ overdueTickets = 2, closedTickets = 7 }) => {
             </Typography>
             <Typography variant="subtitle2" fontSize={35} noWrap>
               <AnimatedNumber
-                value={tasksCount}
+                value={tasks.length}
                 formatValue={formatValue}
                 duration={500}
               />
