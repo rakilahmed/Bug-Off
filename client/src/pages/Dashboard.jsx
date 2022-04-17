@@ -9,6 +9,7 @@ import {
   TaskProvider,
   Tasks,
   Overview,
+  ClosedTickets,
 } from '../components/';
 
 const Dashboard = () => {
@@ -28,15 +29,20 @@ const Dashboard = () => {
         <Grid item xs={12} sm={6}>
           <TicketProvider>
             <RecentTickets />
+            <Box mt={2}>
+              <ClosedTickets />
+            </Box>
           </TicketProvider>
         </Grid>
         <Grid item xs={12} sm={6}>
           <TaskProvider>
             <Tasks />
+            <Box mt={2}>
+              <TicketProvider>
+                <Overview />
+              </TicketProvider>
+            </Box>
           </TaskProvider>
-          <Box mt={2}>
-            <Overview />
-          </Box>
         </Grid>
       </Grid>
     </Box>

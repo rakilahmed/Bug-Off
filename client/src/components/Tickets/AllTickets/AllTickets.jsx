@@ -10,15 +10,17 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
+import { AiOutlineEdit, AiOutlineDelete, AiOutlineCheck } from 'react-icons/ai';
+import { GrAdd } from 'react-icons/gr';
+import { useConfirm } from 'material-ui-confirm';
 import { useAuth } from '../../../firebase/AuthContext';
 import { useTicketContext } from '../TicketProvider';
 import TicketForm from '../TicketForm';
-import { GrAdd } from 'react-icons/gr';
 
 const AllTickets = () => {
   const { user } = useAuth();
-  const { tickets, deleteTicket } = useTicketContext();
+  const { tickets, closeTicket, deleteTicket } = useTicketContext();
+  const confirm = useConfirm();
   const [ticket, setTicket] = useState('');
   const [floatingForm, setFloatingForm] = useState(false);
 
@@ -36,7 +38,16 @@ const AllTickets = () => {
     setTicket('');
   };
 
-  const handleDelete = (id) => {
+  const handleClose = (id) => {
+    closeTicket(tickets[id]);
+  };
+
+  const handleDelete = async (id) => {
+    await confirm({
+      description: 'This will permanently delete the ticket.',
+      confirmationText: 'Yup',
+      cancellationText: 'Nope',
+    });
     deleteTicket(tickets[id]._id);
   };
 
@@ -126,21 +137,28 @@ const AllTickets = () => {
       options: {
         sort: false,
         filter: false,
+        setCellHeaderProps: () => ({ align: 'center' }),
         customBodyRenderLite: (id) => {
           return (
             <Box
               sx={{
+                width: '4rem',
                 display: 'flex',
               }}
             >
+              <Tooltip title="Close" onClick={() => handleClose(id)}>
+                <IconButton>
+                  <AiOutlineCheck style={{ fontSize: 20, color: '#363740' }} />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Edit" onClick={() => handleOpenFloatingForm(id)}>
                 <IconButton>
-                  <AiOutlineEdit style={{ color: '#363740' }} />
+                  <AiOutlineEdit style={{ fontSize: 20, color: '#363740' }} />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete" onClick={() => handleDelete(id)}>
                 <IconButton>
-                  <AiOutlineDelete style={{ color: '#363740' }} />
+                  <AiOutlineDelete style={{ fontSize: 20, color: '#363740' }} />
                 </IconButton>
               </Tooltip>
             </Box>
@@ -245,14 +263,6 @@ const AllTickets = () => {
             <GrAdd style={{ fontSize: 25 }} />
           </IconButton>
         </Tooltip>
-        {/* <TicketForm
-          title={
-            moment().hour() < 12
-              ? `Good Morning, ${user.displayName}`
-              : `Good Evening, ${user.displayName}`
-          }
-          floatingForm={false}
-        /> */}
       </Paper>
       <MUIDataTable
         title={'All Tickets'}
