@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Modal,
-  Typography,
-  Button,
-  Tooltip,
-  IconButton,
-} from '@mui/material/';
+import { Box, Typography, Tooltip, IconButton } from '@mui/material/';
 import { AiOutlineCheck, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import moment from 'moment';
 import { useConfirm } from 'material-ui-confirm';
 import { useTicketContext } from '../TicketProvider';
-import TicketForm from '../TicketForm';
+import FloatingForm from '../../Utils/FloatingForm';
 
 const RecentTicket = ({ ticket }) => {
   const { closeTicket, deleteTicket } = useTicketContext();
@@ -32,48 +25,13 @@ const RecentTicket = ({ ticket }) => {
     deleteTicket(ticket._id);
   };
 
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '22rem',
-    bgcolor: 'background.paper',
-    borderRadius: 2,
-    boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
-    p: 2.5,
-  };
-
   if (floatingForm) {
     return (
-      <Box>
-        <Modal
-          keepMounted
-          open={floatingForm}
-          onClose={handleCloseFloatingForm}
-          aria-labelledby="keep-mounted-modal-title"
-          aria-describedby="keep-mounted-modal-description"
-        >
-          <Box sx={style}>
-            <Button
-              fullWidth
-              variant="outlined"
-              sx={{
-                mt: 1,
-                mb: 2,
-              }}
-              onClick={handleCloseFloatingForm}
-            >
-              Close
-            </Button>
-            <TicketForm
-              floatingForm
-              closeForm={handleCloseFloatingForm}
-              ticket={ticket}
-            />
-          </Box>
-        </Modal>
-      </Box>
+      <FloatingForm
+        floatingForm
+        ticket={ticket}
+        closeForm={handleCloseFloatingForm}
+      />
     );
   }
 
@@ -178,20 +136,26 @@ const RecentTicket = ({ ticket }) => {
                 Last updated: {moment(ticket.updated_at).startOf().fromNow()}
               </Typography>
             </Box>
-            <Box mt={1}>
+            <Box mt={0.5}>
               <Tooltip title="Close" onClick={() => closeTicket(ticket)}>
                 <IconButton>
-                  <AiOutlineCheck style={{ color: '#363740' }} />
+                  <AiOutlineCheck
+                    style={{ fontSize: '20px', color: '#363740' }}
+                  />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Edit" onClick={handleOpenFloatingForm}>
                 <IconButton>
-                  <AiOutlineEdit style={{ color: '#363740' }} />
+                  <AiOutlineEdit
+                    style={{ fontSize: '20px', color: '#363740' }}
+                  />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete" onClick={handleDelete}>
                 <IconButton>
-                  <AiOutlineDelete style={{ color: '#363740' }} />
+                  <AiOutlineDelete
+                    style={{ fontSize: '20px', color: '#363740' }}
+                  />
                 </IconButton>
               </Tooltip>
             </Box>

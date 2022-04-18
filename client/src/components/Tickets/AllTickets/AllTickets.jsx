@@ -1,21 +1,13 @@
 import { useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import moment from 'moment';
-import {
-  Box,
-  Button,
-  Modal,
-  Paper,
-  Tooltip,
-  IconButton,
-  Typography,
-} from '@mui/material';
+import { Box, Paper, Tooltip, IconButton, Typography } from '@mui/material';
 import { AiOutlineEdit, AiOutlineDelete, AiOutlineCheck } from 'react-icons/ai';
 import { GrAdd } from 'react-icons/gr';
 import { useConfirm } from 'material-ui-confirm';
 import { useAuth } from '../../../firebase/AuthContext';
 import { useTicketContext } from '../TicketProvider';
-import TicketForm from '../TicketForm';
+import FloatingForm from '../../Utils/FloatingForm';
 
 const AllTickets = () => {
   const { user } = useAuth();
@@ -168,56 +160,19 @@ const AllTickets = () => {
     },
   ];
 
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '22rem',
-    bgcolor: 'background.paper',
-    borderRadius: 2,
-    boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
-    p: 2.5,
-  };
-
   if (floatingForm) {
-    return (
-      <Box>
-        <Modal
-          keepMounted
-          open={floatingForm}
-          onClose={handleCloseFloatingForm}
-          aria-labelledby="keep-mounted-modal-title"
-          aria-describedby="keep-mounted-modal-description"
-        >
-          <Box sx={style}>
-            <Button
-              fullWidth
-              variant="outlined"
-              sx={{
-                mt: 1,
-                mb: 2,
-              }}
-              onClick={handleCloseFloatingForm}
-            >
-              Close
-            </Button>
-            {ticket ? (
-              <TicketForm
-                floatingForm
-                closeForm={handleCloseFloatingForm}
-                ticket={ticket}
-              />
-            ) : (
-              <TicketForm
-                newTicket
-                floatingForm
-                closeForm={handleCloseFloatingForm}
-              />
-            )}
-          </Box>
-        </Modal>
-      </Box>
+    return ticket ? (
+      <FloatingForm
+        floatingForm
+        closeForm={handleCloseFloatingForm}
+        ticket={ticket}
+      />
+    ) : (
+      <FloatingForm
+        newTicket
+        floatingForm
+        closeForm={handleCloseFloatingForm}
+      />
     );
   }
 

@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Modal,
-  Typography,
-  Button,
-  Tooltip,
-  IconButton,
-} from '@mui/material/';
+import { Box, Typography, Tooltip, IconButton } from '@mui/material/';
 import { AiOutlineEdit, AiOutlineCheck } from 'react-icons/ai';
 import { useTaskContext } from '../TaskProvider';
-import TaskForm from '../TaskForm';
+import FloatingForm from '../../Utils/FloatingForm';
 
 const Task = ({ task }) => {
   const { deleteTask } = useTaskContext();
@@ -18,48 +11,14 @@ const Task = ({ task }) => {
   const handleOpenFloatingForm = () => setFloatingForm(true);
   const handleCloseFloatingForm = () => setFloatingForm(false);
 
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '22rem',
-    bgcolor: 'background.paper',
-    borderRadius: 2,
-    boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
-    p: 2.5,
-  };
-
   if (floatingForm) {
     return (
-      <Box>
-        <Modal
-          keepMounted
-          open={floatingForm}
-          onClose={handleCloseFloatingForm}
-          aria-labelledby="keep-mounted-modal-title"
-          aria-describedby="keep-mounted-modal-description"
-        >
-          <Box sx={style}>
-            <Button
-              fullWidth
-              variant="outlined"
-              sx={{
-                mt: 1,
-                mb: 2,
-              }}
-              onClick={handleCloseFloatingForm}
-            >
-              Close
-            </Button>
-            <TaskForm
-              floatingForm
-              closeForm={handleCloseFloatingForm}
-              task={task}
-            />
-          </Box>
-        </Modal>
-      </Box>
+      <FloatingForm
+        forTask={true}
+        floatingForm
+        closeForm={handleCloseFloatingForm}
+        task={task}
+      />
     );
   }
 

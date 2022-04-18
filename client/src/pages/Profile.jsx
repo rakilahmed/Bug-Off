@@ -64,13 +64,13 @@ const Profile = () => {
       >
         <Paper
           sx={{
-            maxWidth: '27rem',
-            padding: 2,
+            maxWidth: '30rem',
+            padding: 3,
             borderRadius: 2,
             boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
           }}
         >
-          <Box sx={{ mt: 2 }}>
+          <Box>
             {message && (
               <Alert variant="filled" severity="success">
                 {message}
@@ -117,25 +117,28 @@ const Profile = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <TextField
-              fullWidth
-              margin="normal"
-              type="password"
-              id="password"
-              name="password"
-              label="New Password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <TextField
-              fullWidth
-              required
-              margin="normal"
-              type="password"
-              id="confirm-password"
-              name="confirm-password"
-              label="Confirm New Password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <Box display={'flex'}>
+              <TextField
+                style={{ paddingRight: '1rem' }}
+                fullWidth
+                margin="normal"
+                type="password"
+                id="password"
+                name="password"
+                label="New Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <TextField
+                fullWidth
+                required
+                margin="normal"
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+                label="Confirm Password"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </Box>
             <Button
               fullWidth
               size="large"
