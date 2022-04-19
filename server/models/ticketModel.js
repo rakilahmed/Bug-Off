@@ -14,6 +14,10 @@ const ticketSchema = mongoose.Schema(
             type: Number,
             required: [true, 'Please enter a ticket id'],
           },
+          status: {
+            type: String,
+            required: [true, 'Please enter a status (open or closed)'],
+          },
           submitted_by: {
             type: String,
             required: [true, 'Please enter a name'],
