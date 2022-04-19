@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const taskSchema = mongoose.Schema(
   {
-    _id: { type: String, required: [true, 'Please enter an id'] },
+    _id: { type: String, required: [true, 'Please enter an uid'] },
     tasks: [
       {
         _id: {

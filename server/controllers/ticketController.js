@@ -3,8 +3,8 @@ const Ticket = require('../models/ticketModel');
 
 const getTickets = asyncHandler(async (req, res) => {
   const _id = req.user.uid;
-  const userTickets = await Ticket.find({ _id });
-  res.status(200).json(userTickets);
+  const tickets = await Ticket.find({ _id });
+  res.status(200).json(tickets);
 });
 
 const setTicket = asyncHandler(async (req, res) => {
@@ -39,28 +39,28 @@ const setTicket = asyncHandler(async (req, res) => {
 const getTicketById = asyncHandler(async (req, res) => {
   const _id = req.user.uid;
   const ticketId = req.params.id;
-  const ticket = await Ticket.findOne(
+  const user = await Ticket.findOne(
     { _id },
     { tickets: { $elemMatch: { _id: ticketId } } }
   );
 
-  if (ticket.tickets.length === 0) {
+  if (user.tickets.length === 0) {
     res.status(400);
     throw new Error('No ticket found');
   }
 
-  res.status(201).json(ticket.tickets[0]);
+  res.status(201).json(user.tickets[0]);
 });
 
 const updateTicket = asyncHandler(async (req, res) => {
   const _id = req.user.uid;
   const ticketId = req.params.id;
-  const ticket = await Ticket.findOne(
+  const user = await Ticket.findOne(
     { _id },
     { tickets: { $elemMatch: { _id: ticketId } } }
   );
 
-  if (ticket.tickets.length === 0) {
+  if (user.tickets.length === 0) {
     res.status(400);
     throw new Error('No ticket found');
   }
@@ -71,22 +71,22 @@ const updateTicket = asyncHandler(async (req, res) => {
     { $set: { 'tickets.$': data } }
   );
 
-  const updatedTicket = await Ticket.findOne(
+  const modifyUser = await Ticket.findOne(
     { _id },
     { tickets: { $elemMatch: { _id: ticketId } } }
   );
-  res.status(201).json(updatedTicket.tickets.pop());
+  res.status(201).json(modifyUser.tickets.pop());
 });
 
 const deleteTicket = asyncHandler(async (req, res) => {
   const _id = req.user.uid;
   const ticketId = req.params.id;
-  const ticket = await Ticket.findOne(
+  const user = await Ticket.findOne(
     { _id },
     { tickets: { $elemMatch: { _id: ticketId } } }
   );
 
-  if (ticket.tickets.length === 0) {
+  if (user.tickets.length === 0) {
     res.status(400);
     throw new Error('No ticket found');
   }

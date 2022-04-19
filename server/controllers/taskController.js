@@ -39,28 +39,28 @@ const setTask = asyncHandler(async (req, res) => {
 const getTaskById = asyncHandler(async (req, res) => {
   const _id = req.user.uid;
   const taskId = req.params.id;
-  const task = await Task.findOne(
+  const user = await Task.findOne(
     { _id },
     { tasks: { $elemMatch: { _id: taskId } } }
   );
 
-  if (task.tasks.length === 0) {
+  if (user.tasks.length === 0) {
     res.status(400);
     throw new Error('No task found');
   }
 
-  res.status(201).json(task.tasks[0]);
+  res.status(201).json(user.tasks[0]);
 });
 
 const updateTask = asyncHandler(async (req, res) => {
   const _id = req.user.uid;
   const taskId = req.params.id;
-  const task = await Task.findOne(
+  const user = await Task.findOne(
     { _id },
     { tasks: { $elemMatch: { _id: taskId } } }
   );
 
-  if (task.tasks.length === 0) {
+  if (user.tasks.length === 0) {
     res.status(400);
     throw new Error('No task found');
   }
@@ -68,22 +68,22 @@ const updateTask = asyncHandler(async (req, res) => {
   const data = req.body.tasks[0];
   await Task.updateOne({ 'tasks._id': taskId }, { $set: { 'tasks.$': data } });
 
-  const updatedTicket = await Task.findOne(
+  const modifyUser = await Task.findOne(
     { _id },
     { tasks: { $elemMatch: { _id: taskId } } }
   );
-  res.status(201).json(updatedTicket.tasks.pop());
+  res.status(201).json(modifyUser.tasks.pop());
 });
 
 const deleteTask = asyncHandler(async (req, res) => {
   const _id = req.user.uid;
   const taskId = req.params.id;
-  const task = await Task.findOne(
+  const user = await Task.findOne(
     { _id },
     { tasks: { $elemMatch: { _id: taskId } } }
   );
 
-  if (task.tasks.length === 0) {
+  if (user.tasks.length === 0) {
     res.status(400);
     throw new Error('No task found');
   }
