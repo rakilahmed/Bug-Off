@@ -2,15 +2,13 @@ const asyncHandler = require('express-async-handler');
 const Employee = require('../models/employeeModel');
 
 const getEmployees = asyncHandler(async (req, res) => {
-  //const _id = req.user.uid;
-  const _id = 'one';
+  const _id = req.user.uid;
   const employees = await Employee.find({ _id });
   res.status(200).json(employees);
 });
 
 const setEmployee = asyncHandler(async (req, res) => {
-  //const _id = req.user.uid;
-  const _id = 'one';
+  const _id = req.user.uid;
   const data = req.body;
   const user = await Employee.findOne({ _id });
 
@@ -43,15 +41,17 @@ const setEmployee = asyncHandler(async (req, res) => {
 });
 
 const getEmployeeById = asyncHandler(async (req, res) => {
-  //const _id = req.user.uid;
-  const _id = 'one';
+  const _id = req.user.uid;
   const employeeId = req.params.id;
   const user = await Employee.findOne(
     { _id },
     { employees: { $elemMatch: { _id: employeeId } } }
   );
 
-  if (user.employees.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.employees.length === 0) {
     res.status(400);
     throw new Error('No employee found');
   }
@@ -60,20 +60,33 @@ const getEmployeeById = asyncHandler(async (req, res) => {
 });
 
 const updateEmployee = asyncHandler(async (req, res) => {
-  //const _id = req.user.uid;
-  const _id = 'one';
+  const _id = req.user.uid;
   const employeeId = req.params.id;
   const user = await Employee.findOne(
     { _id },
     { employees: { $elemMatch: { _id: employeeId } } }
   );
 
-  if (user.employees.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.employees.length === 0) {
     res.status(400);
     throw new Error('No employee found');
   }
 
   const data = req.body.employees[0];
+  const employeeEmail = data.email;
+  const employee = user.employees.find(
+    (employee) =>
+      employee._id === employeeId || employee.email === employeeEmail
+  );
+
+  if (employee) {
+    res.status(400);
+    throw new Error('Employee with that id or email already exists');
+  }
+
   await Employee.updateOne(
     { 'employees._id': employeeId },
     { $set: { 'employees.$': data } }
@@ -87,15 +100,17 @@ const updateEmployee = asyncHandler(async (req, res) => {
 });
 
 const deleteEmployee = asyncHandler(async (req, res) => {
-  //const _id = req.user.uid;
-  const _id = 'one';
+  const _id = req.user.uid;
   const employeeId = req.params.id;
   const user = await Employee.findOne(
     { _id },
     { employees: { $elemMatch: { _id: employeeId } } }
   );
 
-  if (user.employees.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.employees.length === 0) {
     res.status(400);
     throw new Error('No employee found');
   }

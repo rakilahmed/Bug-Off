@@ -9,11 +9,11 @@ const {
 } = require('../controllers/employeeController');
 const { checkAuth } = require('../middleware/checkAuth');
 
-router.route('/').get(getEmployees).post(setEmployee);
+router.route('/').get(checkAuth, getEmployees).post(checkAuth, setEmployee);
 router
   .route('/:id')
-  .get(getEmployeeById)
-  .put(updateEmployee)
-  .delete(deleteEmployee);
+  .get(checkAuth, getEmployeeById)
+  .put(checkAuth, updateEmployee)
+  .delete(checkAuth, deleteEmployee);
 
 module.exports = router;
