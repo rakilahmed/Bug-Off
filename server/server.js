@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const ticketRoutes = require('./routes/ticketRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
 
 connectDB();
 const app = express();
@@ -22,6 +23,7 @@ app.get('/api', (_, res) => {
     endpoints: {
       'api/tickets': 'To get all the tickets of the user',
       'api/tasks': 'To get all the tasks of the user',
+      'api/employees': 'To get all the employees of the user',
     },
     note: 'You must be a verified user',
   });
@@ -29,6 +31,7 @@ app.get('/api', (_, res) => {
 
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/employees', employeeRoutes);
 
 app.listen(port, () =>
   console.log(
