@@ -23,7 +23,7 @@ const setTask = asyncHandler(async (req, res) => {
 
   if (task) {
     res.status(400);
-    throw new Error('Task with that id exists');
+    throw new Error('Task with that id already exists');
   }
 
   const modifyUser = await Task.findOneAndUpdate(
@@ -44,7 +44,10 @@ const getTaskById = asyncHandler(async (req, res) => {
     { tasks: { $elemMatch: { _id: taskId } } }
   );
 
-  if (user.tasks.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.tasks.length === 0) {
     res.status(400);
     throw new Error('No task found');
   }
@@ -60,12 +63,22 @@ const updateTask = asyncHandler(async (req, res) => {
     { tasks: { $elemMatch: { _id: taskId } } }
   );
 
-  if (user.tasks.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.tasks.length === 0) {
     res.status(400);
     throw new Error('No task found');
   }
 
   const data = req.body.tasks[0];
+  const task = user.tasks.find((task) => task._id === data._id);
+
+  if (task) {
+    res.status(400);
+    throw new Error('Task with that id already exists');
+  }
+
   await Task.updateOne({ 'tasks._id': taskId }, { $set: { 'tasks.$': data } });
 
   const modifyUser = await Task.findOne(
@@ -83,7 +96,10 @@ const deleteTask = asyncHandler(async (req, res) => {
     { tasks: { $elemMatch: { _id: taskId } } }
   );
 
-  if (user.tasks.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.tasks.length === 0) {
     res.status(400);
     throw new Error('No task found');
   }
