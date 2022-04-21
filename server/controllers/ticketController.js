@@ -23,7 +23,7 @@ const setTicket = asyncHandler(async (req, res) => {
 
   if (ticket) {
     res.status(400);
-    throw new Error('Ticket with that id exists');
+    throw new Error('Ticket with that id already exists');
   }
 
   const modifyUser = await Ticket.findOneAndUpdate(
@@ -44,7 +44,10 @@ const getTicketById = asyncHandler(async (req, res) => {
     { tickets: { $elemMatch: { _id: ticketId } } }
   );
 
-  if (user.tickets.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.tickets.length === 0) {
     res.status(400);
     throw new Error('No ticket found');
   }
@@ -60,12 +63,22 @@ const updateTicket = asyncHandler(async (req, res) => {
     { tickets: { $elemMatch: { _id: ticketId } } }
   );
 
-  if (user.tickets.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.tickets.length === 0) {
     res.status(400);
     throw new Error('No ticket found');
   }
 
   const data = req.body.tickets[0];
+  const ticket = user.tickets.find((ticket) => ticket._id === data._id);
+
+  if (ticket) {
+    res.status(400);
+    throw new Error('Ticket with that id already exists');
+  }
+
   await Ticket.updateOne(
     { 'tickets._id': ticketId },
     { $set: { 'tickets.$': data } }
@@ -86,7 +99,10 @@ const deleteTicket = asyncHandler(async (req, res) => {
     { tickets: { $elemMatch: { _id: ticketId } } }
   );
 
-  if (user.tickets.length === 0) {
+  if (!user) {
+    res.status(400);
+    throw new Error('No user found');
+  } else if (user.tickets.length === 0) {
     res.status(400);
     throw new Error('No ticket found');
   }
