@@ -76,17 +76,6 @@ const updateEmployee = asyncHandler(async (req, res) => {
   }
 
   const data = req.body.employees[0];
-  const employeeEmail = data.email;
-  const employee = user.employees.find(
-    (employee) =>
-      employee._id === employeeId || employee.email === employeeEmail
-  );
-
-  if (employee) {
-    res.status(400);
-    throw new Error('Employee with that id or email already exists');
-  }
-
   await Employee.updateOne(
     { 'employees._id': employeeId },
     { $set: { 'employees.$': data } }

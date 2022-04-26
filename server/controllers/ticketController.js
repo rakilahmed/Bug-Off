@@ -72,13 +72,6 @@ const updateTicket = asyncHandler(async (req, res) => {
   }
 
   const data = req.body.tickets[0];
-  const ticket = user.tickets.find((ticket) => ticket._id === data._id);
-
-  if (ticket) {
-    res.status(400);
-    throw new Error('Ticket with that id already exists');
-  }
-
   await Ticket.updateOne(
     { 'tickets._id': ticketId },
     { $set: { 'tickets.$': data } }

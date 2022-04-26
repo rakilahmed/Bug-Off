@@ -72,15 +72,7 @@ const updateTask = asyncHandler(async (req, res) => {
   }
 
   const data = req.body.tasks[0];
-  const task = user.tasks.find((task) => task._id === data._id);
-
-  if (task) {
-    res.status(400);
-    throw new Error('Task with that id already exists');
-  }
-
   await Task.updateOne({ 'tasks._id': taskId }, { $set: { 'tasks.$': data } });
-
   const modifyUser = await Task.findOne(
     { _id },
     { tasks: { $elemMatch: { _id: taskId } } }
