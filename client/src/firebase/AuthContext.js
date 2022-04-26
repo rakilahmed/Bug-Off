@@ -8,7 +8,8 @@ import {
   onAuthStateChanged,
   signOut,
 } from 'firebase/auth';
-import { auth } from './firebase';
+import { auth, db } from './firebase';
+import { setDoc, doc, collection, getDoc } from 'firebase/firestore';
 import Loading from '../components/Utils/Loading';
 
 const AuthContext = createContext();
@@ -17,8 +18,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
 
-  const register = async (name, email, password) => {
+  const register = async (name, type, email, password) => {
     await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(collection(db, 'users'), `${auth.currentUser.uid}`), {
+      type,
+    });
     return updateProfile(auth.currentUser, {
       displayName: name,
     });
@@ -47,7 +51,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const getToken = async () => {
-    return await auth.currentUser.getIdToken();
+    return await auth.currentUser?.getIdToken();
+  };
+
+  const getAccountType = async () => {
+    const userData = await getDoc(doc(db, 'users', `${auth.currentUser?.uid}`));
+    return userData.data() && userData.data().type;
   };
 
   useEffect(() => {
@@ -64,6 +73,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    getAccountType,
     getToken,
     register,
     login,

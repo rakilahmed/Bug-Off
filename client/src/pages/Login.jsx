@@ -51,7 +51,7 @@ const Login = () => {
     >
       <Paper
         sx={{
-          maxWidth: '25rem',
+          maxWidth: '30rem',
           margin: 1,
           padding: 3,
           borderRadius: 2,

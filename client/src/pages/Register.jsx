@@ -9,6 +9,10 @@ import {
   Link,
   Grid,
   Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { Alert } from '@mui/material';
 import logo from '../assets/logo.svg';
@@ -17,6 +21,7 @@ const Register = () => {
   const { user, register } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
+  const [type, setType] = useState('personal');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -32,8 +37,7 @@ const Register = () => {
     event.preventDefault();
     setError('');
     try {
-      await register(name, email, password);
-      navigate('/login');
+      await register(name, type, email, password);
     } catch {
       setError('Failed to register, try again!');
     }
@@ -48,7 +52,7 @@ const Register = () => {
     >
       <Paper
         sx={{
-          maxWidth: '25rem',
+          maxWidth: '30rem',
           margin: 1,
           padding: 3,
           borderRadius: 2,
@@ -89,6 +93,18 @@ const Register = () => {
             label="Name"
             onChange={(e) => setName(e.target.value)}
           />
+          <FormControl fullWidth required sx={{ mt: 1, mr: 1 }}>
+            <InputLabel>Type</InputLabel>
+            <Select
+              value={type}
+              label="Priority"
+              onChange={(e) => setType(e.target.value)}
+            >
+              <MenuItem value="personal">Personal</MenuItem>
+              <MenuItem value="pm">Product Manager</MenuItem>
+              <MenuItem value="employee">Employee</MenuItem>
+            </Select>
+          </FormControl>
           <TextField
             fullWidth
             required
