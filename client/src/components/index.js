@@ -7,3 +7,5 @@ export { default as ClosedTickets } from './Tickets/ClosedTickets/ClosedTickets'
 export { default as AllTickets } from './Tickets/AllTickets/AllTickets';
 export { default as TaskProvider } from './Tasks/TaskProvider';
 export { default as Tasks } from './Tasks/Tasks/Tasks';
+export { default as EmployeeProvider } from './Employees/EmployeeProvider';
+export { default as AllEmployees } from './Employees/AllEmployees';

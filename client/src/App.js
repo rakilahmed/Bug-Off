@@ -3,7 +3,14 @@ import { Container } from '@mui/material';
 import { ConfirmProvider } from 'material-ui-confirm';
 import './App.css';
 import { AuthProvider } from './firebase/AuthContext';
-import { Login, Register, Dashboard, Profile, Tickets } from './pages/';
+import {
+  Login,
+  Register,
+  Dashboard,
+  Profile,
+  Tickets,
+  Employees,
+} from './pages/';
 
 function App() {
   return (
@@ -17,6 +24,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/tickets" element={<Tickets />} />
+              <Route path="/employees" element={<Employees />} />
             </Routes>
           </ConfirmProvider>
         </AuthProvider>
