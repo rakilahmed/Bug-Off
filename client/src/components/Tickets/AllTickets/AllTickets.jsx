@@ -136,6 +136,7 @@ const AllTickets = () => {
               sx={{
                 width: '4rem',
                 display: 'flex',
+                marginRight: '0.5rem',
               }}
             >
               <Tooltip title="Close" onClick={() => handleClose(id)}>

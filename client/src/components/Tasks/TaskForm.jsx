@@ -107,13 +107,6 @@ const TaskForm = ({ title, floatingForm = false, closeForm, task }) => {
                 {floatingForm ? 'Update' : 'Add'}
               </Button>
             </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-evenly',
-              }}
-            ></Box>
           </FormGroup>
         </Box>
       )}
