@@ -3,11 +3,14 @@ import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
 
 const URI = 'https://bugoff.rakilahmed.com/api/tickets';
+const EMP_URI = 'https://bugoff.rakilahmed.com/api/employees';
 const TicketContext = createContext();
 
 const TicketProvider = ({ children }) => {
-  const { user, getToken } = useAuth();
+  const { user, getToken, getAccountType } = useAuth();
   const [tickets, setTickets] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [accountType, setAccountType] = useState('');
   const [closedTickets, setClosedTickets] = useState([]);
 
   useEffect(() => {
@@ -31,8 +34,25 @@ const TicketProvider = ({ children }) => {
       }
     };
 
+    const fetchEmployees = async () => {
+      const res = await axios.get(EMP_URI);
+      try {
+        if (res.data[0] && res.data[0].employees) {
+          setEmployees(res.data[0].employees.reverse());
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchAccountType = async () => {
+      setAccountType(await getAccountType());
+    };
+
     fetchTickets();
-  }, []);
+    fetchEmployees();
+    fetchAccountType();
+  }, [getAccountType]);
 
   axios.interceptors.request.use(
     async (config) => {
@@ -53,7 +73,7 @@ const TicketProvider = ({ children }) => {
           _id: Math.floor(1000 + Math.random() * 9000),
           status: 'open',
           submitted_by: `${user.displayName}`,
-          assigned_to: assignedTo,
+          assigned_to: assignedTo ? assignedTo : 'Self',
           title: title,
           summary: summary,
           priority: priority,
@@ -63,6 +83,24 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
+
+    if (employees.length > 0) {
+      const employee = employees.find(
+        (employee) => employee.name === assignedTo
+      );
+      await axios.put(EMP_URI + `/${employee._id}`, {
+        _id: `${user.uid}`,
+        employees: [
+          {
+            _id: employee._id,
+            name: employee.name,
+            email: employee.email,
+            ticket_count: employee.ticket_count + 1,
+          },
+        ],
+      });
+    }
+
     window.location.reload();
   };
 
@@ -115,6 +153,24 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
+
+    if (employees.length > 0) {
+      const employee = employees.find(
+        (employee) => employee.name === ticket.assigned_to
+      );
+      await axios.put(EMP_URI + `/${employee._id}`, {
+        _id: `${user.uid}`,
+        employees: [
+          {
+            _id: employee._id,
+            name: employee.name,
+            email: employee.email,
+            ticket_count: employee.ticket_count - 1,
+          },
+        ],
+      });
+    }
+
     window.location.reload();
   };
 
@@ -137,17 +193,57 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
+
+    if (employees.length > 0) {
+      const employee = employees.find(
+        (employee) => employee.name === ticket.assigned_to
+      );
+      await axios.put(EMP_URI + `/${employee._id}`, {
+        _id: `${user.uid}`,
+        employees: [
+          {
+            _id: employee._id,
+            name: employee.name,
+            email: employee.email,
+            ticket_count: employee.ticket_count + 1,
+          },
+        ],
+      });
+    }
+
     window.location.reload();
   };
 
   const deleteTicket = async (ticketId) => {
+    const ticket = tickets.find((ticket) => ticket._id === ticketId);
+    const employee = employees.find(
+      (employee) => employee.name === ticket.assigned_to
+    );
+
     await axios.delete(URI + `/${ticketId}`);
+
+    if (employees.length > 0) {
+      await axios.put(EMP_URI + `/${employee._id}`, {
+        _id: `${user.uid}`,
+        employees: [
+          {
+            _id: employee._id,
+            name: employee.name,
+            email: employee.email,
+            ticket_count: employee.ticket_count - 1,
+          },
+        ],
+      });
+    }
+
     window.location.reload();
   };
 
   const contextValue = {
+    accountType,
     tickets,
     closedTickets,
+    employees,
     addTicket,
     editTicket,
     closeTicket,

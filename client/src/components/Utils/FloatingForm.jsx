@@ -1,13 +1,16 @@
 import { Box, Button, Modal } from '@mui/material';
 import TaskForm from '../Tasks/TaskForm';
 import TicketForm from '../Tickets/TicketForm';
+import EmployeeForm from '../Employees/EmployeeForm';
 
 const FloatingForm = ({
   forTask = false,
   newTicket = false,
+  newEmployee = false,
   floatingForm = false,
   ticket,
   task,
+  employee,
   closeForm,
 }) => {
   const style = {
@@ -45,12 +48,24 @@ const FloatingForm = ({
             Close
           </Button>
 
-          {forTask ? (
-            <TaskForm floatingForm closeForm={closeForm} task={task} />
-          ) : newTicket ? (
+          {newEmployee && !ticket && !task && (
+            <EmployeeForm newEmployee floatingForm closeForm={closeForm} />
+          )}
+          {employee && !ticket && !task && (
+            <EmployeeForm
+              employee={employee}
+              floatingForm
+              closeForm={closeForm}
+            />
+          )}
+          {newTicket && !employee && !task && (
             <TicketForm newTicket floatingForm closeForm={closeForm} />
-          ) : (
-            <TicketForm floatingForm closeForm={closeForm} ticket={ticket} />
+          )}
+          {ticket && !employee && !task && (
+            <TicketForm ticket={ticket} floatingForm closeForm={closeForm} />
+          )}
+          {forTask && !ticket && !employee && (
+            <TaskForm task={task} floatingForm closeForm={closeForm} />
           )}
         </Box>
       </Modal>

@@ -24,7 +24,7 @@ const TicketForm = ({
   closeForm,
   ticket,
 }) => {
-  const { addTicket, editTicket } = useTicketContext();
+  const { accountType, employees, addTicket, editTicket } = useTicketContext();
   const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [titleInput, setTitleInput] = useState(ticket ? ticket.title : '');
   const [assignedToInput, setAssignedToInput] = useState(
@@ -69,9 +69,9 @@ const TicketForm = ({
     event.target.value === '' ? setTitleStatus(false) : setTitleStatus(true);
   };
 
-  const validateAssigned = (event) => {
+  const validateAssignedTo = (event) => {
     setAssignedToInput(event.target.value);
-    event.target.value === ''
+    event.target.value === ticket.assigned_to
       ? setAssignedToStatus(false)
       : setAssignedToStatus(true);
   };
@@ -175,7 +175,7 @@ const TicketForm = ({
                 }}
                 disabled={
                   !floatingForm || newTicket
-                    ? !titleStatus || !assignedToStatus || !summaryStatus
+                    ? (!titleStatus && !assignedToStatus) || !summaryStatus
                     : !titleStatus &&
                       !assignedToStatus &&
                       !summaryStatus &&
@@ -191,15 +191,26 @@ const TicketForm = ({
                 {floatingForm && !newTicket ? 'Update' : 'Add'}
               </Button>
             </Box>
-            <TextField
-              required
-              margin="normal"
-              id="ticket-assigned"
-              label="Assigned To"
-              variant="outlined"
-              value={assignedToInput}
-              onChange={validateAssigned}
-            />
+            {accountType === 'pm' && employees.length > 0 && (
+              <FormControl fullWidth required sx={{ mt: 1 }}>
+                <InputLabel>Assigned To</InputLabel>
+                <Select
+                  value={assignedToInput}
+                  label="Assigned To"
+                  onChange={
+                    floatingForm && !newTicket
+                      ? validateAssignedTo
+                      : (e) => setAssignedToInput(e.target.value)
+                  }
+                >
+                  {employees.map((employee) => (
+                    <MenuItem key={employee._id} value={employee.name}>
+                      {employee.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
             <Box
               sx={{
                 display: 'flex',
