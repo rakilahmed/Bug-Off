@@ -1,16 +1,34 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Link, Tooltip, IconButton } from '@mui/material';
 import { MdOutlineDashboardCustomize } from 'react-icons/md';
 import { IoTicketSharp } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg';
+import { FiUsers } from 'react-icons/fi';
 import { ImExit } from 'react-icons/im';
 import { AiOutlineMore } from 'react-icons/ai';
 import logo from '../../assets/logo.svg';
 import { useAuth } from '../../firebase/AuthContext';
 
 const Header = () => {
-  const { logout } = useAuth();
+  const { getAccountType, logout } = useAuth();
   const navigate = useNavigate();
+  const [type, setType] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+    const getType = async () => {
+      const accountType = await getAccountType();
+      if (isMounted) {
+        setType(accountType);
+      }
+    };
+
+    getType();
+    return () => {
+      isMounted = false;
+    };
+  }, [getAccountType]);
 
   const handleLogout = async () => {
     try {
@@ -50,6 +68,15 @@ const Header = () => {
             </IconButton>
           </Tooltip>
         </Link>
+        {type === 'pm' && (
+          <Link href="/employees">
+            <Tooltip title="Employees">
+              <IconButton>
+                <FiUsers color="#363740" />
+              </IconButton>
+            </Tooltip>
+          </Link>
+        )}
         <Link href="/profile">
           <Tooltip title="Profile">
             <IconButton>

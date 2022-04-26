@@ -1,14 +1,29 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../firebase/AuthContext';
-import { Grid, Paper, Box, TextField, Button, Alert } from '@mui/material';
+import {
+  Grid,
+  Paper,
+  Box,
+  TextField,
+  Button,
+  Alert,
+  Typography,
+} from '@mui/material';
+import { RiAdminLine } from 'react-icons/ri';
 import { Header } from '../components';
 
 const Profile = () => {
-  const { user, updateUserName, updateUserEmail, updateUserPassword } =
-    useAuth();
+  const {
+    user,
+    getAccountType,
+    updateUserName,
+    updateUserEmail,
+    updateUserPassword,
+  } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
+  const [type, setType] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,10 +31,23 @@ const Profile = () => {
   const [updateError, setUpdateError] = useState('');
 
   useEffect(() => {
+    let isMounted = true;
     if (!user) {
       navigate('/login');
     }
-  }, [navigate, user]);
+
+    const getType = async () => {
+      const accountType = await getAccountType();
+      if (isMounted) {
+        setType(accountType);
+      }
+    };
+
+    getType();
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, user, getAccountType]);
 
   const handleUpdateProfile = (event) => {
     event.preventDefault();
@@ -70,6 +98,16 @@ const Profile = () => {
             boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
           }}
         >
+          {type !== '' && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <RiAdminLine />
+              <Typography variant="subtitle1" ml={1}>
+                {type === 'personal' && 'Personal'}
+                {type === 'pm' && 'Product Manager'}
+                {type === 'employee' && 'Employee'}
+              </Typography>
+            </Box>
+          )}
           <Box>
             {message && (
               <Alert variant="filled" severity="success">
