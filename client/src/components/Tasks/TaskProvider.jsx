@@ -12,7 +12,9 @@ const TaskProvider = ({ children }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       const res = await axios.get(URI);
-      res.data[0].tasks.length > 0 && setTasks(res.data[0].tasks.reverse());
+      if (res.data[0] && res.data[0].tasks) {
+        setTasks(res.data[0].tasks.reverse());
+      }
     };
 
     fetchTasks();

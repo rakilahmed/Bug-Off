@@ -210,8 +210,8 @@ const AllTickets = () => {
       >
         <Typography variant="h6">
           {moment().hour() < 12
-            ? `Good Morning, ${user.displayName}`
-            : `Good Evening, ${user.displayName}`}
+            ? `Good Morning, ${user?.displayName}`
+            : `Good Evening, ${user?.displayName}`}
         </Typography>
         <Tooltip title="Add Ticket" onClick={handleForm}>
           <IconButton>

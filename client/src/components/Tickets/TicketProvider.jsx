@@ -13,19 +13,22 @@ const TicketProvider = ({ children }) => {
   useEffect(() => {
     const fetchTickets = async () => {
       const res = await axios.get(URI);
-      res.data[0].tickets.length > 0 &&
-        setTickets(
-          res.data[0].tickets
-            .filter((ticket) => ticket.status === 'open')
-            .reverse()
-        );
-
-      res.data[0].tickets.length > 0 &&
-        setClosedTickets(
-          res.data[0].tickets
-            .filter((ticket) => ticket.status === 'closed')
-            .reverse()
-        );
+      try {
+        if (res.data[0] && res.data[0].tickets) {
+          setTickets(
+            res.data[0].tickets
+              .filter((ticket) => ticket.status === 'open')
+              .reverse()
+          );
+          setClosedTickets(
+            res.data[0].tickets
+              .filter((ticket) => ticket.status === 'closed')
+              .reverse()
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     fetchTickets();
