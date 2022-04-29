@@ -101,13 +101,17 @@ const AllTickets = () => {
                 borderRadius: 5,
                 color: 'white',
                 backgroundColor:
+                  (tickets[id].due_date < new Date().toISOString() &&
+                    '#000000') ||
                   (tickets[id].priority === 'Low' && '#29CC97') ||
                   (tickets[id].priority === 'Medium' && '#FEC400') ||
                   (tickets[id].priority === 'High' && '#F12B2C'),
                 padding: 0.3,
               }}
             >
-              {tickets[id].priority}
+              {tickets[id].due_date < new Date().toISOString()
+                ? 'Overdue'
+                : tickets[id].priority}
             </Box>
           );
         },

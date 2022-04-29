@@ -68,14 +68,18 @@ const RecentTicket = ({ ticket }) => {
               borderRadius: 10,
               color: 'white',
               backgroundColor:
+                (ticket.due_date < new Date().toISOString() && '#000000') ||
                 (ticket.priority === 'Low' && '#29CC97') ||
                 (ticket.priority === 'Medium' && '#FEC400') ||
                 (ticket.priority === 'High' && '#F12B2C'),
+
               marginRight: 1,
               padding: 0.3,
             }}
           >
-            {ticket.priority}
+            {ticket.due_date < new Date().toISOString()
+              ? 'Overdue'
+              : ticket.priority}
           </Typography>
           {!showTicket ? (
             <Tooltip title="Expand">
