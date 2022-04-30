@@ -74,7 +74,7 @@ const TicketProvider = ({ children }) => {
 
     setTickets([res.data, ...tickets]);
 
-    if (employees.length > 0) {
+    if (employees.length > 0 && (assignedTo !== '' || assignedTo === 'Self')) {
       const employee = employees.find(
         (employee) => employee.name === assignedTo
       );
@@ -116,8 +116,9 @@ const TicketProvider = ({ children }) => {
       ],
     });
 
-    if (employees.length > 0) {
-      const ticket = tickets.find((ticket) => ticket._id === ticketId);
+    const ticket = tickets.find((ticket) => ticket._id === ticketId);
+
+    if (employees.length > 0 && ticket.assigned_to !== 'Self') {
       const employee = employees.find(
         (employee) => employee.name === ticket.assigned_to
       );
@@ -145,6 +146,19 @@ const TicketProvider = ({ children }) => {
           editEmployee(employee._id, employee.name, employee.email, 0);
         }
       }
+    }
+
+    if (employees.length > 0 && ticket.assigned_to === 'Self') {
+      const employee = employees.find(
+        (employee) => employee.name === assignedTo
+      );
+
+      editEmployee(
+        employee._id,
+        employee.name,
+        employee.email,
+        employee.ticket_count + 1
+      );
     }
 
     setTickets(
@@ -181,7 +195,7 @@ const TicketProvider = ({ children }) => {
     setTickets(updatedTickets);
     setClosedTickets([res.data, ...closedTickets]);
 
-    if (employees.length > 0) {
+    if (employees.length > 0 && ticket.assigned_to !== 'Self') {
       const employee = employees.find(
         (employee) => employee.name === ticket.assigned_to
       );
@@ -226,7 +240,7 @@ const TicketProvider = ({ children }) => {
     setClosedTickets(updatedClosedTickets);
     setTickets([res.data, ...tickets]);
 
-    if (employees.length > 0) {
+    if (employees.length > 0 && ticket.assigned_to !== 'Self') {
       const employee = employees.find(
         (employee) => employee.name === ticket.assigned_to
       );
@@ -241,7 +255,10 @@ const TicketProvider = ({ children }) => {
   };
 
   const deleteTicket = async (ticketId) => {
-    const ticket = tickets.find((ticket) => ticket._id === ticketId);
+    let ticket = tickets.find((ticket) => ticket._id === ticketId);
+    if (ticket === undefined) {
+      ticket = closedTickets.find((ticket) => ticket._id === ticketId);
+    }
     const employee = employees.find(
       (employee) => employee.name === ticket.assigned_to
     );
@@ -258,7 +275,7 @@ const TicketProvider = ({ children }) => {
     });
     setClosedTickets(updatedClosedTickets);
 
-    if (employees.length > 0) {
+    if (employees.length > 0 && ticket.assigned_to !== 'Self') {
       if (employee.ticket_count > 0) {
         editEmployee(
           employee._id,

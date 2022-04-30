@@ -42,7 +42,7 @@ const EmployeeProvider = ({ children }) => {
         },
       ],
     });
-    setEmployees([res.data, ...employees]);
+    setEmployees([...employees, res.data]);
   };
 
   const editEmployee = async (employeeId, name, email, ticketCount) => {

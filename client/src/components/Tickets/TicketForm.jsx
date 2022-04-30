@@ -30,7 +30,7 @@ const TicketForm = ({
   const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [titleInput, setTitleInput] = useState(ticket ? ticket.title : '');
   const [assignedToInput, setAssignedToInput] = useState(
-    ticket ? ticket.assigned_to : ''
+    ticket && ticket.assigned_to !== 'Self' ? ticket.assigned_to : ''
   );
   const [priority, setPriority] = useState(
     ticket ? ticket.priority : '' || newTicket ? 'Low' : ''
