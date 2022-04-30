@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useAuth } from '../firebase/AuthContext';
-import { Header, TicketProvider, AllTickets } from '../components/';
+import { Header, AllTickets } from '../components/';
 
 const Tickets = () => {
   const { user } = useAuth();
@@ -15,11 +15,9 @@ const Tickets = () => {
   }, [navigate, user]);
 
   return (
-    <Box>
+    <Box mb={5}>
       <Header />
-      <TicketProvider>
-        <AllTickets />
-      </TicketProvider>
+      <AllTickets />
     </Box>
   );
 };

@@ -2,24 +2,31 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useAuth } from '../firebase/AuthContext';
-import { Header, EmployeeProvider, AllEmployees } from '../components/';
+import { Header, AllEmployees } from '../components/';
 
 const Tickets = () => {
-  const { user } = useAuth();
+  const { user, getAccountType } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
       navigate('/login');
     }
-  }, [navigate, user]);
+
+    const fetchAccountType = async () => {
+      const res = await getAccountType();
+      if (res !== 'pm') {
+        navigate('/');
+      }
+    };
+
+    fetchAccountType();
+  }, [getAccountType, navigate, user]);
 
   return (
-    <Box>
+    <Box mb={5}>
       <Header />
-      <EmployeeProvider>
-        <AllEmployees />
-      </EmployeeProvider>
+      <AllEmployees />
     </Box>
   );
 };

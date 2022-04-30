@@ -16,6 +16,7 @@ import { GrAdd, GrClose } from 'react-icons/gr';
 import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { useTicketContext } from './TicketProvider';
+import { useEmployeeContext } from '../Employees/EmployeeProvider';
 
 const TicketForm = ({
   title,
@@ -24,7 +25,8 @@ const TicketForm = ({
   closeForm,
   ticket,
 }) => {
-  const { accountType, employees, addTicket, editTicket } = useTicketContext();
+  const { accountType, addTicket, editTicket } = useTicketContext();
+  const { employees } = useEmployeeContext();
   const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [titleInput, setTitleInput] = useState(ticket ? ticket.title : '');
   const [assignedToInput, setAssignedToInput] = useState(

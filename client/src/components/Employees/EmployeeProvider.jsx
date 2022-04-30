@@ -13,7 +13,7 @@ const EmployeeProvider = ({ children }) => {
     const fetchEmployees = async () => {
       const res = await axios.get(URI);
       if (res.data[0] && res.data[0].employees) {
-        setEmployees(res.data[0].employees.reverse());
+        setEmployees(res.data[0].employees);
       }
     };
 

@@ -4,9 +4,7 @@ import { useAuth } from '../firebase/AuthContext';
 import { Box, Grid } from '@mui/material';
 import {
   Header,
-  TicketProvider,
   RecentTickets,
-  TaskProvider,
   Tasks,
   Overview,
   ClosedTickets,
@@ -23,26 +21,20 @@ const Dashboard = () => {
   }, [navigate, user]);
 
   return (
-    <Box>
+    <Box mb={5}>
       <Header />
       <Grid container spacing={2} alignItems="flex-start">
         <Grid item xs={12} sm={6}>
-          <TicketProvider>
-            <RecentTickets />
-            <Box mt={2}>
-              <ClosedTickets />
-            </Box>
-          </TicketProvider>
+          <RecentTickets />
+          <Box mt={2}>
+            <ClosedTickets />
+          </Box>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TaskProvider>
-            <Tasks />
-            <Box mt={2}>
-              <TicketProvider>
-                <Overview />
-              </TicketProvider>
-            </Box>
-          </TaskProvider>
+          <Tasks />
+          <Box mt={2}>
+            <Overview />
+          </Box>
         </Grid>
       </Grid>
     </Box>

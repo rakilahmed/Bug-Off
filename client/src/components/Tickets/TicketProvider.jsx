@@ -1,15 +1,15 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
+import { useEmployeeContext } from '../Employees/EmployeeProvider';
 
 const URI = 'https://bugoff.rakilahmed.com/api/tickets';
-const EMP_URI = 'https://bugoff.rakilahmed.com/api/employees';
 const TicketContext = createContext();
 
 const TicketProvider = ({ children }) => {
   const { user, getToken, getAccountType } = useAuth();
+  const { employees, editEmployee } = useEmployeeContext();
   const [tickets, setTickets] = useState([]);
-  const [employees, setEmployees] = useState([]);
   const [accountType, setAccountType] = useState('');
   const [closedTickets, setClosedTickets] = useState([]);
 
@@ -34,23 +34,11 @@ const TicketProvider = ({ children }) => {
       }
     };
 
-    const fetchEmployees = async () => {
-      const res = await axios.get(EMP_URI);
-      try {
-        if (res.data[0] && res.data[0].employees) {
-          setEmployees(res.data[0].employees.reverse());
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     const fetchAccountType = async () => {
       setAccountType(await getAccountType());
     };
 
     fetchTickets();
-    fetchEmployees();
     fetchAccountType();
   }, [getAccountType]);
 
@@ -65,7 +53,7 @@ const TicketProvider = ({ children }) => {
   );
 
   const addTicket = async (title, assignedTo, priority, dueDate, summary) => {
-    await axios.post(URI, {
+    const res = await axios.post(URI, {
       _id: `${user.uid}`,
       email: `${user.email}`,
       tickets: [
@@ -84,24 +72,20 @@ const TicketProvider = ({ children }) => {
       ],
     });
 
+    setTickets([res.data, ...tickets]);
+
     if (employees.length > 0) {
       const employee = employees.find(
         (employee) => employee.name === assignedTo
       );
-      await axios.put(EMP_URI + `/${employee._id}`, {
-        _id: `${user.uid}`,
-        employees: [
-          {
-            _id: employee._id,
-            name: employee.name,
-            email: employee.email,
-            ticket_count: employee.ticket_count + 1,
-          },
-        ],
-      });
-    }
 
-    window.location.reload();
+      editEmployee(
+        employee._id,
+        employee.name,
+        employee.email,
+        employee.ticket_count + 1
+      );
+    }
   };
 
   const editTicket = async (
@@ -113,7 +97,7 @@ const TicketProvider = ({ children }) => {
     dueDate,
     createdAt
   ) => {
-    await axios.put(URI + `/${ticketId}`, {
+    const res = await axios.put(URI + `/${ticketId}`, {
       _id: `${user.uid}`,
       email: `${user.email}`,
       tickets: [
@@ -131,11 +115,47 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
-    window.location.reload();
+
+    if (employees.length > 0) {
+      const ticket = tickets.find((ticket) => ticket._id === ticketId);
+      const employee = employees.find(
+        (employee) => employee.name === ticket.assigned_to
+      );
+
+      if (employee.name !== assignedTo) {
+        const newAssigned = employees.find(
+          (employee) => employee.name === assignedTo
+        );
+
+        editEmployee(
+          newAssigned._id,
+          newAssigned.name,
+          newAssigned.email,
+          newAssigned.ticket_count + 1
+        );
+
+        if (employee.ticket_count > 0) {
+          editEmployee(
+            employee._id,
+            employee.name,
+            employee.email,
+            employee.ticket_count - 1
+          );
+        } else {
+          editEmployee(employee._id, employee.name, employee.email, 0);
+        }
+      }
+    }
+
+    setTickets(
+      tickets.map((ticket) => {
+        return ticket._id === ticketId ? { ...res.data } : ticket;
+      })
+    );
   };
 
   const closeTicket = async (ticket) => {
-    await axios.put(URI + `/${ticket._id}`, {
+    const res = await axios.put(URI + `/${ticket._id}`, {
       _id: `${user.uid}`,
       email: `${user.email}`,
       tickets: [
@@ -154,28 +174,33 @@ const TicketProvider = ({ children }) => {
       ],
     });
 
+    const updatedTickets = tickets.filter((ticketItem) => {
+      return ticketItem._id !== ticket._id;
+    });
+
+    setTickets(updatedTickets);
+    setClosedTickets([res.data, ...closedTickets]);
+
     if (employees.length > 0) {
       const employee = employees.find(
         (employee) => employee.name === ticket.assigned_to
       );
-      await axios.put(EMP_URI + `/${employee._id}`, {
-        _id: `${user.uid}`,
-        employees: [
-          {
-            _id: employee._id,
-            name: employee.name,
-            email: employee.email,
-            ticket_count: employee.ticket_count - 1,
-          },
-        ],
-      });
-    }
 
-    window.location.reload();
+      if (employee.ticket_count > 0) {
+        editEmployee(
+          employee._id,
+          employee.name,
+          employee.email,
+          employee.ticket_count - 1
+        );
+      } else {
+        editEmployee(employee._id, employee.name, employee.email, 0);
+      }
+    }
   };
 
   const restoreTicket = async (ticket) => {
-    await axios.put(URI + `/${ticket._id}`, {
+    const res = await axios.put(URI + `/${ticket._id}`, {
       _id: `${user.uid}`,
       email: `${user.email}`,
       tickets: [
@@ -194,24 +219,25 @@ const TicketProvider = ({ children }) => {
       ],
     });
 
+    const updatedClosedTickets = closedTickets.filter((ticketItem) => {
+      return ticketItem._id !== ticket._id;
+    });
+
+    setClosedTickets(updatedClosedTickets);
+    setTickets([res.data, ...tickets]);
+
     if (employees.length > 0) {
       const employee = employees.find(
         (employee) => employee.name === ticket.assigned_to
       );
-      await axios.put(EMP_URI + `/${employee._id}`, {
-        _id: `${user.uid}`,
-        employees: [
-          {
-            _id: employee._id,
-            name: employee.name,
-            email: employee.email,
-            ticket_count: employee.ticket_count + 1,
-          },
-        ],
-      });
-    }
 
-    window.location.reload();
+      editEmployee(
+        employee._id,
+        employee.name,
+        employee.email,
+        employee.ticket_count + 1
+      );
+    }
   };
 
   const deleteTicket = async (ticketId) => {
@@ -222,28 +248,34 @@ const TicketProvider = ({ children }) => {
 
     await axios.delete(URI + `/${ticketId}`);
 
-    if (employees.length > 0) {
-      await axios.put(EMP_URI + `/${employee._id}`, {
-        _id: `${user.uid}`,
-        employees: [
-          {
-            _id: employee._id,
-            name: employee.name,
-            email: employee.email,
-            ticket_count: employee.ticket_count - 1,
-          },
-        ],
-      });
-    }
+    const updatedTickets = tickets.filter((ticket) => {
+      return ticket._id !== ticketId;
+    });
+    setTickets(updatedTickets);
 
-    window.location.reload();
+    const updatedClosedTickets = closedTickets.filter((ticket) => {
+      return ticket._id !== ticketId;
+    });
+    setClosedTickets(updatedClosedTickets);
+
+    if (employees.length > 0) {
+      if (employee.ticket_count > 0) {
+        editEmployee(
+          employee._id,
+          employee.name,
+          employee.email,
+          employee.ticket_count - 1
+        );
+      } else {
+        editEmployee(employee._id, employee.name, employee.email, 0);
+      }
+    }
   };
 
   const contextValue = {
     accountType,
     tickets,
     closedTickets,
-    employees,
     addTicket,
     editTicket,
     closeTicket,
