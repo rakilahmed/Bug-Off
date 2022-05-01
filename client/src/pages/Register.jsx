@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { Alert } from '@mui/material';
 import logo from '../assets/logo.svg';
+import { validateEmail, validatePassword } from '../components';
 
 const Register = () => {
   const { user, register } = useAuth();
@@ -25,7 +26,15 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [registerError, setRegisterError] = useState('');
+  const [nameHelperText, setNameHelperText] = useState('');
+  const [emailHelperText, setEmailHelperText] = useState('');
+  const [passwordHelperText, setPasswordHelperText] = useState('');
+  const [confirmPasswordHelperText, setConfirmPasswordHelperText] =
+    useState('');
+  const [nameStatus, setNameStatus] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -35,11 +44,75 @@ const Register = () => {
 
   const handleRegister = async (event) => {
     event.preventDefault();
-    setError('');
+    setRegisterError('');
     try {
       await register(name, type, email, password);
     } catch {
-      setError('Failed to register, try again!');
+      setRegisterError('Failed to register, try again!');
+    }
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (name === 'name') {
+      setName(value);
+      handleValidation(value, 'name');
+    } else if (name === 'email') {
+      setEmail(value);
+      handleValidation(value, 'email');
+    } else if (name === 'password') {
+      setPassword(value);
+      handleValidation(value, 'password');
+    } else if (name === 'confirm-password') {
+      setConfirmPassword(value);
+      handleValidation(value, 'confirm-password');
+    }
+  };
+
+  const handleValidation = (value, type) => {
+    if (type === 'name') {
+      if (value.length === 0) {
+        setNameStatus(false);
+        setNameHelperText('Name is required');
+      } else if (value.length < 3) {
+        setNameStatus(false);
+        setNameHelperText('Name must be at least 3 characters');
+      } else {
+        setNameStatus(true);
+        setNameHelperText('');
+      }
+    } else if (type === 'email') {
+      if (value.length === 0) {
+        setEmailStatus(false);
+        setEmailHelperText('Email is required');
+      } else if (validateEmail(value)) {
+        setEmailStatus(true);
+        setEmailHelperText('');
+      } else {
+        setEmailStatus(false);
+        setEmailHelperText('Email is invalid');
+      }
+    } else if (type === 'password') {
+      if (value.length === 0) {
+        setPasswordHelperText('Password is required');
+      } else if (validatePassword(value)) {
+        setPasswordHelperText('');
+      } else {
+        setPasswordHelperText(
+          'Password must be at least 8 characters long. It must contain at least one lowercase letter, one uppercase letter, one number, and one of these characters ! @ # $ % ^ & *'
+        );
+      }
+    } else if (type === 'confirm-password') {
+      if (value.length === 0) {
+        setPasswordStatus(false);
+        setConfirmPasswordHelperText('Confirm Password is required');
+      } else if (confirmPassword + value[value.length - 1] === password) {
+        setPasswordStatus(true);
+        setConfirmPasswordHelperText('');
+      } else {
+        setPasswordStatus(false);
+        setConfirmPasswordHelperText('Passwords do not match');
+      }
     }
   };
 
@@ -79,19 +152,21 @@ const Register = () => {
           </Typography>
         </Box>
         <Box sx={{ mt: 2 }}>
-          {error && (
+          {registerError && (
             <Alert variant="filled" severity="error">
-              {error}
+              {registerError}
             </Alert>
           )}
           <TextField
             fullWidth
             required
+            error={nameHelperText ? true : false}
             margin="normal"
             id="name"
             name="name"
             label="Name"
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleChange}
+            helperText={nameHelperText}
           />
           <FormControl fullWidth required sx={{ mt: 1, mr: 1 }}>
             <InputLabel>Type</InputLabel>
@@ -108,31 +183,37 @@ const Register = () => {
           <TextField
             fullWidth
             required
+            error={emailHelperText ? true : false}
             margin="normal"
             id="email"
             name="email"
-            label="Email Address"
-            onChange={(e) => setEmail(e.target.value)}
+            label="Email"
+            onChange={handleChange}
+            helperText={emailHelperText}
           />
           <TextField
             fullWidth
             required
+            error={passwordHelperText ? true : false}
             margin="normal"
             type="password"
             id="password"
             name="password"
             label="Password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleChange}
+            helperText={passwordHelperText}
           />
           <TextField
             fullWidth
             required
+            error={confirmPasswordHelperText ? true : false}
             margin="normal"
             type="password"
             id="confirm-password"
             name="confirm-password"
             label="Confirm Password"
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={handleChange}
+            helperText={confirmPasswordHelperText}
           />
           <Button
             fullWidth
@@ -146,7 +227,7 @@ const Register = () => {
             }}
             onClick={handleRegister}
             disabled={
-              !name || !email || !password || password !== confirmPassword
+              nameStatus && emailStatus && passwordStatus ? false : true
             }
           >
             REGISTER

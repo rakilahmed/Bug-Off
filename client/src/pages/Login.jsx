@@ -12,13 +12,18 @@ import {
 } from '@mui/material';
 import { Alert } from '@mui/material';
 import logo from '../assets/logo.svg';
+import { validateEmail, validatePassword } from '../components';
 
 const Login = () => {
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [emailHelperText, setEmailHelperText] = useState('');
+  const [passwordHelperText, setPasswordHelperText] = useState('');
+  const [emailStatus, setEmailStatus] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -28,18 +33,60 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    setError('');
+    setLoginError('');
+
     try {
       await login(email, password);
       navigate('/');
     } catch {
-      setError('Login failed, try again!');
+      setLoginError('Failed to login, try again!');
+    }
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (name === 'email') {
+      setEmail(value);
+      handleValidation(value, 'email');
+    } else if (name === 'password') {
+      setPassword(value);
+      handleValidation(value, 'password');
+    }
+  };
+
+  const handleValidation = (value, type) => {
+    if (type === 'email') {
+      if (value.length === 0) {
+        setEmailStatus(false);
+        setEmailHelperText('Email is required');
+      } else if (validateEmail(value)) {
+        setEmailStatus(true);
+        setEmailHelperText('');
+      } else {
+        setEmailStatus(false);
+        setEmailHelperText('Email is invalid');
+      }
+    } else if (type === 'password') {
+      if (value.length === 0) {
+        setPasswordStatus(false);
+        setPasswordHelperText('Password is required');
+      } else if (validatePassword(value)) {
+        setPasswordStatus(true);
+        setPasswordHelperText('');
+      } else {
+        setPasswordStatus(false);
+        setPasswordHelperText(
+          'Password must be at least 8 characters long. It must contain at least one lowercase letter, one uppercase letter, one number, and one of these characters ! @ # $ % ^ & *'
+        );
+      }
     }
   };
 
   const handleGuest = () => {
     setEmail('admin@bugoff.com');
     setPassword('bugoff2022');
+    setEmailStatus(true);
+    setPasswordStatus(true);
   };
 
   return (
@@ -78,31 +125,35 @@ const Login = () => {
           </Typography>
         </Box>
         <Box sx={{ mt: 2 }}>
-          {error && (
+          {loginError && (
             <Alert variant="filled" severity="error">
-              {error}
+              {loginError}
             </Alert>
           )}
           <TextField
             fullWidth
             required
+            error={emailHelperText ? true : false}
             margin="normal"
             id="email"
             name="email"
-            label="Email Address"
+            label="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleChange}
+            helperText={emailHelperText}
           />
           <TextField
             fullWidth
             required
+            error={passwordHelperText ? true : false}
             margin="normal"
             type="password"
             id="password"
             name="password"
             label="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleChange}
+            helperText={passwordHelperText}
           />
           <Button
             fullWidth
@@ -115,7 +166,7 @@ const Login = () => {
               '&:hover': { backgroundColor: '#66bb6a' },
             }}
             onClick={handleLogin}
-            disabled={!email || !password}
+            disabled={emailStatus && passwordStatus ? false : true}
           >
             LOGIN
           </Button>

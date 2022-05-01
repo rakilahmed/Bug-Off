@@ -1,4 +1,5 @@
 export { default as Loading } from './Utils/Loading';
+export { validateEmail, validatePassword } from './Utils/Validation';
 export { default as Header } from './Header/Header';
 export { default as Overview } from './Overview/Overview';
 export { default as TicketProvider } from './Tickets/TicketProvider';
