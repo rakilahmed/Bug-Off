@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { RiAdminLine } from 'react-icons/ri';
 import { Header } from '../components';
+import { validateEmail, validatePassword } from '../components/';
 
 const Profile = () => {
   const {
@@ -29,6 +30,14 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [updateError, setUpdateError] = useState('');
+  const [nameHelperText, setNameHelperText] = useState('');
+  const [emailHelperText, setEmailHelperText] = useState('');
+  const [passwordHelperText, setPasswordHelperText] = useState('');
+  const [confirmPasswordHelperText, setConfirmPasswordHelperText] =
+    useState('');
+  const [nameStatus, setNameStatus] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -73,8 +82,73 @@ const Profile = () => {
         setConfirmPassword('');
       })
       .catch(() => {
-        setUpdateError('Failed to update account');
+        setUpdateError('Failed to update account, try again!');
       });
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (name === 'name') {
+      setName(value);
+      handleValidation(value, 'name');
+    } else if (name === 'email') {
+      setEmail(value);
+      handleValidation(value, 'email');
+    } else if (name === 'password') {
+      setPassword(value);
+      handleValidation(value, 'password');
+    } else if (name === 'confirm-password') {
+      setConfirmPassword(value);
+      handleValidation(value, 'confirm-password');
+    }
+  };
+
+  const handleValidation = (value, type) => {
+    if (type === 'name') {
+      if (value.length === 0) {
+        setNameStatus(false);
+        setNameHelperText('');
+      } else if (value.length < 3) {
+        setNameStatus(false);
+        setNameHelperText('Name must be at least 3 characters');
+      } else if (value === user?.displayName) {
+        setNameStatus(false);
+        setNameHelperText('Current name is the same');
+      } else {
+        setNameStatus(true);
+        setNameHelperText('');
+      }
+    } else if (type === 'email') {
+      if (value === user?.email) {
+        setEmailStatus(false);
+        setEmailHelperText('Current email is the same');
+      } else if (value.length === 0) {
+        setEmailStatus(false);
+        setEmailHelperText('');
+      } else if (!validateEmail(value)) {
+        setEmailStatus(false);
+        setEmailHelperText('Email is invalid');
+      } else {
+        setEmailStatus(true);
+        setEmailHelperText('');
+      }
+    } else if (type === 'password') {
+      if (value !== '' && !validatePassword(value)) {
+        setPasswordHelperText(
+          'Password must be at least 8 characters long. It must contain at least one lowercase letter, one uppercase letter, one number, and one of these characters ! @ # $ % ^ & *'
+        );
+      } else {
+        setPasswordHelperText('');
+      }
+    } else if (type === 'confirm-password') {
+      if (confirmPassword + value[value.length - 1] === password) {
+        passwordHelperText === '' && setPasswordStatus(true);
+        setConfirmPasswordHelperText('');
+      } else {
+        setPasswordStatus(false);
+        setConfirmPasswordHelperText('Passwords do not match');
+      }
+    }
   };
 
   const handleGoBack = () => {
@@ -139,42 +213,50 @@ const Profile = () => {
             />
             <TextField
               fullWidth
+              error={nameHelperText ? true : false}
               margin="normal"
               id="name"
               name="name"
               label="New Name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={handleChange}
+              helperText={nameHelperText}
             />
             <TextField
               fullWidth
+              error={emailHelperText ? true : false}
               margin="normal"
               id="email"
               name="email"
               label="New Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleChange}
+              helperText={emailHelperText}
             />
             <Box display={'flex'}>
               <TextField
                 style={{ paddingRight: '1rem' }}
                 fullWidth
+                error={passwordHelperText ? true : false}
                 margin="normal"
                 type="password"
                 id="password"
                 name="password"
                 label="New Password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handleChange}
+                helperText={passwordHelperText}
               />
               <TextField
                 fullWidth
                 required
+                error={confirmPasswordHelperText ? true : false}
                 margin="normal"
                 type="password"
                 id="confirm-password"
                 name="confirm-password"
                 label="Confirm Password"
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={handleChange}
+                helperText={confirmPasswordHelperText}
               />
             </Box>
             <Button
@@ -189,8 +271,7 @@ const Profile = () => {
               }}
               onClick={handleUpdateProfile}
               disabled={
-                (!name && !email && !password && !confirmPassword) ||
-                password !== confirmPassword
+                nameStatus || emailStatus || passwordStatus ? false : true
               }
             >
               UPDATE
