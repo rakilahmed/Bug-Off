@@ -39,7 +39,7 @@ const EmployeeProvider = ({ children }) => {
         {
           _id: Math.floor(1000 + Math.random() * 9000),
           name: name,
-          email: email,
+          email: email.toLowerCase(),
           ticket_count: 0,
         },
       ],

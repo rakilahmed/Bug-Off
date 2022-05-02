@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, FormGroup, TextField, Button } from '@mui/material/';
 import { useEmployeeContext } from './EmployeeProvider';
+import { validateEmail } from '../Utils/Validation';
 
 const EmployeeForm = ({
   floatingForm = false,
@@ -8,10 +9,12 @@ const EmployeeForm = ({
   closeForm,
   employee,
 }) => {
-  const { addEmployee, editEmployee } = useEmployeeContext();
+  const { employees, addEmployee, editEmployee } = useEmployeeContext();
   const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [nameInput, setNameInput] = useState(employee ? employee.name : '');
   const [emailInput, setEmailInput] = useState(employee ? employee.email : '');
+  const [nameHelperText, setNameHelperText] = useState('');
+  const [emailHelperText, setEmailHelperText] = useState('');
   const [nameStatus, setNameStatus] = useState(false);
   const [emailStatus, setEmailStatus] = useState(false);
 
@@ -30,14 +33,52 @@ const EmployeeForm = ({
     setEmailStatus(false);
   };
 
-  const validateName = (event) => {
-    setNameInput(event.target.value);
-    event.target.value === '' ? setNameStatus(false) : setNameStatus(true);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (name === 'name') {
+      setNameInput(value);
+      handleValidation(value, name);
+    } else if (name === 'email') {
+      setEmailInput(value);
+      handleValidation(value, name);
+    }
   };
 
-  const validateEmail = (event) => {
-    setEmailInput(event.target.value);
-    event.target.value === '' ? setEmailStatus(false) : setEmailStatus(true);
+  const handleValidation = (value, name) => {
+    if (name === 'name') {
+      if (value.length > 0 && value.length < 3) {
+        setNameStatus(false);
+        setNameHelperText('Name must be at least 3 characters');
+      } else if (value.length === 0) {
+        setNameStatus(false);
+        setNameHelperText('Name is required');
+      } else {
+        setNameStatus(true);
+        setNameHelperText('');
+      }
+    } else if (name === 'email') {
+      if (value.length === 0) {
+        setEmailStatus(false);
+        setEmailHelperText('Email is required');
+      } else if (validateEmail(value)) {
+        const employee = employees.filter(
+          (employee) => employee.email === value.toLowerCase()
+        );
+        if (employee.length > 0) {
+          setEmailStatus(false);
+          setEmailHelperText('Employee with this email already exists');
+        } else {
+          setEmailStatus(true);
+          setEmailHelperText('');
+        }
+      } else if (employee) {
+        setEmailStatus(false);
+        setEmailHelperText('Email already in use');
+      } else {
+        setEmailStatus(false);
+        setEmailHelperText('Email is invalid');
+      }
+    }
   };
 
   const handleAddEmployee = (event) => {
@@ -67,12 +108,14 @@ const EmployeeForm = ({
               <TextField
                 fullWidth
                 required
+                error={nameHelperText ? true : false}
                 margin="normal"
-                id="employee-name"
+                name="name"
                 label="Name"
                 variant="outlined"
                 value={nameInput}
-                onChange={validateName}
+                onChange={handleChange}
+                helperText={nameHelperText}
               />
               <Button
                 type="submit"
@@ -101,12 +144,14 @@ const EmployeeForm = ({
             <TextField
               fullWidth
               required
+              error={emailHelperText ? true : false}
               margin="normal"
-              id="employee-email"
+              name="email"
               label="Email"
               variant="outlined"
               value={emailInput}
-              onChange={validateEmail}
+              onChange={handleChange}
+              helperText={emailHelperText}
             />
           </FormGroup>
         </Box>
