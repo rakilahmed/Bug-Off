@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Box, Link, Tooltip, IconButton } from '@mui/material';
 import { MdOutlineDashboardCustomize } from 'react-icons/md';
 import { IoTicketSharp } from 'react-icons/io5';
@@ -12,7 +11,6 @@ import { useAuth } from '../../firebase/AuthContext';
 
 const Header = () => {
   const { getAccountType, logout } = useAuth();
-  const navigate = useNavigate();
   const [type, setType] = useState('');
 
   useEffect(() => {
@@ -33,7 +31,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login');
+      // navigate('/login');
     } catch (error) {
       console.log(error.message);
     }
@@ -85,11 +83,13 @@ const Header = () => {
           </Tooltip>
         </Link>
         <AiOutlineMore style={{ marginInline: 10, fontSize: 30 }} />
-        <Tooltip title="Logout" onClick={handleLogout}>
-          <IconButton>
-            <ImExit color="#363740" />
-          </IconButton>
-        </Tooltip>
+        <Link href="/login" onClick={handleLogout}>
+          <Tooltip title="Logout">
+            <IconButton>
+              <ImExit color="#363740" />
+            </IconButton>
+          </Tooltip>
+        </Link>
       </Box>
     </Box>
   );

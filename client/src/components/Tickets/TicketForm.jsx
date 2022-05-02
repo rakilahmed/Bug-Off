@@ -30,15 +30,15 @@ const TicketForm = ({
   const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [titleInput, setTitleInput] = useState(ticket ? ticket.title : '');
   const [assignedToInput, setAssignedToInput] = useState(
-    ticket && ticket.assigned_to !== 'Self' ? ticket.assigned_to : ''
+    ticket ? ticket.assigned_to : ''
   );
-  const [priority, setPriority] = useState(
-    ticket ? ticket.priority : '' || newTicket ? 'Low' : ''
-  );
+  const [priority, setPriority] = useState(ticket ? ticket.priority : '');
   const [dueDate, setDueDate] = useState(ticket ? ticket.due_date : new Date());
   const [summaryInput, setSummaryInput] = useState(
     ticket ? ticket.summary : ''
   );
+  const [titleHelperText, setTitleHelperText] = useState('');
+  const [summaryHelperText, setSummaryHelperText] = useState('');
   const [titleStatus, setTitleStatus] = useState(false);
   const [assignedToStatus, setAssignedToStatus] = useState(false);
   const [priorityStatus, setPriorityStatus] = useState(false);
@@ -66,23 +66,56 @@ const TicketForm = ({
     setDueDateStatus(false);
   };
 
-  const validateTitle = (event) => {
-    setTitleInput(event.target.value);
-    event.target.value === '' ? setTitleStatus(false) : setTitleStatus(true);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (name === 'title') {
+      setTitleInput(value);
+      handleValidation(value, 'title');
+    } else if (name === 'assigned-to') {
+      setAssignedToInput(value);
+      handleValidation(value, 'assigned-to');
+    } else if (name === 'priority') {
+      setPriority(value);
+      handleValidation(value, 'priority');
+    } else if (name === 'summary') {
+      setSummaryInput(value);
+      handleValidation(value, 'summary');
+    }
   };
 
-  const validateAssignedTo = (event) => {
-    setAssignedToInput(event.target.value);
-    event.target.value === ticket.assigned_to
-      ? setAssignedToStatus(false)
-      : setAssignedToStatus(true);
-  };
-
-  const validatePriority = (event) => {
-    setPriority(event.target.value);
-    event.target.value === ticket.priority
-      ? setPriorityStatus(false)
-      : setPriorityStatus(true);
+  const handleValidation = (value, type) => {
+    if (type === 'title') {
+      if (value.length === 0) {
+        setTitleStatus(false);
+        setTitleHelperText('Title is required');
+      } else if (value.length > 0 && value.length < 3) {
+        setTitleStatus(false);
+        setTitleHelperText('Title must be at least 3 characters');
+      } else {
+        setTitleStatus(true);
+        setTitleHelperText('');
+      }
+    } else if (type === 'assigned-to') {
+      if (floatingForm && !newTicket && value === ticket.assigned_to) {
+        setAssignedToStatus(false);
+      } else {
+        setAssignedToStatus(true);
+      }
+    } else if (type === 'priority') {
+      if (floatingForm && !newTicket && value === ticket.priority) {
+        setPriorityStatus(false);
+      } else {
+        setPriorityStatus(true);
+      }
+    } else if (type === 'summary') {
+      if (value.length === 0) {
+        setSummaryStatus(false);
+        setSummaryHelperText('Summary is required');
+      } else {
+        setSummaryStatus(true);
+        setSummaryHelperText('');
+      }
+    }
   };
 
   const validateDueDate = (newDate) => {
@@ -90,13 +123,6 @@ const TicketForm = ({
     newDate === ticket.due_data
       ? setDueDateStatus(false)
       : setDueDateStatus(true);
-  };
-
-  const validateSummary = (event) => {
-    setSummaryInput(event.target.value);
-    event.target.value === ''
-      ? setSummaryStatus(false)
-      : setSummaryStatus(true);
   };
 
   const handleAddTicket = (event) => {
@@ -158,12 +184,14 @@ const TicketForm = ({
               <TextField
                 fullWidth
                 required
+                error={titleHelperText ? true : false}
                 margin="normal"
-                id="ticket-title"
+                name="title"
                 label="Title"
                 variant="outlined"
                 value={titleInput}
-                onChange={validateTitle}
+                onChange={handleChange}
+                helperText={titleHelperText}
               />
               <Button
                 type="submit"
@@ -177,7 +205,7 @@ const TicketForm = ({
                 }}
                 disabled={
                   !floatingForm || newTicket
-                    ? (!titleStatus && !assignedToStatus) || !summaryStatus
+                    ? !titleStatus || !summaryStatus
                     : !titleStatus &&
                       !assignedToStatus &&
                       !summaryStatus &&
@@ -193,18 +221,16 @@ const TicketForm = ({
                 {floatingForm && !newTicket ? 'Update' : 'Add'}
               </Button>
             </Box>
-            {accountType === 'pm' && employees.length > 0 && (
-              <FormControl fullWidth required sx={{ mt: 1 }}>
+            {accountType === 'pm' && (
+              <FormControl fullWidth sx={{ mt: 1 }}>
                 <InputLabel>Assigned To</InputLabel>
                 <Select
-                  value={assignedToInput}
+                  name="assigned-to"
                   label="Assigned To"
-                  onChange={
-                    floatingForm && !newTicket
-                      ? validateAssignedTo
-                      : (e) => setAssignedToInput(e.target.value)
-                  }
+                  value={assignedToInput || 'Self'}
+                  onChange={handleChange}
                 >
+                  <MenuItem value="Self">Self</MenuItem>
                   {employees.map((employee) => (
                     <MenuItem key={employee._id} value={employee.name}>
                       {employee.name}
@@ -223,13 +249,10 @@ const TicketForm = ({
               <FormControl fullWidth sx={{ mt: 1, mr: 1 }}>
                 <InputLabel>Priority</InputLabel>
                 <Select
-                  value={priority}
+                  name="priority"
                   label="Priority"
-                  onChange={
-                    floatingForm && !newTicket
-                      ? validatePriority
-                      : (e) => setPriority(e.target.value)
-                  }
+                  value={priority || 'Low'}
+                  onChange={handleChange}
                 >
                   <MenuItem value="Low">Low</MenuItem>
                   <MenuItem value="Medium">Medium</MenuItem>
@@ -256,14 +279,17 @@ const TicketForm = ({
             </Box>
             <TextField
               required
+              fullWidth
+              error={summaryHelperText ? true : false}
               margin="normal"
-              id="ticket-summary"
+              name="summary"
               label="Summary"
               variant="outlined"
               multiline
               rows={5}
               value={summaryInput}
-              onChange={validateSummary}
+              onChange={handleChange}
+              helperText={summaryHelperText}
             />
           </FormGroup>
         </Box>

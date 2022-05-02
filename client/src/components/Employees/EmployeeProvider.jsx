@@ -10,15 +10,17 @@ const EmployeeProvider = ({ children }) => {
   const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
-    const fetchEmployees = async () => {
-      const res = await axios.get(URI);
-      if (res.data[0] && res.data[0].employees) {
-        setEmployees(res.data[0].employees);
-      }
-    };
+    if (user) {
+      const fetchEmployees = async () => {
+        const res = await axios.get(URI);
+        if (res.data[0] && res.data[0].employees) {
+          setEmployees(res.data[0].employees);
+        }
+      };
 
-    fetchEmployees();
-  }, []);
+      fetchEmployees();
+    }
+  }, [user]);
 
   axios.interceptors.request.use(
     async (config) => {

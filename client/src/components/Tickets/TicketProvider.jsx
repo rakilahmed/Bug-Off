@@ -14,33 +14,35 @@ const TicketProvider = ({ children }) => {
   const [closedTickets, setClosedTickets] = useState([]);
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      const res = await axios.get(URI);
-      try {
-        if (res.data[0] && res.data[0].tickets) {
-          setTickets(
-            res.data[0].tickets
-              .filter((ticket) => ticket.status === 'open')
-              .reverse()
-          );
-          setClosedTickets(
-            res.data[0].tickets
-              .filter((ticket) => ticket.status === 'closed')
-              .reverse()
-          );
+    if (user) {
+      const fetchTickets = async () => {
+        const res = await axios.get(URI);
+        try {
+          if (res.data[0] && res.data[0].tickets) {
+            setTickets(
+              res.data[0].tickets
+                .filter((ticket) => ticket.status === 'open')
+                .reverse()
+            );
+            setClosedTickets(
+              res.data[0].tickets
+                .filter((ticket) => ticket.status === 'closed')
+                .reverse()
+            );
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
-      }
-    };
+      };
 
-    const fetchAccountType = async () => {
-      setAccountType(await getAccountType());
-    };
+      const fetchAccountType = async () => {
+        setAccountType(await getAccountType());
+      };
 
-    fetchTickets();
-    fetchAccountType();
-  }, [getAccountType]);
+      fetchTickets();
+      fetchAccountType();
+    }
+  }, [user, getAccountType]);
 
   axios.interceptors.request.use(
     async (config) => {
@@ -74,7 +76,7 @@ const TicketProvider = ({ children }) => {
 
     setTickets([res.data, ...tickets]);
 
-    if (employees.length > 0 && (assignedTo !== '' || assignedTo === 'Self')) {
+    if (employees.length > 0 && assignedTo !== '' && assignedTo !== 'Self') {
       const employee = employees.find(
         (employee) => employee.name === assignedTo
       );
@@ -123,7 +125,7 @@ const TicketProvider = ({ children }) => {
         (employee) => employee.name === ticket.assigned_to
       );
 
-      if (employee.name !== assignedTo) {
+      if (employee.name !== assignedTo && assignedTo !== 'Self') {
         const newAssigned = employees.find(
           (employee) => employee.name === assignedTo
         );
@@ -145,10 +147,19 @@ const TicketProvider = ({ children }) => {
         } else {
           editEmployee(employee._id, employee.name, employee.email, 0);
         }
+      } else if (assignedTo === 'Self') {
+        if (employee.ticket_count > 0) {
+          editEmployee(
+            employee._id,
+            employee.name,
+            employee.email,
+            employee.ticket_count - 1
+          );
+        } else {
+          editEmployee(employee._id, employee.name, employee.email, 0);
+        }
       }
-    }
-
-    if (employees.length > 0 && ticket.assigned_to === 'Self') {
+    } else if (employees.length > 0 && ticket.assigned_to === 'Self') {
       const employee = employees.find(
         (employee) => employee.name === assignedTo
       );
