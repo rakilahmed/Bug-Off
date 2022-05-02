@@ -10,15 +10,17 @@ const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      const res = await axios.get(URI);
-      if (res.data[0] && res.data[0].tasks) {
-        setTasks(res.data[0].tasks.reverse());
-      }
-    };
+    if (user) {
+      const fetchTasks = async () => {
+        const res = await axios.get(URI);
+        if (res.data[0] && res.data[0].tasks) {
+          setTasks(res.data[0].tasks.reverse());
+        }
+      };
 
-    fetchTasks();
-  }, []);
+      fetchTasks();
+    }
+  }, [user]);
 
   axios.interceptors.request.use(
     async (config) => {

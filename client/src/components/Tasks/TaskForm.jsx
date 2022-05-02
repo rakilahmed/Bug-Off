@@ -15,11 +15,13 @@ const TaskForm = ({ title, floatingForm = false, closeForm, task }) => {
   const { addTask, editTask } = useTaskContext();
   const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [taskInput, setTaskInput] = useState(task ? task.task : '');
+  const [taskHelperText, setTaskHelperText] = useState('');
   const [titleStatus, setTitleStatus] = useState(false);
 
   const handleForm = () => {
     setShowForm(!showForm);
     setTaskInput('');
+    setTaskHelperText('');
     setTitleStatus(false);
   };
 
@@ -28,9 +30,27 @@ const TaskForm = ({ title, floatingForm = false, closeForm, task }) => {
     setTitleStatus(false);
   };
 
-  const validateTitle = (event) => {
-    setTaskInput(event.target.value);
-    event.target.value === '' ? setTitleStatus(false) : setTitleStatus(true);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (name === 'task') {
+      setTaskInput(value);
+      handleValidation(value, name);
+    }
+  };
+
+  const handleValidation = (value, name) => {
+    if (name === 'task') {
+      if (value.length > 0 && value.length < 3) {
+        setTitleStatus(false);
+        setTaskHelperText('Task must be at least 3 characters');
+      } else if (value.length === 0) {
+        setTitleStatus(false);
+        setTaskHelperText('Task is required');
+      } else {
+        setTitleStatus(true);
+        setTaskHelperText('');
+      }
+    }
   };
 
   const handleAddTask = (event) => {
@@ -84,12 +104,14 @@ const TaskForm = ({ title, floatingForm = false, closeForm, task }) => {
               <TextField
                 fullWidth
                 required
+                error={taskHelperText ? true : false}
                 margin="normal"
-                id="task-title"
+                name="task"
                 label="Task"
                 variant="outlined"
                 value={taskInput}
-                onChange={validateTitle}
+                onChange={handleChange}
+                helperText={taskHelperText}
               />
               <Button
                 type="submit"
