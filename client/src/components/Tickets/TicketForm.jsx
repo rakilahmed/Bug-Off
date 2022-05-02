@@ -50,8 +50,10 @@ const TicketForm = ({
     setShowForm(!showForm);
     setTitleInput('');
     setAssignedToInput('');
-    setSummaryInput('');
     setPriority('Low');
+    setSummaryInput('');
+    setTitleHelperText('');
+    setSummaryHelperText('');
     setTitleStatus(false);
     setAssignedToStatus(false);
     setSummaryStatus(false);
