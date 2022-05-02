@@ -159,7 +159,11 @@ const TicketProvider = ({ children }) => {
           editEmployee(employee._id, employee.name, employee.email, 0);
         }
       }
-    } else if (employees.length > 0 && ticket.assigned_to === 'Self') {
+    } else if (
+      employees.length > 0 &&
+      ticket.assigned_to === 'Self' &&
+      assignedTo !== 'Self'
+    ) {
       const employee = employees.find(
         (employee) => employee.name === assignedTo
       );
