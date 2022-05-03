@@ -17,14 +17,15 @@ import { validateEmail, validatePassword } from '../components/';
 const Profile = () => {
   const {
     user,
-    getAccountType,
     updateUserName,
     updateUserEmail,
     updateUserPassword,
+    setAccountType,
+    getAccountType,
   } = useAuth();
   const navigate = useNavigate();
+  const [profileType, setProfileType] = useState('');
   const [name, setName] = useState('');
-  const [type, setType] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -40,22 +41,13 @@ const Profile = () => {
   const [passwordStatus, setPasswordStatus] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
     if (!user) {
       navigate('/login');
     }
 
-    const getType = async () => {
-      const accountType = await getAccountType();
-      if (isMounted) {
-        setType(accountType);
-      }
-    };
-
-    getType();
-    return () => {
-      isMounted = false;
-    };
+    getAccountType().then((accountType) => {
+      setProfileType(accountType);
+    });
   }, [navigate, user, getAccountType]);
 
   const handleUpdateProfile = (event) => {
@@ -155,6 +147,15 @@ const Profile = () => {
     navigate('/');
   };
 
+  const handleAccountTypeSwitch = async () => {
+    if (profileType === 'pm') {
+      await setAccountType('personal');
+    } else {
+      await setAccountType('pm');
+    }
+    window.location.reload();
+  };
+
   return (
     <Box>
       <Header />
@@ -172,16 +173,30 @@ const Profile = () => {
             boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
           }}
         >
-          {type !== '' && (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <RiAdminLine />
-              <Typography variant="subtitle1" ml={1}>
-                {type === 'personal' && 'Personal'}
-                {type === 'pm' && 'Product Manager'}
-                {type === 'employee' && 'Employee'}
-              </Typography>
+          {profileType !== '' && (
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <RiAdminLine />
+                <Typography variant="subtitle2" ml={1}>
+                  {profileType === 'personal' && 'Personal'}
+                  {profileType === 'pm' && 'Product Manager'}
+                  {profileType === 'employee' && 'Employee'}
+                </Typography>
+              </Box>
+              {profileType !== 'employee' && (
+                <Typography
+                  variant="subtitle2"
+                  color={'secondary'}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={handleAccountTypeSwitch}
+                >
+                  Switch to{' '}
+                  {profileType === 'pm' ? 'Personal' : 'Product Manager'}
+                </Typography>
+              )}
             </Box>
           )}
+
           <Box>
             {message && (
               <Alert variant="filled" severity="success">

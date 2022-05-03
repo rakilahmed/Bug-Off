@@ -13,14 +13,11 @@ const Tickets = () => {
       navigate('/login');
     }
 
-    const fetchAccountType = async () => {
-      const res = await getAccountType();
-      if (res !== 'pm') {
+    getAccountType().then((accountType) => {
+      if (accountType !== 'pm') {
         navigate('/');
       }
-    };
-
-    fetchAccountType();
+    });
   }, [getAccountType, navigate, user]);
 
   return (

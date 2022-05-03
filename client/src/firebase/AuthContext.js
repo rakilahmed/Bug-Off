@@ -20,9 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, type, email, password) => {
     await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(collection(db, 'users'), `${auth.currentUser.uid}`), {
-      type,
-    });
+    setAccountType(type);
     return updateProfile(auth.currentUser, {
       displayName: name,
     });
@@ -54,6 +52,12 @@ export const AuthProvider = ({ children }) => {
     return await auth.currentUser?.getIdToken();
   };
 
+  const setAccountType = async (type) => {
+    await setDoc(doc(collection(db, 'users'), `${auth.currentUser.uid}`), {
+      type,
+    });
+  };
+
   const getAccountType = async () => {
     const userData = await getDoc(doc(db, 'users', `${auth.currentUser?.uid}`));
     return userData.data() && userData.data().type;
@@ -73,6 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    setAccountType,
     getAccountType,
     getToken,
     register,

@@ -9,9 +9,11 @@ const TicketContext = createContext();
 const TicketProvider = ({ children }) => {
   const { user, getToken, getAccountType } = useAuth();
   const { employees, editEmployee } = useEmployeeContext();
-  const [tickets, setTickets] = useState([]);
   const [accountType, setAccountType] = useState('');
+  const [tickets, setTickets] = useState([]);
+  const [assignedTickets, setAssignedTickets] = useState([]);
   const [closedTickets, setClosedTickets] = useState([]);
+  const [closedAssignedTickets, setClosedAssignedTickets] = useState([]);
 
   useEffect(() => {
     if (user) {
@@ -24,6 +26,9 @@ const TicketProvider = ({ children }) => {
                 .filter((ticket) => ticket.status === 'open')
                 .reverse()
             );
+            if (accountType === 'pm' && employees.length > 0) {
+              updateEmaployeeTicketCount();
+            }
             setClosedTickets(
               res.data[0].tickets
                 .filter((ticket) => ticket.status === 'closed')
@@ -35,14 +40,49 @@ const TicketProvider = ({ children }) => {
         }
       };
 
-      const fetchAccountType = async () => {
-        setAccountType(await getAccountType());
+      getAccountType().then((accountType) => {
+        setAccountType(accountType);
+      });
+
+      const fetchAssignedTickets = async () => {
+        const res = await axios.get(URI + `/assigned/${accountType}`);
+        try {
+          setAssignedTickets(
+            res.data.filter((ticket) => ticket.status === 'open').reverse()
+          );
+          setClosedAssignedTickets(
+            res.data.filter((ticket) => ticket.status === 'closed').reverse()
+          );
+        } catch (error) {
+          console.log(error);
+        }
       };
 
       fetchTickets();
-      fetchAccountType();
+      accountType === 'employee' && fetchAssignedTickets();
     }
-  }, [user, getAccountType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, getAccountType, accountType]);
+
+  const updateEmaployeeTicketCount = () => {
+    if (employees.length > 0) {
+      employees.forEach((employee) => {
+        const employeeTickets = tickets.filter(
+          (ticket) =>
+            ticket.status === 'open' &&
+            ticket.assigned_to === employee.name &&
+            ticket.assignee_email === employee.email
+        );
+        employee.ticket_count = employeeTickets.length;
+        editEmployee(
+          employee._id,
+          employee.name,
+          employee.email,
+          employee.ticket_count
+        );
+      });
+    }
+  };
 
   axios.interceptors.request.use(
     async (config) => {
@@ -83,19 +123,6 @@ const TicketProvider = ({ children }) => {
     });
 
     setTickets([res.data, ...tickets]);
-
-    if (employees.length > 0 && assignedTo !== '' && assignedTo !== 'Self') {
-      const employee = employees.find(
-        (employee) => employee.name === assignedTo
-      );
-
-      editEmployee(
-        employee._id,
-        employee.name,
-        employee.email,
-        employee.ticket_count + 1
-      );
-    }
   };
 
   const editTicket = async (
@@ -128,63 +155,7 @@ const TicketProvider = ({ children }) => {
       ],
     });
 
-    const ticket = tickets.find((ticket) => ticket._id === ticketId);
-
-    if (employees.length > 0 && ticket.assigned_to !== 'Self') {
-      const employee = employees.find(
-        (employee) => employee.name === ticket.assigned_to
-      );
-
-      if (employee.name !== assignedTo && assignedTo !== 'Self') {
-        const newAssigned = employees.find(
-          (employee) => employee.name === assignedTo
-        );
-
-        editEmployee(
-          newAssigned._id,
-          newAssigned.name,
-          newAssigned.email,
-          newAssigned.ticket_count + 1
-        );
-
-        if (employee.ticket_count > 0) {
-          editEmployee(
-            employee._id,
-            employee.name,
-            employee.email,
-            employee.ticket_count - 1
-          );
-        } else {
-          editEmployee(employee._id, employee.name, employee.email, 0);
-        }
-      } else if (assignedTo === 'Self') {
-        if (employee.ticket_count > 0) {
-          editEmployee(
-            employee._id,
-            employee.name,
-            employee.email,
-            employee.ticket_count - 1
-          );
-        } else {
-          editEmployee(employee._id, employee.name, employee.email, 0);
-        }
-      }
-    } else if (
-      employees.length > 0 &&
-      ticket.assigned_to === 'Self' &&
-      assignedTo !== 'Self'
-    ) {
-      const employee = employees.find(
-        (employee) => employee.name === assignedTo
-      );
-
-      editEmployee(
-        employee._id,
-        employee.name,
-        employee.email,
-        employee.ticket_count + 1
-      );
-    }
+    updateEmaployeeTicketCount();
 
     setTickets(
       tickets.map((ticket) => {
@@ -203,6 +174,7 @@ const TicketProvider = ({ children }) => {
           status: 'closed',
           submitted_by: ticket.submitted_by,
           assigned_to: ticket.assigned_to,
+          assignee_email: ticket.assignee_email,
           title: ticket.title,
           summary: ticket.summary,
           priority: ticket.priority,
@@ -213,29 +185,14 @@ const TicketProvider = ({ children }) => {
       ],
     });
 
+    updateEmaployeeTicketCount();
+
     const updatedTickets = tickets.filter((ticketItem) => {
       return ticketItem._id !== ticket._id;
     });
 
     setTickets(updatedTickets);
     setClosedTickets([res.data, ...closedTickets]);
-
-    if (employees.length > 0 && ticket.assigned_to !== 'Self') {
-      const employee = employees.find(
-        (employee) => employee.name === ticket.assigned_to
-      );
-
-      if (employee.ticket_count > 0) {
-        editEmployee(
-          employee._id,
-          employee.name,
-          employee.email,
-          employee.ticket_count - 1
-        );
-      } else {
-        editEmployee(employee._id, employee.name, employee.email, 0);
-      }
-    }
   };
 
   const restoreTicket = async (ticket) => {
@@ -248,6 +205,7 @@ const TicketProvider = ({ children }) => {
           status: 'open',
           submitted_by: ticket.submitted_by,
           assigned_to: ticket.assigned_to,
+          assignee_email: ticket.assignee_email,
           title: ticket.title,
           summary: ticket.summary,
           priority: ticket.priority,
@@ -258,36 +216,17 @@ const TicketProvider = ({ children }) => {
       ],
     });
 
+    updateEmaployeeTicketCount();
+
     const updatedClosedTickets = closedTickets.filter((ticketItem) => {
       return ticketItem._id !== ticket._id;
     });
 
     setClosedTickets(updatedClosedTickets);
     setTickets([res.data, ...tickets]);
-
-    if (employees.length > 0 && ticket.assigned_to !== 'Self') {
-      const employee = employees.find(
-        (employee) => employee.name === ticket.assigned_to
-      );
-
-      editEmployee(
-        employee._id,
-        employee.name,
-        employee.email,
-        employee.ticket_count + 1
-      );
-    }
   };
 
   const deleteTicket = async (ticketId) => {
-    let ticket = tickets.find((ticket) => ticket._id === ticketId);
-    if (ticket === undefined) {
-      ticket = closedTickets.find((ticket) => ticket._id === ticketId);
-    }
-    const employee = employees.find(
-      (employee) => employee.name === ticket.assigned_to
-    );
-
     await axios.delete(URI + `/${ticketId}`);
 
     const updatedTickets = tickets.filter((ticket) => {
@@ -299,19 +238,140 @@ const TicketProvider = ({ children }) => {
       return ticket._id !== ticketId;
     });
     setClosedTickets(updatedClosedTickets);
+  };
 
-    if (employees.length > 0 && ticket.assigned_to !== 'Self') {
-      if (employee.ticket_count > 0) {
-        editEmployee(
-          employee._id,
-          employee.name,
-          employee.email,
-          employee.ticket_count - 1
-        );
-      } else {
-        editEmployee(employee._id, employee.name, employee.email, 0);
+  const editAssignedTicket = async (
+    ticketId,
+    pmName,
+    assignedTo,
+    assigneeEmail,
+    title,
+    summary,
+    priority,
+    dueDate,
+    createdAt
+  ) => {
+    const res = await axios.put(URI + `/assigned/${accountType}/${ticketId}`, {
+      tickets: [
+        {
+          _id: ticketId,
+          status: 'open',
+          submitted_by: pmName,
+          assigned_to: assignedTo,
+          assignee_email: assigneeEmail,
+          title: title,
+          summary: summary,
+          priority: priority,
+          due_date: dueDate,
+          created_at: createdAt,
+          updated_at: new Date().toISOString(),
+        },
+      ],
+    });
+
+    updateEmaployeeTicketCount();
+
+    const modifiedTicket = res.data.tickets.filter((ticketItem) => {
+      return ticketItem._id === ticketId;
+    });
+
+    const updatedAssignedTickets = assignedTickets.map((ticket) => {
+      return ticket._id === ticketId ? { ...modifiedTicket[0] } : ticket;
+    });
+
+    setAssignedTickets(updatedAssignedTickets);
+  };
+
+  const closeAssignedTicket = async (ticket) => {
+    const res = await axios.put(
+      URI + `/assigned/${accountType}/${ticket._id}`,
+      {
+        tickets: [
+          {
+            _id: ticket._id,
+            status: 'closed',
+            submitted_by: ticket.submitted_by,
+            assigned_to: ticket.assigned_to,
+            assignee_email: ticket.assignee_email,
+            title: ticket.title,
+            summary: ticket.summary,
+            priority: ticket.priority,
+            due_date: ticket.due_date,
+            created_at: ticket.created_at,
+            updated_at: new Date().toISOString(),
+          },
+        ],
       }
-    }
+    );
+
+    updateEmaployeeTicketCount();
+
+    const modifiedTicket = res.data.tickets.filter((ticketItem) => {
+      return ticketItem._id === ticket._id;
+    });
+
+    const updatedAssignedTickets = assignedTickets.filter((ticketItem) => {
+      return ticketItem._id !== ticket._id;
+    });
+
+    setAssignedTickets(updatedAssignedTickets);
+    setClosedAssignedTickets([modifiedTicket[0], ...closedAssignedTickets]);
+  };
+
+  const restoreAssignedTicket = async (ticket) => {
+    const res = await axios.put(
+      URI + `/assigned/${accountType}/${ticket._id}`,
+      {
+        tickets: [
+          {
+            _id: ticket._id,
+            status: 'open',
+            submitted_by: ticket.submitted_by,
+            assigned_to: ticket.assigned_to,
+            assignee_email: ticket.assignee_email,
+            title: ticket.title,
+            summary: ticket.summary,
+            priority: ticket.priority,
+            due_date: ticket.due_date,
+            created_at: ticket.created_at,
+            updated_at: new Date().toISOString(),
+          },
+        ],
+      }
+    );
+
+    updateEmaployeeTicketCount();
+
+    const modifiedTicket = res.data.tickets.filter((ticketItem) => {
+      return ticketItem._id === ticket._id;
+    });
+
+    const updatedClosedAssignedTickets = closedAssignedTickets.filter(
+      (ticketItem) => {
+        return ticketItem._id !== ticket._id;
+      }
+    );
+
+    setClosedAssignedTickets(updatedClosedAssignedTickets);
+    setAssignedTickets([modifiedTicket[0], ...assignedTickets]);
+  };
+
+  const deleteAssignedTicket = async (ticketId) => {
+    await axios.delete(URI + `/assigned/${accountType}/${ticketId}`);
+
+    const updatedAssignedTickets = assignedTickets.filter((ticketItem) => {
+      return ticketItem._id !== ticketId;
+    });
+
+    updateEmaployeeTicketCount();
+    setAssignedTickets(updatedAssignedTickets);
+
+    const updatedClosedAssignedTickets = closedAssignedTickets.filter(
+      (ticketItem) => {
+        return ticketItem._id !== ticketId;
+      }
+    );
+    setClosedAssignedTickets(updatedClosedAssignedTickets);
   };
 
   const contextValue = {
@@ -323,6 +383,12 @@ const TicketProvider = ({ children }) => {
     closeTicket,
     restoreTicket,
     deleteTicket,
+    assignedTickets,
+    closedAssignedTickets,
+    editAssignedTicket,
+    closeAssignedTicket,
+    restoreAssignedTicket,
+    deleteAssignedTicket,
   };
 
   return (

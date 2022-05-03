@@ -25,7 +25,8 @@ const TicketForm = ({
   closeForm,
   ticket,
 }) => {
-  const { accountType, addTicket, editTicket } = useTicketContext();
+  const { accountType, addTicket, editTicket, editAssignedTicket } =
+    useTicketContext();
   const { employees } = useEmployeeContext();
   const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [titleInput, setTitleInput] = useState(ticket ? ticket.title : '');
@@ -144,16 +145,31 @@ const TicketForm = ({
 
   const handleEditTicket = (event) => {
     event.preventDefault();
-    editTicket(
-      ticket._id,
-      assignedToInput,
-      assigneeEmail,
-      titleInput,
-      summaryInput,
-      priority,
-      dueDate,
-      ticket.created_at
-    );
+
+    if (accountType === 'employee' && ticket.assigned_to !== 'Self') {
+      editAssignedTicket(
+        ticket._id,
+        ticket.submitted_by,
+        ticket.assigned_to,
+        ticket.assignee_email,
+        titleInput,
+        summaryInput,
+        priority,
+        dueDate,
+        ticket.created_at
+      );
+    } else {
+      editTicket(
+        ticket._id,
+        assignedToInput,
+        assigneeEmail,
+        titleInput,
+        summaryInput,
+        priority,
+        dueDate,
+        ticket.created_at
+      );
+    }
     handleFloatingForm();
   };
 
