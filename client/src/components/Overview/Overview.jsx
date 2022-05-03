@@ -7,7 +7,8 @@ import { useTicketContext } from '../Tickets/TicketProvider';
 
 const Overview = () => {
   const { getToken } = useAuth();
-  const { tickets, closedTickets } = useTicketContext();
+  const { tickets, assignedTickets, closedTickets, closedAssignedTickets } =
+    useTicketContext();
   const { tasks } = useTaskContext();
 
   const formatValue = (value) => `${Number(value).toFixed(0)}`;
@@ -41,7 +42,7 @@ const Overview = () => {
             </Typography>
             <Typography variant="subtitle2" fontSize={35} noWrap>
               <AnimatedNumber
-                value={tickets.length}
+                value={tickets.length + assignedTickets.length}
                 formatValue={formatValue}
                 duration={500}
               />
@@ -69,6 +70,11 @@ const Overview = () => {
                     (ticket) =>
                       ticket.status === 'open' &&
                       ticket.due_date < new Date().toISOString()
+                  ).length +
+                  assignedTickets.filter(
+                    (ticket) =>
+                      ticket.status === 'open' &&
+                      ticket.due_date < new Date().toISOString()
                   ).length
                 }
                 formatValue={formatValue}
@@ -93,7 +99,7 @@ const Overview = () => {
             </Typography>
             <Typography variant="subtitle2" fontSize={35} noWrap>
               <AnimatedNumber
-                value={closedTickets.length}
+                value={closedTickets.length + closedAssignedTickets.length}
                 formatValue={formatValue}
                 duration={500}
               />
