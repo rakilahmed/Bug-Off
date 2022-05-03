@@ -21,8 +21,13 @@ const RecentTicket = ({ ticket }) => {
       description: 'This will permanently delete the ticket.',
       confirmationText: 'Yup',
       cancellationText: 'Nope',
-    });
-    deleteTicket(ticket._id);
+    })
+      .then(() => {
+        deleteTicket(ticket._id);
+      })
+      .catch(() => {
+        console.log('Cancelled');
+      });
   };
 
   if (floatingForm) {

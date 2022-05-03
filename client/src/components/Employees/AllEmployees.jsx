@@ -35,8 +35,13 @@ const AllEmployees = () => {
       description: 'This will permanently delete the employee.',
       confirmationText: 'Yup',
       cancellationText: 'Nope',
-    });
-    deleteEmployee(employees[id]._id);
+    })
+      .then(() => {
+        deleteEmployee(employees[id]._id);
+      })
+      .catch(() => {
+        console.log('Cancelled');
+      });
   };
 
   const columns = [

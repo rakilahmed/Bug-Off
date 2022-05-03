@@ -39,8 +39,13 @@ const AllTickets = () => {
       description: 'This will permanently delete the ticket.',
       confirmationText: 'Yup',
       cancellationText: 'Nope',
-    });
-    deleteTicket(tickets[id]._id);
+    })
+      .then(() => {
+        deleteTicket(tickets[id]._id);
+      })
+      .catch(() => {
+        console.log('Cancelled');
+      });
   };
 
   const columns = [
