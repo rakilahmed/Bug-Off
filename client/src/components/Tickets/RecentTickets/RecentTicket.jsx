@@ -8,13 +8,27 @@ import { useTicketContext } from '../TicketProvider';
 import FloatingForm from '../../Utils/FloatingForm';
 
 const RecentTicket = ({ ticket }) => {
-  const { closeTicket, deleteTicket } = useTicketContext();
+  const {
+    accountType,
+    closeTicket,
+    deleteTicket,
+    closeAssignedTicket,
+    deleteAssignedTicket,
+  } = useTicketContext();
   const confirm = useConfirm();
   const [showTicket, setShowTicket] = useState(false);
   const [floatingForm, setFloatingForm] = useState(false);
 
   const handleOpenFloatingForm = () => setFloatingForm(true);
   const handleCloseFloatingForm = () => setFloatingForm(false);
+
+  const handleClose = async () => {
+    if (accountType === 'employee' && ticket.assigned_to !== 'Self') {
+      closeAssignedTicket(ticket);
+    } else {
+      closeTicket(ticket);
+    }
+  };
 
   const handleDelete = async () => {
     await confirm({
@@ -23,7 +37,11 @@ const RecentTicket = ({ ticket }) => {
       cancellationText: 'Nope',
     })
       .then(() => {
-        deleteTicket(ticket._id);
+        if (accountType === 'employee' && ticket.assigned_to !== 'Self') {
+          deleteAssignedTicket(ticket._id);
+        } else {
+          deleteTicket(ticket._id);
+        }
       })
       .catch(() => {
         console.log('Cancelled');
@@ -69,17 +87,16 @@ const RecentTicket = ({ ticket }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 70,
+              width: 75,
               borderRadius: 10,
+              marginRight: 1,
+              padding: 0.3,
               color: 'white',
               backgroundColor:
                 (ticket.due_date < new Date().toISOString() && '#000000') ||
                 (ticket.priority === 'Low' && '#29CC97') ||
                 (ticket.priority === 'Medium' && '#FEC400') ||
                 (ticket.priority === 'High' && '#F12B2C'),
-
-              marginRight: 1,
-              padding: 0.3,
             }}
           >
             {ticket.due_date < new Date().toISOString()
@@ -146,7 +163,7 @@ const RecentTicket = ({ ticket }) => {
               </Typography>
             </Box>
             <Box mt={0.5}>
-              <Tooltip title="Close" onClick={() => closeTicket(ticket)}>
+              <Tooltip title="Close" onClick={handleClose}>
                 <IconButton>
                   <AiOutlineCheck
                     style={{ fontSize: '20px', color: '#363740' }}

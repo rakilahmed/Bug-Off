@@ -5,8 +5,22 @@ import { useTicketContext } from '../TicketProvider';
 import { useConfirm } from 'material-ui-confirm';
 
 const ClosedTicket = ({ ticket }) => {
-  const { restoreTicket, deleteTicket } = useTicketContext();
+  const {
+    accountType,
+    restoreTicket,
+    deleteTicket,
+    restoreAssignedTicket,
+    deleteAssignedTicket,
+  } = useTicketContext();
   const confirm = useConfirm();
+
+  const handleRestore = async () => {
+    if (accountType === 'employee' && ticket.assigned_to !== 'Self') {
+      restoreAssignedTicket(ticket);
+    } else {
+      restoreTicket(ticket);
+    }
+  };
 
   const handleDelete = async () => {
     await confirm({
@@ -15,7 +29,11 @@ const ClosedTicket = ({ ticket }) => {
       cancellationText: 'Nope',
     })
       .then(() => {
-        deleteTicket(ticket._id);
+        if (accountType === 'employee' && ticket.assigned_to !== 'Self') {
+          deleteAssignedTicket(ticket._id);
+        } else {
+          deleteTicket(ticket._id);
+        }
       })
       .catch(() => {
         console.log('Cancelled');
@@ -70,7 +88,7 @@ const ClosedTicket = ({ ticket }) => {
             {ticket.priority}
           </Typography>
           <Tooltip title="Restore">
-            <IconButton onClick={() => restoreTicket(ticket)}>
+            <IconButton onClick={handleRestore}>
               <MdRestore style={{ fontSize: '20px', color: '#363740' }} />
             </IconButton>
           </Tooltip>

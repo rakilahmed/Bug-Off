@@ -5,7 +5,7 @@ import RecentTicket from './RecentTicket';
 import { useTicketContext } from '../TicketProvider';
 
 const RecentTickets = () => {
-  const { tickets } = useTicketContext();
+  const { tickets, assignedTickets } = useTicketContext();
   return (
     <Paper
       sx={{
@@ -15,16 +15,25 @@ const RecentTickets = () => {
       }}
     >
       <TicketForm title="Recent Tickets" />
-      {tickets.length > 0 ? (
+      {assignedTickets.length > 0 &&
+        assignedTickets.slice(0, 5).map((ticket, idx) => {
+          return <RecentTicket key={idx} ticket={ticket} />;
+        })}
+
+      {assignedTickets.length > 0 && tickets.length > 0 && <hr />}
+
+      {tickets.length > 0 &&
         tickets.slice(0, 5).map((ticket) => {
           return <RecentTicket key={ticket._id} ticket={ticket} />;
-        })
-      ) : (
+        })}
+
+      {tickets.length === 0 && assignedTickets.length === 0 && (
         <Typography sx={{ marginTop: 2 }} varient="body1">
           No open tickets to show.
         </Typography>
       )}
-      {tickets.length > 5 && (
+
+      {tickets.length + assignedTickets.length > 5 && (
         <Box
           sx={{
             display: 'flex',

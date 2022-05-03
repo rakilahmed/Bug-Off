@@ -5,7 +5,7 @@ import ClosedTicket from './ClosedTicket';
 import { useTicketContext } from '../TicketProvider';
 
 const ClosedTickets = () => {
-  const { closedTickets } = useTicketContext();
+  const { closedTickets, closedAssignedTickets } = useTicketContext();
   const [loadMore, setLoadMore] = useState(false);
 
   return (
@@ -17,21 +17,33 @@ const ClosedTickets = () => {
       }}
     >
       <Typography variant="h6">Closed Tickets</Typography>
-      {!loadMore && closedTickets.length > 0 ? (
-        closedTickets.slice(0, 5).map((ticket) => {
-          return <ClosedTicket key={ticket._id} ticket={ticket} />;
-        })
-      ) : loadMore ? (
-        closedTickets.slice(0, 10).map((ticket) => {
-          return <ClosedTicket key={ticket._id} ticket={ticket} />;
-        })
-      ) : (
+      {closedAssignedTickets.length > 0
+        ? closedAssignedTickets.slice(0, 5).map((ticket, idx) => {
+            return <ClosedTicket key={idx} ticket={ticket} />;
+          })
+        : loadMore &&
+          closedAssignedTickets.slice(0, 10).map((ticket, idx) => {
+            return <ClosedTicket key={idx} ticket={ticket} />;
+          })}
+
+      {closedAssignedTickets.length > 0 && closedTickets.length > 0 && <hr />}
+
+      {!loadMore && closedTickets.length > 0
+        ? closedTickets.slice(0, 5).map((ticket, idx) => {
+            return <ClosedTicket key={idx} ticket={ticket} />;
+          })
+        : loadMore &&
+          closedTickets.slice(0, 10).map((ticket, idx) => {
+            return <ClosedTicket key={idx} ticket={ticket} />;
+          })}
+
+      {closedTickets.length === 0 && closedAssignedTickets.length === 0 && (
         <Typography sx={{ marginTop: 2 }} varient="body1">
           No closed tickets to show.
         </Typography>
       )}
 
-      {!loadMore && closedTickets.length > 5 ? (
+      {!loadMore && closedTickets.length + closedAssignedTickets.length > 5 ? (
         <Box
           sx={{
             display: 'flex',
