@@ -59,6 +59,9 @@ const AllEmployees = () => {
       options: {
         filter: true,
         sort: true,
+        setCellProps: () => ({
+          style: { minWidth: '200px', maxWidth: '500px' },
+        }),
       },
     },
     {
@@ -67,6 +70,9 @@ const AllEmployees = () => {
       options: {
         filter: true,
         sort: true,
+        setCellProps: () => ({
+          style: { minWidth: '250px', maxWidth: '500px' },
+        }),
       },
     },
     {
@@ -86,8 +92,9 @@ const AllEmployees = () => {
           return (
             <Box
               sx={{
-                width: '4rem',
+                width: '3rem',
                 display: 'flex',
+                justifyContent: 'space-evenly',
               }}
             >
               <Tooltip title="Edit" onClick={() => handleOpenFloatingForm(id)}>

@@ -87,6 +87,9 @@ const AllTickets = () => {
       options: {
         filter: false,
         sort: true,
+        setCellProps: () => ({
+          style: { minWidth: '100px', maxWidth: '200px' },
+        }),
       },
     },
     {
@@ -102,7 +105,7 @@ const AllTickets = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 70,
+                width: 75,
                 borderRadius: 5,
                 color: 'white',
                 backgroundColor:
@@ -145,7 +148,6 @@ const AllTickets = () => {
               sx={{
                 width: '4rem',
                 display: 'flex',
-                marginRight: '0.5rem',
               }}
             >
               <Tooltip title="Close" onClick={() => handleClose(id)}>
