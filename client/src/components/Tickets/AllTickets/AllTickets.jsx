@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import moment from 'moment';
 import { Box, Paper, Tooltip, IconButton, Typography } from '@mui/material';
@@ -11,17 +11,30 @@ import FloatingForm from '../../Utils/FloatingForm';
 
 const AllTickets = () => {
   const { user } = useAuth();
-  const { tickets, closeTicket, deleteTicket } = useTicketContext();
+  const {
+    accountType,
+    tickets,
+    assignedTickets,
+    closeTicket,
+    deleteTicket,
+    closeAssignedTicket,
+    deleteAssignedTicket,
+  } = useTicketContext();
   const confirm = useConfirm();
   const [ticket, setTicket] = useState('');
+  const [allTickets, setAllTickets] = useState([]);
   const [floatingForm, setFloatingForm] = useState(false);
+
+  useEffect(() => {
+    setAllTickets(assignedTickets.concat(tickets));
+  }, [assignedTickets, tickets]);
 
   const handleForm = () => {
     setFloatingForm(true);
   };
 
   const handleOpenFloatingForm = (id) => {
-    setTicket(tickets[id]);
+    setTicket(allTickets[id]);
     setFloatingForm(true);
   };
 
@@ -31,7 +44,11 @@ const AllTickets = () => {
   };
 
   const handleClose = (id) => {
-    closeTicket(tickets[id]);
+    if (accountType === 'employee' && allTickets[id].assigned_to !== 'Self') {
+      closeAssignedTicket(allTickets[id]);
+    } else {
+      closeTicket(allTickets[id]);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -41,7 +58,14 @@ const AllTickets = () => {
       cancellationText: 'Nope',
     })
       .then(() => {
-        deleteTicket(tickets[id]._id);
+        if (
+          accountType === 'employee' &&
+          allTickets[id].assigned_to !== 'Self'
+        ) {
+          deleteAssignedTicket(allTickets[id]._id);
+        } else {
+          deleteTicket(allTickets[id]._id);
+        }
       })
       .catch(() => {
         console.log('Cancelled');
@@ -109,17 +133,17 @@ const AllTickets = () => {
                 borderRadius: 5,
                 color: 'white',
                 backgroundColor:
-                  (tickets[id].due_date < new Date().toISOString() &&
+                  (allTickets[id].due_date < new Date().toISOString() &&
                     '#000000') ||
-                  (tickets[id].priority === 'Low' && '#29CC97') ||
-                  (tickets[id].priority === 'Medium' && '#FEC400') ||
-                  (tickets[id].priority === 'High' && '#F12B2C'),
+                  (allTickets[id].priority === 'Low' && '#29CC97') ||
+                  (allTickets[id].priority === 'Medium' && '#FEC400') ||
+                  (allTickets[id].priority === 'High' && '#F12B2C'),
                 padding: 0.3,
               }}
             >
-              {tickets[id].due_date < new Date().toISOString()
+              {allTickets[id].due_date < new Date().toISOString()
                 ? 'Overdue'
-                : tickets[id].priority}
+                : allTickets[id].priority}
             </Box>
           );
         },
@@ -132,7 +156,7 @@ const AllTickets = () => {
         filter: false,
         sort: true,
         customBodyRenderLite: (id) => {
-          return <>{moment(tickets[id].due_date).endOf().fromNow()}</>;
+          return <>{moment(allTickets[id].due_date).endOf().fromNow()}</>;
         },
       },
     },
@@ -146,7 +170,7 @@ const AllTickets = () => {
           return (
             <Box
               sx={{
-                width: '4rem',
+                width: '5rem',
                 display: 'flex',
               }}
             >
@@ -233,7 +257,7 @@ const AllTickets = () => {
       </Paper>
       <MUIDataTable
         title={'All Tickets'}
-        data={tickets}
+        data={allTickets}
         columns={columns}
         options={options}
       />
