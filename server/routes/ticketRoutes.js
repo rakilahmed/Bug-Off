@@ -6,6 +6,9 @@ const {
   getTicketById,
   updateTicket,
   deleteTicket,
+  getAssignedTickets,
+  updateAssignedTicket,
+  deleteAssignedTicket,
 } = require('../controllers/ticketController');
 const { checkAuth } = require('../middleware/checkAuth');
 
@@ -15,5 +18,10 @@ router
   .get(checkAuth, getTicketById)
   .put(checkAuth, updateTicket)
   .delete(checkAuth, deleteTicket);
+router.route('/assigned/:type').get(checkAuth, getAssignedTickets);
+router
+  .route('/assigned/:type/:id')
+  .put(checkAuth, updateAssignedTicket)
+  .delete(checkAuth, deleteAssignedTicket);
 
 module.exports = router;

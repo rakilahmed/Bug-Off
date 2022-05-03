@@ -81,6 +81,7 @@ const updateTicket = asyncHandler(async (req, res) => {
     { _id },
     { tickets: { $elemMatch: { _id: ticketId } } }
   );
+
   res.status(201).json(modifyUser.tickets.pop());
 });
 
@@ -107,10 +108,94 @@ const deleteTicket = asyncHandler(async (req, res) => {
   res.status(200).json({ ticketId });
 });
 
+const getAssignedTickets = asyncHandler(async (req, res) => {
+  const type = req.params.type;
+
+  if (type !== 'employee') {
+    res.status(400);
+    throw new Error('Invalid account type');
+  }
+
+  const employeeEmail = req.user.email;
+
+  const pmTickets = await Ticket.find({ assignee_email: employeeEmail });
+
+  const tickets = pmTickets[0].tickets.filter(
+    (ticket) => ticket.assignee_email === employeeEmail
+  );
+
+  res.status(200).json(tickets);
+});
+
+const updateAssignedTicket = asyncHandler(async (req, res) => {
+  const type = req.params.type;
+
+  if (type !== 'employee') {
+    res.status(400);
+    throw new Error('Invalid account type');
+  }
+
+  const employeeEmail = req.user.email;
+
+  const ticketId = req.params.id;
+  const ticket = await Ticket.findOne({
+    'tickets._id': ticketId,
+    assignee_email: employeeEmail,
+  });
+
+  if (!ticket) {
+    res.status(400);
+    throw new Error('No ticket found');
+  }
+
+  const data = req.body.tickets[0];
+  await Ticket.updateOne(
+    { 'tickets._id': ticketId },
+    { $set: { 'tickets.$': data } }
+  );
+
+  const modifyUser = await Ticket.findOne({
+    tickets: { $elemMatch: { _id: ticketId, assignee_email: employeeEmail } },
+  });
+
+  res.status(201).json(modifyUser);
+});
+
+const deleteAssignedTicket = asyncHandler(async (req, res) => {
+  const type = req.params.type;
+
+  if (type !== 'employee') {
+    res.status(400);
+    throw new Error('Invalid account type');
+  }
+
+  const employeeEmail = req.user.email;
+
+  const ticketId = req.params.id;
+  const ticket = await Ticket.findOne({
+    'tickets._id': ticketId,
+    assignee_email: employeeEmail,
+  });
+
+  if (!ticket) {
+    res.status(400);
+    throw new Error('No ticket found');
+  }
+
+  await Ticket.updateOne(
+    { 'tickets._id': ticketId },
+    { $pull: { tickets: { _id: ticketId } } }
+  );
+  res.status(200).json({ ticketId });
+});
+
 module.exports = {
   getTickets,
   setTicket,
   getTicketById,
   updateTicket,
   deleteTicket,
+  getAssignedTickets,
+  updateAssignedTicket,
+  deleteAssignedTicket,
 };
