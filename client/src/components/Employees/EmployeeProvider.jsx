@@ -41,6 +41,7 @@ const EmployeeProvider = ({ children }) => {
           name: name,
           email: email.toLowerCase(),
           ticket_count: 0,
+          pm_email: `${user.email}`,
         },
       ],
     });
@@ -56,6 +57,7 @@ const EmployeeProvider = ({ children }) => {
           name: name,
           email: email,
           ticket_count: ticketCount,
+          pm_email: `${user.email}`,
         },
       ],
     });

@@ -21,6 +21,10 @@ const employeeSchema = mongoose.Schema(
           type: Number,
           required: [true, 'Please enter a ticket count'],
         },
+        pm_email: {
+          type: String,
+          required: [true, "Please enter the product manager's email"],
+        },
       },
     ],
   },

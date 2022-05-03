@@ -32,6 +32,7 @@ const TicketForm = ({
   const [assignedToInput, setAssignedToInput] = useState(
     ticket ? ticket.assigned_to : 'Self'
   );
+  const [assigneeEmail, setAssigneeEmail] = useState('');
   const [priority, setPriority] = useState(ticket ? ticket.priority : 'Low');
   const [dueDate, setDueDate] = useState(ticket ? ticket.due_date : new Date());
   const [summaryInput, setSummaryInput] = useState(
@@ -49,9 +50,10 @@ const TicketForm = ({
     newTicket && closeForm();
     setShowForm(!showForm);
     setTitleInput('');
-    setAssignedToInput('');
+    setAssignedToInput('Self');
     setPriority('Low');
     setSummaryInput('');
+    setAssigneeEmail('');
     setTitleHelperText('');
     setSummaryHelperText('');
     setTitleStatus(false);
@@ -129,7 +131,14 @@ const TicketForm = ({
 
   const handleAddTicket = (event) => {
     event.preventDefault();
-    addTicket(titleInput, assignedToInput, priority, dueDate, summaryInput);
+    addTicket(
+      titleInput,
+      assignedToInput,
+      assigneeEmail,
+      priority,
+      dueDate,
+      summaryInput
+    );
     handleForm();
   };
 
@@ -138,6 +147,7 @@ const TicketForm = ({
     editTicket(
       ticket._id,
       assignedToInput,
+      assigneeEmail,
       titleInput,
       summaryInput,
       priority,
@@ -234,7 +244,11 @@ const TicketForm = ({
                 >
                   <MenuItem value="Self">Self</MenuItem>
                   {employees.map((employee) => (
-                    <MenuItem key={employee._id} value={employee.name}>
+                    <MenuItem
+                      key={employee._id}
+                      value={employee.name}
+                      onClick={() => setAssigneeEmail(employee.email)}
+                    >
                       {employee.name}
                     </MenuItem>
                   ))}

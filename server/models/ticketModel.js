@@ -9,48 +9,50 @@ const ticketSchema = mongoose.Schema(
     },
     tickets: [
       {
-        type: new mongoose.Schema({
-          _id: {
-            type: Number,
-            required: [true, 'Please enter a ticket id'],
-          },
-          status: {
-            type: String,
-            required: [true, 'Please enter a status (open or closed)'],
-          },
-          submitted_by: {
-            type: String,
-            required: [true, 'Please enter a name'],
-          },
-          assigned_to: {
-            type: String,
-            required: [true, 'Please enter a name'],
-          },
-          title: {
-            type: String,
-            required: [true, 'Please enter a title'],
-          },
-          summary: {
-            type: String,
-            required: [true, 'Please enter a summary'],
-          },
-          priority: {
-            type: String,
-            required: [true, 'Please enter a priority'],
-          },
-          due_date: {
-            type: Date,
-            required: [true, 'Please enter a due date'],
-          },
-          created_at: {
-            type: Date,
-            required: [true, 'Please enter a created at date'],
-          },
-          updated_at: {
-            type: Date,
-            required: [true, 'Please enter a updated at date'],
-          },
-        }),
+        _id: {
+          type: Number,
+          required: [true, 'Please enter a ticket id'],
+        },
+        status: {
+          type: String,
+          required: [true, 'Please enter a status (open or closed)'],
+        },
+        submitted_by: {
+          type: String,
+          required: [true, 'Please enter a name'],
+        },
+        assigned_to: {
+          type: String,
+          required: [true, 'Please enter a name'],
+        },
+        assignee_email: {
+          type: String,
+          required: [true, "Please enter the assignee's email"],
+        },
+        title: {
+          type: String,
+          required: [true, 'Please enter a title'],
+        },
+        summary: {
+          type: String,
+          required: [true, 'Please enter a summary'],
+        },
+        priority: {
+          type: String,
+          required: [true, 'Please enter a priority'],
+        },
+        due_date: {
+          type: Date,
+          required: [true, 'Please enter a due date'],
+        },
+        created_at: {
+          type: Date,
+          required: [true, 'Please enter a created at date'],
+        },
+        updated_at: {
+          type: Date,
+          required: [true, 'Please enter a updated at date'],
+        },
       },
     ],
   },

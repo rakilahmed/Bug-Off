@@ -54,7 +54,14 @@ const TicketProvider = ({ children }) => {
     }
   );
 
-  const addTicket = async (title, assignedTo, priority, dueDate, summary) => {
+  const addTicket = async (
+    title,
+    assignedTo,
+    assigneeEmail,
+    priority,
+    dueDate,
+    summary
+  ) => {
     const res = await axios.post(URI, {
       _id: `${user.uid}`,
       email: `${user.email}`,
@@ -63,7 +70,8 @@ const TicketProvider = ({ children }) => {
           _id: Math.floor(1000 + Math.random() * 9000),
           status: 'open',
           submitted_by: `${user.displayName}`,
-          assigned_to: assignedTo ? assignedTo : 'Self',
+          assigned_to: assignedTo,
+          assignee_email: assignedTo === 'Self' ? user.email : assigneeEmail,
           title: title,
           summary: summary,
           priority: priority,
@@ -93,6 +101,7 @@ const TicketProvider = ({ children }) => {
   const editTicket = async (
     ticketId,
     assignedTo,
+    assigneeEmail,
     title,
     summary,
     priority,
@@ -108,6 +117,7 @@ const TicketProvider = ({ children }) => {
           status: 'open',
           submitted_by: `${user.displayName}`,
           assigned_to: assignedTo,
+          assignee_email: assignedTo === 'Self' ? user.email : assigneeEmail,
           title: title,
           summary: summary,
           priority: priority,
