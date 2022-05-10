@@ -52,38 +52,40 @@ const Overview = () => {
           </Link>
         </Grid>
         <Grid item xs={4}>
-          <Paper
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: 2,
-              borderRadius: 2,
-              boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
-            }}
-          >
-            <Typography variant="subtitle1" fontSize={20} noWrap>
-              Overdue Tickets
-            </Typography>
-            <Typography variant="subtitle2" fontSize={35}>
-              <AnimatedNumber
-                value={
-                  tickets.filter(
-                    (ticket) =>
-                      ticket.status === 'open' &&
-                      ticket.due_date < new Date().toISOString()
-                  ).length +
-                  assignedTickets.filter(
-                    (ticket) =>
-                      ticket.status === 'open' &&
-                      ticket.due_date < new Date().toISOString()
-                  ).length
-                }
-                formatValue={formatValue}
-                duration={500}
-              />
-            </Typography>
-          </Paper>
+          <Link href="/tickets" sx={{ textDecoration: 'none' }}>
+            <Paper
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: 2,
+                borderRadius: 2,
+                boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
+              }}
+            >
+              <Typography variant="subtitle1" fontSize={20} noWrap>
+                Overdue Tickets
+              </Typography>
+              <Typography variant="subtitle2" fontSize={35}>
+                <AnimatedNumber
+                  value={
+                    tickets.filter(
+                      (ticket) =>
+                        ticket.status === 'open' &&
+                        ticket.due_date < new Date().toISOString()
+                    ).length +
+                    assignedTickets.filter(
+                      (ticket) =>
+                        ticket.status === 'open' &&
+                        ticket.due_date < new Date().toISOString()
+                    ).length
+                  }
+                  formatValue={formatValue}
+                  duration={500}
+                />
+              </Typography>
+            </Paper>
+          </Link>
         </Grid>
         <Grid item xs={4}>
           <Paper
