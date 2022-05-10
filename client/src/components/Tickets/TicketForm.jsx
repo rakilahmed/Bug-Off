@@ -12,7 +12,7 @@ import {
   Tooltip,
   IconButton,
 } from '@mui/material/';
-import { GrAdd, GrClose } from 'react-icons/gr';
+import { GrRefresh, GrAdd, GrClose } from 'react-icons/gr';
 import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { useTicketContext } from './TicketProvider';
@@ -33,7 +33,9 @@ const TicketForm = ({
   const [assignedToInput, setAssignedToInput] = useState(
     ticket ? ticket.assigned_to : 'Self'
   );
-  const [assigneeEmail, setAssigneeEmail] = useState('');
+  const [assigneeEmail, setAssigneeEmail] = useState(
+    ticket ? ticket.assignee_email : ''
+  );
   const [priority, setPriority] = useState(ticket ? ticket.priority : 'Low');
   const [dueDate, setDueDate] = useState(ticket ? ticket.due_date : new Date());
   const [summaryInput, setSummaryInput] = useState(
@@ -185,11 +187,18 @@ const TicketForm = ({
         >
           <Typography variant="h6">{title}</Typography>
           {!showForm ? (
-            <Tooltip title="Add Ticket" onClick={handleForm}>
-              <IconButton>
-                <GrAdd style={{ fontSize: 25 }} />
-              </IconButton>
-            </Tooltip>
+            <Box>
+              <Tooltip title="Refresh" onClick={() => window.location.reload()}>
+                <IconButton>
+                  <GrRefresh />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Add Ticket" onClick={handleForm}>
+                <IconButton>
+                  <GrAdd style={{ fontSize: 25 }} />
+                </IconButton>
+              </Tooltip>
+            </Box>
           ) : (
             <Tooltip title="Close" onClick={handleForm}>
               <IconButton>
