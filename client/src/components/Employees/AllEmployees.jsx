@@ -60,7 +60,7 @@ const AllEmployees = () => {
         filter: true,
         sort: true,
         setCellProps: () => ({
-          style: { minWidth: '200px', maxWidth: '500px' },
+          style: { width: '25%' },
         }),
       },
     },
@@ -71,7 +71,7 @@ const AllEmployees = () => {
         filter: true,
         sort: true,
         setCellProps: () => ({
-          style: { minWidth: '250px', maxWidth: '500px' },
+          style: { width: '40%' },
         }),
       },
     },
@@ -81,6 +81,9 @@ const AllEmployees = () => {
       options: {
         filter: true,
         sort: true,
+        setCellProps: () => ({
+          style: { width: '20%' },
+        }),
       },
     },
     {
@@ -88,13 +91,15 @@ const AllEmployees = () => {
       options: {
         sort: false,
         filter: false,
+        setCellProps: () => ({
+          style: { width: '1%' },
+        }),
+        setCellHeaderProps: () => ({ align: 'center' }),
         customBodyRenderLite: (id) => {
           return (
             <Box
               sx={{
-                width: '3rem',
                 display: 'flex',
-                justifyContent: 'space-evenly',
               }}
             >
               <Tooltip title="Edit" onClick={() => handleOpenFloatingForm(id)}>
@@ -132,7 +137,7 @@ const AllEmployees = () => {
 
   const options = {
     selectableRows: 'none',
-    responsive: 'vertical',
+    responsive: 'standard',
     print: false,
     downloadOptions: {
       filename: 'employees.csv',

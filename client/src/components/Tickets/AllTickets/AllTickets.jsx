@@ -3,7 +3,7 @@ import MUIDataTable from 'mui-datatables';
 import moment from 'moment';
 import { Box, Paper, Tooltip, IconButton, Typography } from '@mui/material';
 import { AiOutlineEdit, AiOutlineDelete, AiOutlineCheck } from 'react-icons/ai';
-import { GrAdd } from 'react-icons/gr';
+import { GrRefresh, GrAdd } from 'react-icons/gr';
 import { useConfirm } from 'material-ui-confirm';
 import { useAuth } from '../../../firebase/AuthContext';
 import { useTicketContext } from '../TicketProvider';
@@ -103,6 +103,9 @@ const AllTickets = () => {
       options: {
         filter: true,
         sort: true,
+        setCellProps: () => ({
+          style: { width: '15%' },
+        }),
       },
     },
     {
@@ -112,7 +115,7 @@ const AllTickets = () => {
         filter: false,
         sort: true,
         setCellProps: () => ({
-          style: { minWidth: '100px', maxWidth: '200px' },
+          style: { width: '30%' },
         }),
       },
     },
@@ -165,12 +168,14 @@ const AllTickets = () => {
       options: {
         sort: false,
         filter: false,
+        setCellProps: () => ({
+          style: { width: '12%' },
+        }),
         setCellHeaderProps: () => ({ align: 'center' }),
         customBodyRenderLite: (id) => {
           return (
             <Box
               sx={{
-                width: '5rem',
                 display: 'flex',
               }}
             >
@@ -214,7 +219,7 @@ const AllTickets = () => {
 
   const options = {
     selectableRows: 'none',
-    responsive: 'vertical',
+    responsive: 'standard',
     print: false,
     downloadOptions: {
       filename: 'tickets.csv',
@@ -249,11 +254,18 @@ const AllTickets = () => {
             ? `Good Morning, ${user?.displayName}`
             : `Good Evening, ${user?.displayName}`}
         </Typography>
-        <Tooltip title="Add Ticket" onClick={handleForm}>
-          <IconButton>
-            <GrAdd style={{ fontSize: 25 }} />
-          </IconButton>
-        </Tooltip>
+        <Box>
+          <Tooltip title="Refresh" onClick={() => window.location.reload()}>
+            <IconButton>
+              <GrRefresh />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Add Ticket" onClick={handleForm}>
+            <IconButton>
+              <GrAdd style={{ fontSize: 25 }} />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Paper>
       <MUIDataTable
         title={'All Tickets'}
