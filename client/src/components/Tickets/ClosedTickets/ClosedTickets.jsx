@@ -17,7 +17,7 @@ const ClosedTickets = () => {
       }}
     >
       <Typography variant="h6">Closed Tickets</Typography>
-      {closedAssignedTickets.length > 0
+      {!loadMore && closedAssignedTickets.length > 0
         ? closedAssignedTickets.slice(0, 5).map((ticket, idx) => {
             return <ClosedTicket key={idx} ticket={ticket} />;
           })
@@ -65,7 +65,7 @@ const ClosedTickets = () => {
         </Box>
       ) : (
         loadMore &&
-        closedTickets.length > 10 && (
+        closedTickets.length + closedAssignedTickets.length > 10 && (
           <Typography variant="body2" color={'secondary'}>
             You can only see the first 10 closed tickets here. <br /> Delete few
             closed tickets from the list to see more.
