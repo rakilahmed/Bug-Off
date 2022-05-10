@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography } from '@mui/material';
+import { Grid, Link, Paper, Typography } from '@mui/material';
 import AnimatedNumber from 'animated-number-react';
 import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
@@ -27,27 +27,29 @@ const Overview = () => {
     <>
       <Grid container spacing={2} columns={{ xs: 4, sm: 8 }}>
         <Grid item xs={4}>
-          <Paper
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: 2,
-              borderRadius: 2,
-              boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
-            }}
-          >
-            <Typography variant="subtitle1" fontSize={20} noWrap>
-              Open Tickets
-            </Typography>
-            <Typography variant="subtitle2" fontSize={35} noWrap>
-              <AnimatedNumber
-                value={tickets.length + assignedTickets.length}
-                formatValue={formatValue}
-                duration={500}
-              />
-            </Typography>
-          </Paper>
+          <Link href="/tickets" sx={{ textDecoration: 'none' }}>
+            <Paper
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: 2,
+                borderRadius: 2,
+                boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
+              }}
+            >
+              <Typography variant="subtitle1" fontSize={20} noWrap>
+                Open Tickets
+              </Typography>
+              <Typography variant="subtitle2" fontSize={35} noWrap>
+                <AnimatedNumber
+                  value={tickets.length + assignedTickets.length}
+                  formatValue={formatValue}
+                  duration={500}
+                />
+              </Typography>
+            </Paper>
+          </Link>
         </Grid>
         <Grid item xs={4}>
           <Paper
