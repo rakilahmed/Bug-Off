@@ -178,9 +178,9 @@ const Login = () => {
             }}
           >
             <Link
-              href="/login"
+              href="/forgot-password"
               variant="body2"
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: 'none', cursor: 'pointer' }}
             >
               Forgot password?
             </Link>

@@ -5,6 +5,7 @@ import {
   updateProfile,
   updateEmail,
   updatePassword,
+  sendPasswordResetEmail,
   onAuthStateChanged,
   signOut,
 } from 'firebase/auth';
@@ -48,6 +49,10 @@ export const AuthProvider = ({ children }) => {
     return updatePassword(auth.currentUser, password);
   };
 
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  };
+
   const getToken = async () => {
     return await auth.currentUser?.getIdToken();
   };
@@ -86,6 +91,7 @@ export const AuthProvider = ({ children }) => {
     updateUserName,
     updateUserEmail,
     updateUserPassword,
+    resetPassword,
   };
   return loading ? (
     <Loading />

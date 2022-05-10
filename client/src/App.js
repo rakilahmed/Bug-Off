@@ -6,6 +6,7 @@ import { AuthProvider } from './firebase/AuthContext';
 import { EmployeeProvider, TicketProvider, TaskProvider } from './components';
 import {
   Login,
+  ForgotPassword,
   Register,
   Dashboard,
   Profile,
@@ -25,6 +26,10 @@ function App() {
                   <Routes>
                     <Route exact path="/" element={<Dashboard />} />
                     <Route path="/login" element={<Login />} />
+                    <Route
+                      path="/forgot-password"
+                      element={<ForgotPassword />}
+                    />
                     <Route path="/register" element={<Register />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/tickets" element={<Tickets />} />
