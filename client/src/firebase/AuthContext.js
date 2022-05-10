@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   updateProfile,
   updateEmail,
@@ -20,11 +21,13 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const register = async (name, type, email, password) => {
-    await createUserWithEmailAndPassword(auth, email, password);
-    setAccountType(type);
-    return updateProfile(auth.currentUser, {
-      displayName: name,
+    await createUserWithEmailAndPassword(auth, email, password).then(() => {
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+      setAccountType(type);
     });
+    return await sendEmailVerification(auth.currentUser);
   };
 
   const login = (email, password) => {
