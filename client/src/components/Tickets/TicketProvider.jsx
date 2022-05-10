@@ -21,19 +21,59 @@ const TicketProvider = ({ children }) => {
         const res = await axios.get(URI);
         try {
           if (res.data[0] && res.data[0].tickets) {
-            setTickets(
-              res.data[0].tickets
-                .filter((ticket) => ticket.status === 'open')
-                .reverse()
-            );
-            if (accountType === 'pm' && employees.length > 0) {
-              updateEmaployeeTicketCount();
+            if (accountType === 'pm') {
+              setTickets(
+                res.data[0].tickets
+                  .filter(
+                    (ticket) =>
+                      ticket.status === 'open' && ticket.assigned_to === 'Self'
+                  )
+                  .reverse()
+              );
+
+              setAssignedTickets(
+                res.data[0].tickets
+                  .filter(
+                    (ticket) =>
+                      ticket.status === 'open' && ticket.assigned_to !== 'Self'
+                  )
+                  .reverse()
+              );
+
+              setClosedTickets(
+                res.data[0].tickets
+                  .filter(
+                    (ticket) =>
+                      ticket.status === 'closed' &&
+                      ticket.assigned_to === 'Self'
+                  )
+                  .reverse()
+              );
+
+              setClosedAssignedTickets(
+                res.data[0].tickets
+                  .filter(
+                    (ticket) =>
+                      ticket.status === 'closed' &&
+                      ticket.assigned_to !== 'Self'
+                  )
+                  .reverse()
+              );
+
+              employees.length > 0 && updateEmaployeeTicketCount();
+            } else {
+              setTickets(
+                res.data[0].tickets
+                  .filter((ticket) => ticket.status === 'open')
+                  .reverse()
+              );
+
+              setClosedTickets(
+                res.data[0].tickets
+                  .filter((ticket) => ticket.status === 'closed')
+                  .reverse()
+              );
             }
-            setClosedTickets(
-              res.data[0].tickets
-                .filter((ticket) => ticket.status === 'closed')
-                .reverse()
-            );
           }
         } catch (error) {
           console.log(error);
@@ -122,7 +162,11 @@ const TicketProvider = ({ children }) => {
       ],
     });
 
-    setTickets([res.data, ...tickets]);
+    if (accountType === 'pm' && assignedTo !== 'Self') {
+      setAssignedTickets([res.data, ...assignedTickets]);
+    } else {
+      setTickets([res.data, ...tickets]);
+    }
   };
 
   const editTicket = async (
@@ -157,11 +201,45 @@ const TicketProvider = ({ children }) => {
 
     updateEmaployeeTicketCount();
 
-    setTickets(
-      tickets.map((ticket) => {
-        return ticket._id === ticketId ? { ...res.data } : ticket;
-      })
-    );
+    if (accountType === 'pm' && assignedTo !== 'Self') {
+      const assignee = tickets.filter(
+        (ticket) => ticket._id === ticketId && ticket.assigned_to !== assignedTo
+      );
+
+      if (assignee.length > 0) {
+        setAssignedTickets([res.data, ...assignedTickets]);
+        setTickets(tickets.filter((ticket) => ticket._id !== ticketId));
+      } else {
+        setAssignedTickets(
+          assignedTickets.map((ticket) => {
+            return ticket._id === ticketId ? { ...res.data } : ticket;
+          })
+        );
+      }
+    } else if (accountType === 'pm' && assignedTo === 'Self') {
+      const assignedToSelf = assignedTickets.filter(
+        (ticket) => ticket._id === ticketId && ticket.assigned_to !== assignedTo
+      );
+
+      if (assignedToSelf.length > 0) {
+        setTickets([res.data, ...tickets]);
+        setAssignedTickets(
+          assignedTickets.filter((ticket) => ticket._id !== ticketId)
+        );
+      } else {
+        setTickets(
+          tickets.map((ticket) => {
+            return ticket._id === ticketId ? { ...res.data } : ticket;
+          })
+        );
+      }
+    } else {
+      setTickets(
+        tickets.map((ticket) => {
+          return ticket._id === ticketId ? { ...res.data } : ticket;
+        })
+      );
+    }
   };
 
   const closeTicket = async (ticket) => {
@@ -187,12 +265,16 @@ const TicketProvider = ({ children }) => {
 
     updateEmaployeeTicketCount();
 
-    const updatedTickets = tickets.filter((ticketItem) => {
-      return ticketItem._id !== ticket._id;
-    });
+    if (accountType === 'pm' && ticket.assigned_to !== 'Self') {
+      setAssignedTickets(
+        assignedTickets.filter((ticketItem) => ticketItem._id !== ticket._id)
+      );
 
-    setTickets(updatedTickets);
-    setClosedTickets([res.data, ...closedTickets]);
+      setClosedAssignedTickets([res.data, ...closedAssignedTickets]);
+    } else {
+      setTickets(tickets.filter((ticketItem) => ticketItem._id !== ticket._id));
+      setClosedTickets([res.data, ...closedTickets]);
+    }
   };
 
   const restoreTicket = async (ticket) => {
@@ -218,26 +300,47 @@ const TicketProvider = ({ children }) => {
 
     updateEmaployeeTicketCount();
 
-    const updatedClosedTickets = closedTickets.filter((ticketItem) => {
-      return ticketItem._id !== ticket._id;
-    });
-
-    setClosedTickets(updatedClosedTickets);
-    setTickets([res.data, ...tickets]);
+    if (accountType === 'pm' && ticket.assigned_to !== 'Self') {
+      setClosedAssignedTickets(
+        closedAssignedTickets.filter(
+          (ticketItem) => ticketItem._id !== ticket._id
+        )
+      );
+      setAssignedTickets([res.data, ...assignedTickets]);
+    } else {
+      setClosedTickets(
+        closedTickets.filter((ticketItem) => ticketItem._id !== ticket._id)
+      );
+      setTickets([res.data, ...tickets]);
+    }
   };
 
   const deleteTicket = async (ticketId) => {
     await axios.delete(URI + `/${ticketId}`);
 
-    const updatedTickets = tickets.filter((ticket) => {
-      return ticket._id !== ticketId;
-    });
-    setTickets(updatedTickets);
+    if (accountType === 'pm') {
+      if (assignedTickets.length > 0) {
+        setAssignedTickets(
+          assignedTickets.filter((ticket) => ticket._id !== ticketId)
+        );
+      }
 
-    const updatedClosedTickets = closedTickets.filter((ticket) => {
-      return ticket._id !== ticketId;
-    });
-    setClosedTickets(updatedClosedTickets);
+      if (closedAssignedTickets.length > 0) {
+        setClosedAssignedTickets(
+          closedAssignedTickets.filter((ticket) => ticket._id !== ticketId)
+        );
+      }
+
+      setTickets(tickets.filter((ticket) => ticket._id !== ticketId));
+      setClosedTickets(
+        closedTickets.filter((ticket) => ticket._id !== ticketId)
+      );
+    } else {
+      setTickets(tickets.filter((ticket) => ticket._id !== ticketId));
+      setClosedTickets(
+        closedTickets.filter((ticket) => ticket._id !== ticketId)
+      );
+    }
   };
 
   const editAssignedTicket = async (
