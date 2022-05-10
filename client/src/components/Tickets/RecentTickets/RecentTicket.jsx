@@ -77,9 +77,7 @@ const RecentTicket = ({ ticket }) => {
         }}
         onClick={() => setShowTicket(!showTicket)}
       >
-        <Typography variant="subtitle1" sx={{ wordBreak: 'break-all' }}>
-          {ticket.title}
-        </Typography>
+        <Typography variant="subtitle1">{ticket.title}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography
             variant="caption"

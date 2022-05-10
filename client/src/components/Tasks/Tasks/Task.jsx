@@ -36,12 +36,9 @@ const Task = ({ task }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          userSelect: 'none',
         }}
       >
-        <Typography variant="subtitle1" sx={{ wordBreak: 'break-all' }}>
-          {task.task}
-        </Typography>
+        <Typography variant="subtitle1">{task.task}</Typography>
         <Box sx={{ display: 'flex' }}>
           <Tooltip title="Done" onClick={() => deleteTask(task._id)}>
             <IconButton>

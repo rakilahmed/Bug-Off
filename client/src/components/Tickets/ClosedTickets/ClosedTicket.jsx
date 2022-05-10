@@ -62,7 +62,6 @@ const ClosedTicket = ({ ticket }) => {
           sx={{
             color: 'gray',
             textDecoration: 'line-through',
-            wordBreak: 'break-all',
           }}
         >
           {ticket.title}
