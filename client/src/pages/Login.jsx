@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../firebase/AuthContext';
 import {
@@ -15,7 +15,7 @@ import logo from '../assets/logo.svg';
 import { validateEmail, validatePassword } from '../components';
 
 const Login = () => {
-  const { user, login } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,12 +24,6 @@ const Login = () => {
   const [passwordHelperText, setPasswordHelperText] = useState('');
   const [emailStatus, setEmailStatus] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
-  }, [navigate, user]);
 
   const handleLogin = async (event) => {
     event.preventDefault();

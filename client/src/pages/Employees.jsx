@@ -1,31 +1,32 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useAuth } from '../firebase/AuthContext';
 import { Header, AllEmployees } from '../components/';
 
-const Tickets = () => {
-  const { user, getAccountType } = useAuth();
+const Employees = () => {
+  const { getAccountType } = useAuth();
   const navigate = useNavigate();
+  const [profileType, setProfileType] = useState('');
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-
     getAccountType().then((accountType) => {
+      setProfileType(accountType);
+
       if (accountType !== 'pm') {
         navigate('/');
       }
     });
-  }, [getAccountType, navigate, user]);
+  }, [getAccountType, navigate]);
 
   return (
-    <Box mb={5}>
-      <Header />
-      <AllEmployees />
-    </Box>
+    profileType === 'pm' && (
+      <Box mb={5}>
+        <Header />
+        <AllEmployees />
+      </Box>
+    )
   );
 };
 
-export default Tickets;
+export default Employees;

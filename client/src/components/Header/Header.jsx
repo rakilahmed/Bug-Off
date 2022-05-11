@@ -14,24 +14,14 @@ const Header = () => {
   const [type, setType] = useState('');
 
   useEffect(() => {
-    let isMounted = true;
-    const getType = async () => {
-      const accountType = await getAccountType();
-      if (isMounted) {
-        setType(accountType);
-      }
-    };
-
-    getType();
-    return () => {
-      isMounted = false;
-    };
+    getAccountType().then((accountType) => {
+      setType(accountType);
+    });
   }, [getAccountType]);
 
   const handleLogout = async () => {
     try {
       await logout();
-      // navigate('/login');
     } catch (error) {
       console.log(error.message);
     }

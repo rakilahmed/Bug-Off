@@ -1,6 +1,3 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../firebase/AuthContext';
 import { Box, Grid } from '@mui/material';
 import {
   Header,
@@ -11,15 +8,6 @@ import {
 } from '../components/';
 
 const Dashboard = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-  }, [navigate, user]);
-
   return (
     <Box mb={5}>
       <Header />

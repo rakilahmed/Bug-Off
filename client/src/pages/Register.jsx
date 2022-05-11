@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '../firebase/AuthContext';
 import {
   Box,
@@ -19,8 +18,7 @@ import logo from '../assets/logo.svg';
 import { validateEmail, validatePassword } from '../components';
 
 const Register = () => {
-  const { user, register } = useAuth();
-  const navigate = useNavigate();
+  const { register } = useAuth();
   const [name, setName] = useState('');
   const [type, setType] = useState('personal');
   const [email, setEmail] = useState('');
@@ -35,12 +33,6 @@ const Register = () => {
   const [nameStatus, setNameStatus] = useState(false);
   const [emailStatus, setEmailStatus] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
-  }, [navigate, user]);
 
   const handleRegister = async (event) => {
     event.preventDefault();

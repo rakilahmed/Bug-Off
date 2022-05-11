@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Alert,
@@ -13,19 +13,13 @@ import { validateEmail } from '../components';
 import { useAuth } from '../firebase/AuthContext';
 
 const ForgotPassword = () => {
-  const { user, resetPassword } = useAuth();
+  const { resetPassword } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [emailHelperText, setEmailHelperText] = useState('');
   const [emailStatus, setEmailStatus] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
-  }, [user, navigate]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;

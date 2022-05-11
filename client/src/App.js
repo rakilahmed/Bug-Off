@@ -5,16 +5,18 @@ import './App.css';
 import { AuthProvider } from './firebase/AuthContext';
 import { EmployeeProvider, TicketProvider, TaskProvider } from './components';
 import {
+  PrivateRoute,
+  PublicRoute,
+  Register,
   Login,
   ForgotPassword,
-  Register,
   Dashboard,
-  Profile,
   Tickets,
   Employees,
+  Profile,
 } from './pages/';
 
-function App() {
+const App = () => {
   return (
     <Router>
       <Container style={{ maxWidth: '1350px' }}>
@@ -24,16 +26,62 @@ function App() {
               <TicketProvider>
                 <TaskProvider>
                   <Routes>
-                    <Route exact path="/" element={<Dashboard />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route
+                      path="/register"
+                      element={
+                        <PublicRoute>
+                          <Register />
+                        </PublicRoute>
+                      }
+                    />
+                    <Route
+                      path="/login"
+                      element={
+                        <PublicRoute>
+                          <Login />
+                        </PublicRoute>
+                      }
+                    />
                     <Route
                       path="/forgot-password"
-                      element={<ForgotPassword />}
+                      element={
+                        <PublicRoute>
+                          <ForgotPassword />
+                        </PublicRoute>
+                      }
                     />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/tickets" element={<Tickets />} />
-                    <Route path="/employees" element={<Employees />} />
+                    <Route
+                      path="/"
+                      element={
+                        <PrivateRoute>
+                          <Dashboard />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="/tickets"
+                      element={
+                        <PrivateRoute>
+                          <Tickets />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="/employees"
+                      element={
+                        <PrivateRoute>
+                          <Employees />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="/profile"
+                      element={
+                        <PrivateRoute>
+                          <Profile />
+                        </PrivateRoute>
+                      }
+                    />
                   </Routes>
                 </TaskProvider>
               </TicketProvider>
@@ -43,6 +91,6 @@ function App() {
       </Container>
     </Router>
   );
-}
+};
 
 export default App;

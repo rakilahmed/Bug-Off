@@ -41,14 +41,10 @@ const Profile = () => {
   const [passwordStatus, setPasswordStatus] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-
     getAccountType().then((accountType) => {
       setProfileType(accountType);
     });
-  }, [navigate, user, getAccountType]);
+  }, [getAccountType]);
 
   const handleUpdateProfile = (event) => {
     event.preventDefault();
@@ -141,10 +137,6 @@ const Profile = () => {
         setConfirmPasswordHelperText('Passwords do not match');
       }
     }
-  };
-
-  const handleGoBack = () => {
-    navigate('/');
   };
 
   const handleAccountTypeSwitch = async () => {
@@ -295,7 +287,9 @@ const Profile = () => {
               fullWidth
               variant="outlined"
               size="large"
-              onClick={handleGoBack}
+              onClick={() => {
+                navigate('/');
+              }}
             >
               Back to Dashboard
             </Button>
