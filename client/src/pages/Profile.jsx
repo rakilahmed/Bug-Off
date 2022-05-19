@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../firebase/AuthContext';
 import {
@@ -21,10 +21,9 @@ const Profile = () => {
     updateUserEmail,
     updateUserPassword,
     setAccountType,
-    getAccountType,
+    userType,
   } = useAuth();
   const navigate = useNavigate();
-  const [profileType, setProfileType] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,12 +38,6 @@ const Profile = () => {
   const [nameStatus, setNameStatus] = useState(false);
   const [emailStatus, setEmailStatus] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState(false);
-
-  useEffect(() => {
-    getAccountType().then((accountType) => {
-      setProfileType(accountType);
-    });
-  }, [getAccountType]);
 
   const handleUpdateProfile = (event) => {
     event.preventDefault();
@@ -140,7 +133,7 @@ const Profile = () => {
   };
 
   const handleAccountTypeSwitch = async () => {
-    if (profileType === 'pm') {
+    if (userType === 'pm') {
       await setAccountType('personal');
     } else {
       await setAccountType('pm');
@@ -165,25 +158,24 @@ const Profile = () => {
             boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
           }}
         >
-          {profileType !== '' && (
+          {userType !== '' && (
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <RiAdminLine />
                 <Typography variant="subtitle2" ml={1}>
-                  {profileType === 'personal' && 'Personal'}
-                  {profileType === 'pm' && 'Product Manager'}
-                  {profileType === 'employee' && 'Employee'}
+                  {userType === 'personal' && 'Personal'}
+                  {userType === 'pm' && 'Product Manager'}
+                  {userType === 'employee' && 'Employee'}
                 </Typography>
               </Box>
-              {profileType !== 'employee' && (
+              {userType !== 'employee' && (
                 <Typography
                   variant="subtitle2"
                   color={'secondary'}
                   sx={{ cursor: 'pointer' }}
                   onClick={handleAccountTypeSwitch}
                 >
-                  Switch to{' '}
-                  {profileType === 'pm' ? 'Personal' : 'Product Manager'}
+                  Switch to {userType === 'pm' ? 'Personal' : 'Product Manager'}
                 </Typography>
               )}
             </Box>

@@ -18,6 +18,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
+  const [userType, setUserType] = useState();
   const [loading, setLoading] = useState(true);
 
   const register = async (name, type, email, password) => {
@@ -74,6 +75,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      getAccountType().then((type) => {
+        setUserType(type);
+      });
 
       setTimeout(() => {
         setLoading(false);
@@ -85,6 +89,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    userType,
     setAccountType,
     getAccountType,
     getToken,

@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Box, Link, Tooltip, IconButton } from '@mui/material';
 import { MdOutlineDashboardCustomize } from 'react-icons/md';
 import { IoTicketSharp } from 'react-icons/io5';
@@ -10,17 +9,11 @@ import logo from '../../assets/logo.svg';
 import { useAuth } from '../../firebase/AuthContext';
 
 const Header = () => {
-  const { getAccountType, logout } = useAuth();
-  const [type, setType] = useState('');
-
-  useEffect(() => {
-    getAccountType().then((accountType) => {
-      setType(accountType);
-    });
-  }, [getAccountType]);
+  const { userType, logout } = useAuth();
 
   const handleLogout = async () => {
     try {
+      window.location.href = '/login';
       await logout();
     } catch (error) {
       console.log(error.message);
@@ -56,7 +49,7 @@ const Header = () => {
             </IconButton>
           </Tooltip>
         </Link>
-        {type === 'pm' && (
+        {userType === 'pm' && (
           <Link href="/employees">
             <Tooltip title="Employees">
               <IconButton>
@@ -73,13 +66,11 @@ const Header = () => {
           </Tooltip>
         </Link>
         <AiOutlineMore style={{ marginInline: 10, fontSize: 30 }} />
-        <Link href="/login" onClick={handleLogout}>
-          <Tooltip title="Logout">
-            <IconButton>
-              <ImExit color="#363740" />
-            </IconButton>
-          </Tooltip>
-        </Link>
+        <Tooltip title="Logout" onClick={handleLogout}>
+          <IconButton>
+            <ImExit color="#363740" />
+          </IconButton>
+        </Tooltip>
       </Box>
     </Box>
   );

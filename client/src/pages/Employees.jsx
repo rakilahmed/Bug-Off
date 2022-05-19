@@ -1,31 +1,18 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useAuth } from '../firebase/AuthContext';
 import { Header, AllEmployees } from '../components/';
 
 const Employees = () => {
-  const { getAccountType } = useAuth();
-  const navigate = useNavigate();
-  const [profileType, setProfileType] = useState('');
+  const { userType } = useAuth();
 
-  useEffect(() => {
-    getAccountType().then((accountType) => {
-      setProfileType(accountType);
-
-      if (accountType !== 'pm') {
-        navigate('/');
-      }
-    });
-  }, [getAccountType, navigate]);
-
-  return (
-    profileType === 'pm' && (
-      <Box mb={5}>
-        <Header />
-        <AllEmployees />
-      </Box>
-    )
+  return userType === 'pm' ? (
+    <Box mb={5}>
+      <Header />
+      <AllEmployees />
+    </Box>
+  ) : (
+    <Navigate to="/" />
   );
 };
 
