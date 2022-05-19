@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Tooltip, IconButton } from '@mui/material/';
 import { AiOutlineCheck, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { BiMessageSquareDetail } from 'react-icons/bi';
 import moment from 'moment';
 import { useConfirm } from 'material-ui-confirm';
 import { useTicketContext } from '../TicketProvider';
@@ -77,7 +78,16 @@ const RecentTicket = ({ ticket }) => {
         }}
         onClick={() => setShowTicket(!showTicket)}
       >
-        <Typography variant="subtitle1">{ticket.title}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {ticket.request_reassignment && (
+            <Tooltip title="Reassign Me" style={{ marginRight: 5 }}>
+              <IconButton>
+                <BiMessageSquareDetail fontSize={20} />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Typography variant="subtitle1">{ticket.title}</Typography>
+        </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography
             variant="caption"
@@ -126,6 +136,11 @@ const RecentTicket = ({ ticket }) => {
             <Typography variant="caption">
               Assigned to: {ticket.assigned_to}
             </Typography>
+            {ticket.request_reassignment && (
+              <Typography variant="caption">
+                Note: Requested for Reassignment
+              </Typography>
+            )}
             <Typography variant="caption">
               Due: {moment(ticket.due_date).endOf().fromNow()}
             </Typography>
