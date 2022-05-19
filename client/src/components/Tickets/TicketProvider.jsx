@@ -17,6 +17,10 @@ const TicketProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
+      getAccountType().then((accountType) => {
+        setAccountType(accountType);
+      });
+
       const fetchTickets = async () => {
         const res = await axios.get(URI);
         try {
@@ -60,7 +64,7 @@ const TicketProvider = ({ children }) => {
                   .reverse()
               );
 
-              employees.length > 0 && updateEmaployeeTicketCount();
+              updateEmaployeeTicketCount();
             } else {
               setTickets(
                 res.data[0].tickets
@@ -79,10 +83,6 @@ const TicketProvider = ({ children }) => {
           console.log(error);
         }
       };
-
-      getAccountType().then((accountType) => {
-        setAccountType(accountType);
-      });
 
       const fetchAssignedTickets = async () => {
         const res = await axios.get(URI + `/assigned/${accountType}`);
@@ -173,6 +173,7 @@ const TicketProvider = ({ children }) => {
     ticketId,
     assignedTo,
     assigneeEmail,
+    requestReassignment,
     title,
     summary,
     priority,
@@ -189,6 +190,7 @@ const TicketProvider = ({ children }) => {
           submitted_by: `${user.displayName}`,
           assigned_to: assignedTo,
           assignee_email: assignedTo === 'Self' ? user.email : assigneeEmail,
+          request_reassignment: requestReassignment,
           title: title,
           summary: summary,
           priority: priority,
@@ -198,8 +200,6 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
-
-    updateEmaployeeTicketCount();
 
     if (accountType === 'pm' && assignedTo !== 'Self') {
       const assignee = tickets.filter(
@@ -253,6 +253,7 @@ const TicketProvider = ({ children }) => {
           submitted_by: ticket.submitted_by,
           assigned_to: ticket.assigned_to,
           assignee_email: ticket.assignee_email,
+          request_reassignment: ticket.request_reassignment,
           title: ticket.title,
           summary: ticket.summary,
           priority: ticket.priority,
@@ -262,8 +263,6 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
-
-    updateEmaployeeTicketCount();
 
     if (accountType === 'pm' && ticket.assigned_to !== 'Self') {
       setAssignedTickets(
@@ -288,6 +287,7 @@ const TicketProvider = ({ children }) => {
           submitted_by: ticket.submitted_by,
           assigned_to: ticket.assigned_to,
           assignee_email: ticket.assignee_email,
+          request_reassignment: ticket.request_reassignment,
           title: ticket.title,
           summary: ticket.summary,
           priority: ticket.priority,
@@ -297,8 +297,6 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
-
-    updateEmaployeeTicketCount();
 
     if (accountType === 'pm' && ticket.assigned_to !== 'Self') {
       setClosedAssignedTickets(
@@ -348,6 +346,7 @@ const TicketProvider = ({ children }) => {
     pmName,
     assignedTo,
     assigneeEmail,
+    requestReassignment,
     title,
     summary,
     priority,
@@ -362,6 +361,7 @@ const TicketProvider = ({ children }) => {
           submitted_by: pmName,
           assigned_to: assignedTo,
           assignee_email: assigneeEmail,
+          request_reassignment: requestReassignment,
           title: title,
           summary: summary,
           priority: priority,
@@ -371,8 +371,6 @@ const TicketProvider = ({ children }) => {
         },
       ],
     });
-
-    updateEmaployeeTicketCount();
 
     const modifiedTicket = res.data.tickets.filter((ticketItem) => {
       return ticketItem._id === ticketId;
@@ -396,6 +394,7 @@ const TicketProvider = ({ children }) => {
             submitted_by: ticket.submitted_by,
             assigned_to: ticket.assigned_to,
             assignee_email: ticket.assignee_email,
+            request_reassignment: ticket.request_reassignment,
             title: ticket.title,
             summary: ticket.summary,
             priority: ticket.priority,
@@ -406,8 +405,6 @@ const TicketProvider = ({ children }) => {
         ],
       }
     );
-
-    updateEmaployeeTicketCount();
 
     const modifiedTicket = res.data.tickets.filter((ticketItem) => {
       return ticketItem._id === ticket._id;
@@ -432,6 +429,7 @@ const TicketProvider = ({ children }) => {
             submitted_by: ticket.submitted_by,
             assigned_to: ticket.assigned_to,
             assignee_email: ticket.assignee_email,
+            request_reassignment: ticket.request_reassignment,
             title: ticket.title,
             summary: ticket.summary,
             priority: ticket.priority,
@@ -442,8 +440,6 @@ const TicketProvider = ({ children }) => {
         ],
       }
     );
-
-    updateEmaployeeTicketCount();
 
     const modifiedTicket = res.data.tickets.filter((ticketItem) => {
       return ticketItem._id === ticket._id;
@@ -465,8 +461,6 @@ const TicketProvider = ({ children }) => {
     const updatedAssignedTickets = assignedTickets.filter((ticketItem) => {
       return ticketItem._id !== ticketId;
     });
-
-    updateEmaployeeTicketCount();
     setAssignedTickets(updatedAssignedTickets);
 
     const updatedClosedAssignedTickets = closedAssignedTickets.filter(
@@ -475,6 +469,13 @@ const TicketProvider = ({ children }) => {
       }
     );
     setClosedAssignedTickets(updatedClosedAssignedTickets);
+  };
+
+  const deleteAllClosedTickets = async () => {
+    await axios.delete(URI + `/closed/${accountType}`);
+
+    setClosedTickets([]);
+    setClosedAssignedTickets([]);
   };
 
   const contextValue = {
@@ -492,6 +493,7 @@ const TicketProvider = ({ children }) => {
     closeAssignedTicket,
     restoreAssignedTicket,
     deleteAssignedTicket,
+    deleteAllClosedTickets,
   };
 
   return (

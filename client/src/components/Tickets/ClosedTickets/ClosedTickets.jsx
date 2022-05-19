@@ -1,12 +1,29 @@
 import { useState } from 'react';
-import { Paper, Typography, Box } from '@mui/material/';
+import { Paper, Typography, Box, Button } from '@mui/material/';
 import { BsArrowDown } from 'react-icons/bs';
 import ClosedTicket from './ClosedTicket';
+import { useConfirm } from 'material-ui-confirm';
 import { useTicketContext } from '../TicketProvider';
 
 const ClosedTickets = () => {
-  const { closedTickets, closedAssignedTickets } = useTicketContext();
+  const confirm = useConfirm();
+  const { closedTickets, closedAssignedTickets, deleteAllClosedTickets } =
+    useTicketContext();
   const [loadMore, setLoadMore] = useState(false);
+
+  const handleDeleteAll = async () => {
+    await confirm({
+      description: 'This will permanently delete all closed tickets.',
+      confirmationText: 'Yup',
+      cancellationText: 'Nope',
+    })
+      .then(() => {
+        deleteAllClosedTickets();
+      })
+      .catch(() => {
+        console.log('Cancelled');
+      });
+  };
 
   return (
     <Paper
@@ -16,7 +33,25 @@ const ClosedTickets = () => {
         boxShadow: 'rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;',
       }}
     >
-      <Typography variant="h6">Closed Tickets</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Typography variant="h6">Closed Tickets</Typography>
+        {closedTickets.length + closedAssignedTickets.length > 0 && (
+          <Button
+            size="small"
+            color="error"
+            variant="outlined"
+            onClick={handleDeleteAll}
+          >
+            Delete All
+          </Button>
+        )}
+      </Box>
       {!loadMore && closedAssignedTickets.length > 0
         ? closedAssignedTickets.slice(0, 5).map((ticket, idx) => {
             return <ClosedTicket key={idx} ticket={ticket} />;

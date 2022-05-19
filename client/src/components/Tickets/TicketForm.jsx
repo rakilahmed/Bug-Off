@@ -17,6 +17,7 @@ import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { useTicketContext } from './TicketProvider';
 import { useEmployeeContext } from '../Employees/EmployeeProvider';
+import { useAuth } from '../../firebase/AuthContext';
 
 const TicketForm = ({
   title,
@@ -25,8 +26,8 @@ const TicketForm = ({
   closeForm,
   ticket,
 }) => {
-  const { accountType, addTicket, editTicket, editAssignedTicket } =
-    useTicketContext();
+  const { userType } = useAuth();
+  const { addTicket, editTicket, editAssignedTicket } = useTicketContext();
   const { employees } = useEmployeeContext();
   const [showForm, setShowForm] = useState(floatingForm ? floatingForm : false);
   const [titleInput, setTitleInput] = useState(ticket ? ticket.title : '');
@@ -148,12 +149,13 @@ const TicketForm = ({
   const handleEditTicket = (event) => {
     event.preventDefault();
 
-    if (accountType === 'employee' && ticket.assigned_to !== 'Self') {
+    if (userType === 'employee' && ticket.assigned_to !== 'Self') {
       editAssignedTicket(
         ticket._id,
         ticket.submitted_by,
         ticket.assigned_to,
         ticket.assignee_email,
+        ticket.request_reassignment,
         titleInput,
         summaryInput,
         priority,
@@ -165,6 +167,7 @@ const TicketForm = ({
         ticket._id,
         assignedToInput,
         assigneeEmail,
+        false,
         titleInput,
         summaryInput,
         priority,
@@ -172,6 +175,27 @@ const TicketForm = ({
         ticket.created_at
       );
     }
+    handleFloatingForm();
+  };
+
+  const handleReassignment = (event) => {
+    event.preventDefault();
+
+    if (userType === 'employee' && ticket.assigned_to !== 'Self') {
+      editAssignedTicket(
+        ticket._id,
+        ticket.submitted_by,
+        ticket.assigned_to,
+        ticket.assignee_email,
+        ticket.request_reassignment ? false : true,
+        titleInput,
+        summaryInput,
+        priority,
+        dueDate,
+        ticket.created_at
+      );
+    }
+
     handleFloatingForm();
   };
 
@@ -258,7 +282,7 @@ const TicketForm = ({
                 {floatingForm && !newTicket ? 'Update' : 'Add'}
               </Button>
             </Box>
-            {accountType === 'pm' && (
+            {userType === 'pm' && (
               <FormControl fullWidth sx={{ mt: 1 }}>
                 <InputLabel>Assigned To</InputLabel>
                 <Select
@@ -332,6 +356,18 @@ const TicketForm = ({
               onChange={handleChange}
               helperText={summaryHelperText}
             />
+
+            {userType === 'employee' && (
+              <Button
+                variant="outlined"
+                sx={{ marginTop: 1 }}
+                onClick={handleReassignment}
+              >
+                {!ticket.request_reassignment
+                  ? 'Request Reassignment'
+                  : 'Cancel Request'}
+              </Button>
+            )}
           </FormGroup>
         </Box>
       )}
