@@ -1,18 +1,22 @@
-import { Navigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useAuth } from '../firebase/AuthContext';
 import { Header, AllEmployees } from '../components/';
+import { useEffect } from 'react';
 
 const Employees = () => {
   const { userType } = useAuth();
 
-  return userType === 'pm' ? (
+  useEffect(() => {
+    if (userType !== 'pm') {
+      window.location.href = '/';
+    }
+  }, [userType]);
+
+  return (
     <Box mb={5}>
       <Header />
       <AllEmployees />
     </Box>
-  ) : (
-    <Navigate to="/" />
   );
 };
 

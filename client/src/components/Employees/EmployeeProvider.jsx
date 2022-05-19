@@ -2,7 +2,8 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
 
-const URI = 'https://bugoff.rakilahmed.com/api/employees';
+// const URI = 'https://bugoff.rakilahmed.com/api/employees';
+const URI = 'http://localhost:8080/api/employees';
 const EmployeeContext = createContext();
 
 const EmployeeProvider = ({ children }) => {

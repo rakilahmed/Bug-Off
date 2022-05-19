@@ -209,7 +209,6 @@ const deleteAllClosedTickets = asyncHandler(async (req, res) => {
       (ticket) => ticket.status === 'closed'
     );
 
-    // delete all closed tickets
     await Ticket.updateOne(
       { 'tickets._id': { $in: closedTickets.map((ticket) => ticket._id) } },
       {
