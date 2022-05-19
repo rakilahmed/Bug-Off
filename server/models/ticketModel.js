@@ -29,6 +29,11 @@ const ticketSchema = mongoose.Schema(
           type: String,
           required: [true, "Please enter the assignee's email"],
         },
+        request_reassignment: {
+          type: Boolean,
+          default: false,
+          required: false,
+        },
         title: {
           type: String,
           required: [true, 'Please enter a title'],

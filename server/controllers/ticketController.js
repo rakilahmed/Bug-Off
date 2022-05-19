@@ -118,7 +118,13 @@ const getAssignedTickets = asyncHandler(async (req, res) => {
 
   const employeeEmail = req.user.email;
 
-  const pmTickets = await Ticket.find({ assignee_email: employeeEmail });
+  const pmTickets = await Ticket.find({
+    'tickets.assignee_email': employeeEmail,
+  });
+
+  if (pmTickets.length === 0) {
+    return;
+  }
 
   const tickets = pmTickets[0].tickets.filter(
     (ticket) => ticket.assignee_email === employeeEmail
@@ -189,6 +195,58 @@ const deleteAssignedTicket = asyncHandler(async (req, res) => {
   res.status(200).json({ ticketId });
 });
 
+const deleteAllClosedTickets = asyncHandler(async (req, res) => {
+  const type = req.params.type;
+
+  if (type === 'employee') {
+    const employeeEmail = req.user.email;
+
+    const tickets = await Ticket.find({
+      'tickets.assignee_email': employeeEmail,
+    });
+
+    const closedTickets = tickets[0].tickets.filter(
+      (ticket) => ticket.status === 'closed'
+    );
+
+    // delete all closed tickets
+    await Ticket.updateOne(
+      { 'tickets._id': { $in: closedTickets.map((ticket) => ticket._id) } },
+      {
+        $pull: {
+          tickets: { _id: { $in: closedTickets.map((ticket) => ticket._id) } },
+        },
+      }
+    );
+
+    res.status(200).json(closedTickets);
+  } else {
+    const _id = req.user.uid;
+    const user = await Ticket.findOne({ _id });
+
+    if (!user) {
+      res.status(400);
+      throw new Error('No user found');
+    }
+
+    const closedTickets = user.tickets.filter(
+      (ticket) => ticket.status === 'closed'
+    );
+
+    if (closedTickets.length === 0) {
+      res.status(400);
+      throw new Error('No closed tickets found');
+    }
+
+    await Ticket.updateOne(
+      { _id },
+      { $pull: { tickets: { status: 'closed' } } }
+    );
+
+    res.status(200).json(closedTickets);
+  }
+});
+
 module.exports = {
   getTickets,
   setTicket,
@@ -198,4 +256,5 @@ module.exports = {
   getAssignedTickets,
   updateAssignedTicket,
   deleteAssignedTicket,
+  deleteAllClosedTickets,
 };

@@ -9,6 +9,7 @@ const {
   getAssignedTickets,
   updateAssignedTicket,
   deleteAssignedTicket,
+  deleteAllClosedTickets,
 } = require('../controllers/ticketController');
 const { checkAuth } = require('../middleware/checkAuth');
 
@@ -23,5 +24,6 @@ router
   .route('/assigned/:type/:id')
   .put(checkAuth, updateAssignedTicket)
   .delete(checkAuth, deleteAssignedTicket);
+router.route('/closed/:type').delete(checkAuth, deleteAllClosedTickets);
 
 module.exports = router;
