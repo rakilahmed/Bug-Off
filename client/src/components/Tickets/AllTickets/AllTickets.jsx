@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Box, Paper, Tooltip, IconButton, Typography } from '@mui/material';
 import { AiOutlineEdit, AiOutlineDelete, AiOutlineCheck } from 'react-icons/ai';
 import { GrRefresh, GrAdd } from 'react-icons/gr';
+import { BiMessageSquareDetail } from 'react-icons/bi';
 import { useConfirm } from 'material-ui-confirm';
 import { useAuth } from '../../../firebase/AuthContext';
 import { useTicketContext } from '../TicketProvider';
@@ -106,6 +107,22 @@ const AllTickets = () => {
         setCellProps: () => ({
           style: { width: '15%' },
         }),
+        customBodyRenderLite: (id) => {
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2">
+                {allTickets[id].assigned_to}
+              </Typography>
+              {allTickets[id].request_reassignment && (
+                <Tooltip title="Reassign Me">
+                  <IconButton>
+                    <BiMessageSquareDetail fontSize={18} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Box>
+          );
+        },
       },
     },
     {
