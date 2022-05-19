@@ -31,17 +31,29 @@ const AllEmployees = () => {
   };
 
   const handleDelete = async (id) => {
-    await confirm({
-      description: 'This will permanently delete the employee.',
-      confirmationText: 'Yup',
-      cancellationText: 'Nope',
-    })
-      .then(() => {
-        deleteEmployee(employees[id]._id);
-      })
-      .catch(() => {
-        console.log('Cancelled');
+    if (employees[id].ticket_count > 0) {
+      confirm({
+        title: 'Cannot delete employee',
+        description:
+          'This employee has tickets assigned to them. Please assign them to another employee before deleting.',
+        confirmLabel: 'OK',
+        confirmationButtonProps: {
+          href: '/tickets',
+        },
       });
+    } else {
+      await confirm({
+        description: 'This will permanently delete the employee.',
+        confirmationText: 'Yup',
+        cancellationText: 'Nope',
+      })
+        .then(() => {
+          deleteEmployee(employees[id]._id);
+        })
+        .catch(() => {
+          console.log('Cancelled');
+        });
+    }
   };
 
   const columns = [
