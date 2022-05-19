@@ -3,8 +3,9 @@ import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
 import { useEmployeeContext } from '../Employees/EmployeeProvider';
 
-// const URI = 'https://bugoff.rakilahmed.com/api/tickets';
-const URI = 'http://localhost:8080/api/tickets';
+// const UR = 'https://bugoff.rakilahmed.com/api/tickets';
+const URI = 'https://bug-off-server.vercel.app/api/tickets';
+
 const TicketContext = createContext();
 
 const TicketProvider = ({ children }) => {
