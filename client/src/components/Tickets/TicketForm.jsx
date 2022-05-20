@@ -357,7 +357,7 @@ const TicketForm = ({
               helperText={summaryHelperText}
             />
 
-            {userType === 'employee' && (
+            {userType === 'employee' && ticket && (
               <Button
                 variant="outlined"
                 sx={{ marginTop: 1 }}
