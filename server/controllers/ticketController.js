@@ -207,19 +207,18 @@ const deleteAllClosedTickets = asyncHandler(async (req, res) => {
       'tickets.assignee_email': employeeEmail,
     });
 
-    let closedTickets = [];
-
-    // delete all closed tickets
     for (let i = 0; i < tickets.length; i++) {
-      const ticket = tickets[i];
-      const ticketId = ticket.tickets.find(
-        (ticket) => ticket.assignee_email === employeeEmail
-      )._id;
+      const user = tickets[i];
+      const _id = req.user.uid;
 
-      const res = await Ticket.updateOne(
-        { 'tickets._id': ticketId },
-        { $pull: { tickets: { _id: ticketId } } }
-      );
+      if (user._id === _id) {
+        await Ticket.updateOne(
+          { 'tickets.status': 'closed' },
+          { $pull: { tickets: { _id: user.tickets[0]._id } } }
+        );
+      } else {
+        await Ticket.updateOne({ $pull: { tickets: { status: 'closed' } } });
+      }
     }
 
     res.status(200).json({ message: 'All closed tickets deleted' });
