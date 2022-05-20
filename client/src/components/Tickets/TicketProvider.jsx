@@ -130,11 +130,9 @@ const TicketProvider = ({ children }) => {
           employee.name,
           employee.email,
           employee.ticket_count + count
-        );
-
-        if (accountType === 'employee') {
-          window.location.reload();
-        }
+        ).then(() => {
+          accountType === 'employee' && window.location.reload();
+        });
       }
     }
   };
