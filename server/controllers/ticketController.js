@@ -116,9 +116,11 @@ const getAssignedTickets = asyncHandler(async (req, res) => {
     throw new Error('Invalid account type');
   }
 
+  const employeeName = req.user.name;
   const employeeEmail = req.user.email;
 
   const pmTickets = await Ticket.find({
+    'tickets.assigned_to': employeeName,
     'tickets.assignee_email': employeeEmail,
   });
 
@@ -205,20 +207,22 @@ const deleteAllClosedTickets = asyncHandler(async (req, res) => {
       'tickets.assignee_email': employeeEmail,
     });
 
-    const closedTickets = tickets[0].tickets.filter(
-      (ticket) => ticket.status === 'closed'
-    );
+    let closedTickets = [];
 
-    await Ticket.updateOne(
-      { 'tickets._id': { $in: closedTickets.map((ticket) => ticket._id) } },
-      {
-        $pull: {
-          tickets: { _id: { $in: closedTickets.map((ticket) => ticket._id) } },
-        },
-      }
-    );
+    // delete all closed tickets
+    for (let i = 0; i < tickets.length; i++) {
+      const ticket = tickets[i];
+      const ticketId = ticket.tickets.find(
+        (ticket) => ticket.assignee_email === employeeEmail
+      )._id;
 
-    res.status(200).json(closedTickets);
+      const res = await Ticket.updateOne(
+        { 'tickets._id': ticketId },
+        { $pull: { tickets: { _id: ticketId } } }
+      );
+    }
+
+    res.status(200).json({ message: 'All closed tickets deleted' });
   } else {
     const _id = req.user.uid;
     const user = await Ticket.findOne({ _id });
@@ -242,7 +246,7 @@ const deleteAllClosedTickets = asyncHandler(async (req, res) => {
       { $pull: { tickets: { status: 'closed' } } }
     );
 
-    res.status(200).json(closedTickets);
+    res.status(200).json({ message: 'All closed tickets deleted' });
   }
 });
 

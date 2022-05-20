@@ -357,17 +357,19 @@ const TicketForm = ({
               helperText={summaryHelperText}
             />
 
-            {userType === 'employee' && ticket && (
-              <Button
-                variant="outlined"
-                sx={{ marginTop: 1 }}
-                onClick={handleReassignment}
-              >
-                {!ticket.request_reassignment
-                  ? 'Request Reassignment'
-                  : 'Cancel Request'}
-              </Button>
-            )}
+            {userType === 'employee' &&
+              ticket &&
+              ticket.assigned_to !== 'Self' && (
+                <Button
+                  variant="outlined"
+                  sx={{ marginTop: 1 }}
+                  onClick={handleReassignment}
+                >
+                  {!ticket.request_reassignment
+                    ? 'Request Reassignment'
+                    : 'Cancel Request'}
+                </Button>
+              )}
           </FormGroup>
         </Box>
       )}
