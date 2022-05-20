@@ -90,10 +90,20 @@ const TicketProvider = ({ children }) => {
         const res = await axios.get(URI + `/assigned/${accountType}`);
         try {
           setAssignedTickets(
-            res.data.filter((ticket) => ticket.status === 'open').reverse()
+            res.data
+              .filter(
+                (ticket) =>
+                  ticket.status === 'open' && ticket.assigned_to !== 'Self'
+              )
+              .reverse()
           );
           setClosedAssignedTickets(
-            res.data.filter((ticket) => ticket.status === 'closed').reverse()
+            res.data
+              .filter(
+                (ticket) =>
+                  ticket.status === 'closed' && ticket.assigned_to !== 'Self'
+              )
+              .reverse()
           );
         } catch (error) {
           console.log(error);
