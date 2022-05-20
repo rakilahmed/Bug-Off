@@ -116,13 +116,9 @@ const getAssignedTickets = asyncHandler(async (req, res) => {
     throw new Error('Invalid account type');
   }
 
-  const employeeName = req.user.name;
   const employeeEmail = req.user.email;
 
-  const pmTickets = await Ticket.find({
-    'tickets.assigned_to': employeeName,
-    'tickets.assignee_email': employeeEmail,
-  });
+  const pmTickets = await Ticket.find({});
 
   if (pmTickets.length === 0) {
     return;
@@ -203,25 +199,26 @@ const deleteAllClosedTickets = asyncHandler(async (req, res) => {
   if (type === 'employee') {
     const employeeEmail = req.user.email;
 
-    const tickets = await Ticket.find({
+    const users = await Ticket.find({
       'tickets.assignee_email': employeeEmail,
     });
 
-    for (let i = 0; i < tickets.length; i++) {
-      const user = tickets[i];
-      const _id = req.user.uid;
-
-      if (user._id === _id) {
-        await Ticket.updateOne(
-          { 'tickets.status': 'closed' },
-          { $pull: { tickets: { _id: user.tickets[0]._id } } }
-        );
-      } else {
-        await Ticket.updateOne({ $pull: { tickets: { status: 'closed' } } });
-      }
+    if (users.length === 0) {
+      res.status(400);
+      throw new Error('No user found');
     }
 
-    res.status(200).json({ message: 'All closed tickets deleted' });
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      const tickets = user.tickets.filter(
+        (ticket) => ticket.status === 'closed'
+      );
+
+      await Ticket.updateOne(
+        { _id: user._id },
+        { $pull: { tickets: { $in: tickets } } }
+      );
+    }
   } else {
     const _id = req.user.uid;
     const user = await Ticket.findOne({ _id });
@@ -242,11 +239,11 @@ const deleteAllClosedTickets = asyncHandler(async (req, res) => {
 
     await Ticket.updateOne(
       { _id },
-      { $pull: { tickets: { status: 'closed' } } }
+      { $pull: { tickets: { $in: closedTickets } } }
     );
-
-    res.status(200).json({ message: 'All closed tickets deleted' });
   }
+
+  res.status(200).json({ message: 'All closed tickets deleted' });
 });
 
 module.exports = {

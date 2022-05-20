@@ -65,8 +65,6 @@ const TicketProvider = ({ children }) => {
                   )
                   .reverse()
               );
-
-              updateEmaployeeTicketCount();
             } else {
               setTickets(
                 res.data[0].tickets
@@ -120,26 +118,24 @@ const TicketProvider = ({ children }) => {
       fetchTickets();
       accountType === 'employee' && fetchAssignedTickets();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, getAccountType, accountType]);
+  }, [user, accountType, getAccountType]);
 
-  const updateEmaployeeTicketCount = () => {
-    if (employees.length > 0) {
-      employees.forEach((employee) => {
-        const employeeTickets = tickets.filter(
-          (ticket) =>
-            ticket.status === 'open' &&
-            ticket.assigned_to === employee.name &&
-            ticket.assignee_email === employee.email
-        );
-        employee.ticket_count = employeeTickets.length;
+  const updateEmaployeeTicketCount = (email, count) => {
+    if (employees.length > 0 && email !== undefined && count !== undefined) {
+      const employee = employees.find((employee) => employee.email === email);
+
+      if (employee && employee.ticket_count + count >= 0) {
         editEmployee(
           employee._id,
           employee.name,
           employee.email,
-          employee.ticket_count
+          employee.ticket_count + count
         );
-      });
+
+        if (accountType === 'employee') {
+          window.location.reload();
+        }
+      }
     }
   };
 
@@ -186,6 +182,7 @@ const TicketProvider = ({ children }) => {
     } else {
       setTickets([res.data, ...tickets]);
     }
+    updateEmaployeeTicketCount(assigneeEmail, 1);
   };
 
   const editTicket = async (
@@ -221,30 +218,34 @@ const TicketProvider = ({ children }) => {
     });
 
     if (accountType === 'pm' && assignedTo !== 'Self') {
-      const assignee = tickets.filter(
-        (ticket) => ticket._id === ticketId && ticket.assigned_to !== assignedTo
+      const assignSelfToEmployee = tickets.find(
+        (ticket) => ticket._id === ticketId && ticket.assigned_to === 'Self'
       );
 
-      if (assignee.length > 0) {
+      if (assignSelfToEmployee) {
         setAssignedTickets([res.data, ...assignedTickets]);
         setTickets(tickets.filter((ticket) => ticket._id !== ticketId));
+        updateEmaployeeTicketCount(assigneeEmail, 1);
       } else {
         setAssignedTickets(
           assignedTickets.map((ticket) => {
+            updateEmaployeeTicketCount(assigneeEmail, 1);
+            updateEmaployeeTicketCount(ticket.assignee_email, -1);
             return ticket._id === ticketId ? { ...res.data } : ticket;
           })
         );
       }
     } else if (accountType === 'pm' && assignedTo === 'Self') {
-      const assignedToSelf = assignedTickets.filter(
+      const assignEmployeeToSelf = assignedTickets.find(
         (ticket) => ticket._id === ticketId && ticket.assigned_to !== assignedTo
       );
 
-      if (assignedToSelf.length > 0) {
+      if (assignEmployeeToSelf) {
         setTickets([res.data, ...tickets]);
         setAssignedTickets(
           assignedTickets.filter((ticket) => ticket._id !== ticketId)
         );
+        updateEmaployeeTicketCount(assigneeEmail, -1);
       } else {
         setTickets(
           tickets.map((ticket) => {
@@ -289,6 +290,7 @@ const TicketProvider = ({ children }) => {
       );
 
       setClosedAssignedTickets([res.data, ...closedAssignedTickets]);
+      updateEmaployeeTicketCount(ticket.assignee_email, -1);
     } else {
       setTickets(tickets.filter((ticketItem) => ticketItem._id !== ticket._id));
       setClosedTickets([res.data, ...closedTickets]);
@@ -324,6 +326,7 @@ const TicketProvider = ({ children }) => {
         )
       );
       setAssignedTickets([res.data, ...assignedTickets]);
+      updateEmaployeeTicketCount(ticket.assignee_email, 1);
     } else {
       setClosedTickets(
         closedTickets.filter((ticketItem) => ticketItem._id !== ticket._id)
@@ -339,6 +342,11 @@ const TicketProvider = ({ children }) => {
       if (assignedTickets.length > 0) {
         setAssignedTickets(
           assignedTickets.filter((ticket) => ticket._id !== ticketId)
+        );
+        updateEmaployeeTicketCount(
+          assignedTickets.find((ticket) => ticket._id === ticketId)
+            .assignee_email,
+          -1
         );
       }
 
@@ -425,6 +433,8 @@ const TicketProvider = ({ children }) => {
       }
     );
 
+    updateEmaployeeTicketCount(ticket.assignee_email, -1);
+
     const modifiedTicket = res.data.tickets.filter((ticketItem) => {
       return ticketItem._id === ticket._id;
     });
@@ -460,6 +470,8 @@ const TicketProvider = ({ children }) => {
       }
     );
 
+    updateEmaployeeTicketCount(ticket.assignee_email, 1);
+
     const modifiedTicket = res.data.tickets.filter((ticketItem) => {
       return ticketItem._id === ticket._id;
     });
@@ -478,6 +490,7 @@ const TicketProvider = ({ children }) => {
     await axios.delete(URI + `/assigned/${accountType}/${ticketId}`);
 
     const updatedAssignedTickets = assignedTickets.filter((ticketItem) => {
+      updateEmaployeeTicketCount(ticketItem.assignee_email, -1);
       return ticketItem._id !== ticketId;
     });
     setAssignedTickets(updatedAssignedTickets);

@@ -4,13 +4,15 @@ import { Header, AllEmployees } from '../components/';
 import { useEffect } from 'react';
 
 const Employees = () => {
-  const { userType } = useAuth();
+  const { getAccountType } = useAuth();
 
   useEffect(() => {
-    if (userType !== 'pm') {
-      window.location.href = '/';
-    }
-  }, [userType]);
+    getAccountType().then((accountType) => {
+      if (accountType !== 'pm') {
+        window.location.href = '/';
+      }
+    });
+  }, [getAccountType]);
 
   return (
     <Box mb={5}>

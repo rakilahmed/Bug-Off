@@ -15,8 +15,12 @@ const EmployeeProvider = ({ children }) => {
     if (user) {
       const fetchEmployees = async () => {
         const res = await axios.get(URI);
-        if (res.data[0] && res.data[0].employees) {
-          setEmployees(res.data[0].employees);
+        if (res.data[0]) {
+          if (res.data[0].employees) {
+            setEmployees(res.data[0].employees);
+          } else {
+            setEmployees(res.data);
+          }
         }
       };
 
@@ -59,7 +63,7 @@ const EmployeeProvider = ({ children }) => {
           name: name,
           email: email,
           ticket_count: ticketCount,
-          pm_email: `${user.email}`,
+          pm_email: employees.find((e) => e._id === employeeId).pm_email,
         },
       ],
     });
