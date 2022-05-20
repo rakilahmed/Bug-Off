@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
 
-// const UR = 'https://bugoff.rakilahmed.com/api/tasks';
+// const URI = 'https://bugoff.rakilahmed.com/api/tasks';
 const URI = 'https://bug-off-server.vercel.app/api/tasks';
 
 const TaskContext = createContext();
