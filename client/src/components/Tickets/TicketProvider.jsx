@@ -70,13 +70,20 @@ const TicketProvider = ({ children }) => {
             } else {
               setTickets(
                 res.data[0].tickets
-                  .filter((ticket) => ticket.status === 'open')
+                  .filter(
+                    (ticket) =>
+                      ticket.status === 'open' && ticket.assigned_to === 'Self'
+                  )
                   .reverse()
               );
 
               setClosedTickets(
                 res.data[0].tickets
-                  .filter((ticket) => ticket.status === 'closed')
+                  .filter(
+                    (ticket) =>
+                      ticket.status === 'closed' &&
+                      ticket.assigned_to === 'Self'
+                  )
                   .reverse()
               );
             }
