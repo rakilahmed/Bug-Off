@@ -3,8 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../../firebase/AuthContext';
 import { useEmployeeContext } from '../Employees/EmployeeProvider';
 
-// const URI = 'https://bugoff.rakilahmed.com/api/tickets';
-const URI = 'https://bug-off-server.vercel.app/api/tickets';
+const URI = 'https://bugoff.rakilahmed.com/api/tickets';
 
 const TicketContext = createContext();
 
