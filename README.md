@@ -1,15 +1,9 @@
 # Bug Off
 
-A simple and user-frinedly (free) Bug Tracking software. This software can be used for both your personal and (small) business needs.
+## Live
 
-To run it locally on your machine:
+https://bugoff.vercel.app
 
-- Clone the repo `git clone https://github.com/rakilahmed/bug-off` or download the zipped folder.
-- Navigate inside the folder via terminal:
-  - Run `npm install` to initiate
-  - Then run `npm run setup` to install all the dependencies for both server and client
-  - [NOTE: To run the server, you will need to create a .env file (under the server/config folder) with your own MongoDB connection URI. Otherwise, you can only run the client!]
-  - Once that's done:
-    - To start the client only, run `npm start client`
-    - To start the server only, run `npm run server`
-    - Or to start both server and client at once, run `npm run dev`
+## About
+
+A full-stack web app which allows authenticated users to track all the bugs or issues of their products. This is something very common in the tech world, but most of the available applications like Jira are built for teams and not for individuals. So this app solves that problem, it is built in a way where individual programmers can use it for their personal projects and Product Managers can create and manage employees for their small business needs. 
