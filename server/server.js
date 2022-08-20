@@ -1,5 +1,6 @@
 require('dotenv').config({ path: './config/.env' });
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
@@ -16,7 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('tiny'));
 
-app.get('/', (_, res) => res.redirect('/api'));
 app.get('/api', (_, res) => {
   res.status(201).json({
     who_are_we: 'Bug Off Team',
@@ -33,8 +33,32 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/employees', employeeRoutes);
 
-app.listen(port, () =>
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+  app
+    .get(
+      [
+        '/register',
+        '/login',
+        '/forgot-password',
+        '/',
+        '/tickets',
+        '/employees',
+        '/profile',
+      ],
+      (req, res) => {
+        res.sendFile(path.join(__dirname, '../client/build/index.html'));
+      }
+    )
+    .get('*', (req, res) => {
+      res.json({
+        error: 'Page not found, check the url',
+      });
+    });
+}
+
+app.listen(port, () => {
   console.log(
     `=> ${process.env.NODE_ENV} server is running on port: ${port} <=`
-  )
-);
+  );
+});
